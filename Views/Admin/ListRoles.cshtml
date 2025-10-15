@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<IdentityRole>
+
+@{
+    ViewBag.Title = "All Roles";
+}
+
+<h1 class="mb-4">All Roles</h1>
+
+<div class="mb-3">
+    <a asp-controller="Admin" asp-action="CreateRole" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Add New Role
+    </a>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var role in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header bg-light">
+                        <strong>Role Id:</strong> @role.Id
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@role.Name</h5>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <a asp-controller="Admin" asp-action="EditRole" asp-route-id="@role.Id" class="btn btn-primary btn-sm">
+                            Edit
+                        </a>
+                        <form asp-controller="Admin" asp-action="DeleteRole" asp-route-id="@role.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa role này không?');">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <h5>No roles created yet</h5>
+        <p>Click the button below to create a new role.</p>
+        <a asp-controller="Admin" asp-action="CreateRole" class="btn btn-success">
+            Create Role
+        </a>
+    </div>
+}
