@@ -1,0 +1,214 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ASM_1.Models.Account.AppUser> UserManager
+
+@{
+    var username = User?.Identity?.Name ?? "";
+    string userRole = string.Empty;
+
+    // Lấy user hiện tại
+    var user = await UserManager.FindByNameAsync(username);
+    if (user != null)
+    {
+        // Lấy danh sách role của user
+        var roles = await UserManager.GetRolesAsync(user);
+        // Nếu user chỉ có 1 role chính, lấy role đầu tiên
+        userRole = roles.FirstOrDefault() ?? string.Empty;
+    }
+
+    // Avatar
+    var avatarClaim = User?.FindFirst("Avatar")?.Value;
+    string userAvatar;
+    if (string.IsNullOrWhiteSpace(avatarClaim))
+    {
+        userAvatar = Url.Content("~/images/user.jpg");
+    }
+    else if (avatarClaim.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+             avatarClaim.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+    {
+        userAvatar = avatarClaim;
+    }
+    else if (avatarClaim.StartsWith("~"))
+    {
+        userAvatar = Url.Content(avatarClaim);
+    }
+    else
+    {
+        userAvatar = Url.Content("~/" + avatarClaim.TrimStart('/'));
+    }
+}
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/admin-layout.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    @RenderSection("Styles", required: false)
+</head>
+<body class="admin-body">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="admin-logo">
+                <img src="~/Images/Food-logo.jpg" alt="Logo">
+                <span>Manage Panel</span>
+            </div>
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- User Admin Menu - Hiển thị cho Admin và accountadmin -->
+            @if (user != null)
+            {
+                bool isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
+                bool isAccountAdmin = await UserManager.IsInRoleAsync(user, "AccountAdmin");
+                bool isFoodAdmin = await UserManager.IsInRoleAsync(user, "FoodAdmin");
+
+                if (isAdmin || isAccountAdmin)
+                {
+                    <div class="nav-section">
+                        <span class="section-title">
+                            <i class="fas fa-user-cog"></i>
+                            Quản lý Tài khoản
+                        </span>
+                        <a asp-controller="Admin" asp-action="Index" class="nav-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard Tài khoản</span>
+                        </a>
+                        <a asp-controller="Admin" asp-action="ListUsers" class="nav-item">
+                            <i class="fas fa-users"></i>
+                            <span>Quản lý người dùng</span>
+                        </a>
+                        <a asp-controller="Admin" asp-action="ListRoles" class="nav-item">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Quản lý vai trò</span>
+                        </a>
+                    </div>
+                }
+                if (isAdmin || isFoodAdmin)
+                {
+                    <div class="nav-section">
+                        <span class="section-title">
+                            <i class="fas fa-user-cog"></i>
+                            Quản lý Đồ ăn
+                        </span>
+                        <a asp-controller="Invoices" asp-action="Index" class="nav-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Hóa đơn</span>
+                        </a>
+                        <a asp-controller="Tables" asp-action="Index" class="nav-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Quản lý bàn ăn</span>
+                        </a>
+                        <a asp-controller="Categories" asp-action="Index" class="nav-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Quản lý danh mục món ăn</span>
+                        </a>
+                        <a asp-controller="FoodItems" asp-action="Index" class="nav-item">
+                            <i class="fas fa-users"></i>
+                            <span>Quản lý món ăn</span>
+                        </a>
+                        <a asp-controller="FoodOptions" asp-action="Index" class="nav-item">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Quản lý tùy chọn món ăn</span>
+                        </a>
+                        <a asp-controller="Comboes" asp-action="Index" class="nav-item">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Quản lý combo</span>
+                        </a>
+                        <a asp-controller="ComboDetails" asp-action="Index" class="nav-item">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Quản lý chi tiết combo</span>
+                        </a>
+                        <a asp-controller="Discounts" asp-action="Index" class="nav-item">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Quản lý giảm giá</span>
+                        </a>
+                    </div>
+                }
+            }
+
+            <!-- Không hiển thị menu Food Admin cho Admin và accountadmin -->
+            <!-- Không hiển thị menu Hệ thống cho Admin và accountadmin nếu không cần -->
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-profile">
+                <img src="@userAvatar" alt="Admin Avatar">
+                <div class="profile-info">
+                    <span class="admin-name">@username</span>
+                    <span class="admin-role">@userRole</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Header -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="breadcrumb">
+                    <span>@ViewData["Title"]</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">5</span>
+                </button>
+
+                <div class="admin-dropdown">
+                    <button class="dropdown-toggle">
+                        <img src="@userAvatar" alt="Admin Avatar">
+                        <span>@username</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            Hồ sơ
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            Cài đặt
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a asp-controller="Home" asp-action="Index" class="dropdown-item">
+                            <i class="fas fa-home"></i>
+                            Về trang chủ
+                        </a>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                            <button type="submit" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="admin-content">
+            @RenderBody()
+        </div>
+    </main>
+
+    <script src="~/js/site.js"></script>
+    <script src="~/js/admin.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

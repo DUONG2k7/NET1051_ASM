@@ -1,0 +1,350 @@
+﻿.admin-body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #f8f9fa;
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Admin Sidebar */
+.admin-sidebar {
+    width: 280px;
+    background: #2c3e50;
+    color: white;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+    .admin-sidebar.collapsed {
+        transform: translateX(-280px);
+    }
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #34495e;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .admin-logo img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .admin-logo span {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #ecf0f1;
+    }
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: #ecf0f1;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+    .sidebar-toggle:hover {
+        background: #34495e;
+    }
+
+/* Sidebar Navigation */
+.sidebar-nav {
+    padding: 20px 0;
+}
+
+.nav-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    display: block;
+    padding: 0 20px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #7f8c8d;
+    letter-spacing: 0.5px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+
+    .nav-item:hover {
+        background: #34495e;
+        color: #ecf0f1;
+        text-decoration: none;
+        border-left-color: #e74c3c;
+    }
+
+    .nav-item.active {
+        background: #34495e;
+        color: #ecf0f1;
+        border-left-color: #e74c3c;
+    }
+
+    .nav-item i {
+        width: 16px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+/* Sidebar Footer */
+.sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    border-top: 1px solid #34495e;
+}
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .admin-profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ecf0f1;
+}
+
+.admin-role {
+    font-size: 12px;
+    color: #95a5a6;
+}
+
+/* Main Content */
+.admin-main {
+    flex: 1;
+    margin-left: 280px;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s ease;
+}
+
+    .admin-main.expanded {
+        margin-left: 0;
+    }
+
+/* Admin Header */
+.admin-header {
+    background: white;
+    padding: 16px 24px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    color: #6c757d;
+    transition: all 0.2s;
+}
+
+    .menu-toggle:hover {
+        background: #f8f9fa;
+        color: #333;
+    }
+
+.breadcrumb {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.notification-btn {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    color: #6c757d;
+    transition: all 0.2s;
+}
+
+    .notification-btn:hover {
+        background: #f8f9fa;
+        color: #333;
+    }
+
+.notification-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #dc3545;
+    color: white;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* Admin Dropdown */
+.admin-dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+    .dropdown-toggle:hover {
+        background: #f8f9fa;
+    }
+
+    .dropdown-toggle img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .dropdown-toggle span {
+        font-weight: 500;
+        color: #333;
+    }
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    min-width: 180px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s;
+}
+
+.admin-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.2s;
+    font-size: 14px;
+}
+
+    .dropdown-item:hover {
+        background: #f8f9fa;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .dropdown-item i {
+        width: 16px;
+        text-align: center;
+        color: #6c757d;
+    }
+
+.dropdown-divider {
+    height: 1px;
+    background: #dee2e6;
+    margin: 8px 0;
+}
+
+/* Admin Content */
+.admin-content {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        transform: translateX(-280px);
+    }
+
+        .admin-sidebar.show {
+            transform: translateX(0);
+        }
+
+    .admin-main {
+        margin-left: 0;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+}

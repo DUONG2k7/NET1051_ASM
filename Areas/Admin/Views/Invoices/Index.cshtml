@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ASM_1.Models.Food.Invoice>
+
+@{
+    ViewData["Title"] = "Danh sách hóa đơn";
+}
+
+<h2 class="mb-3">Danh sách hóa đơn</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã hóa đơn</th>
+            <th>Bàn</th>
+            <th>Ngày tạo</th>
+            <th>Trạng thái</th>
+            <th>Tổng tiền</th>
+            <th>Giảm giá</th>
+            <th>Thành tiền</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.InvoiceCode</td>
+                <td>
+                    @string.Join(", ", item.TableInvoices.Select(ti => ti.Table!.TableName))
+                </td>
+                <td>@item.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <span class="badge bg-@(item.Status == "Paid" ? "success" : "warning")">
+                        @item.Status
+                    </span>
+                </td>
+                <td>@item.TotalAmount.ToString("N0") ₫</td>
+                <td>
+                    @(item.Discount != null ? item.Discount.DiscountId : "-")
+                </td>
+                <td>@item.FinalAmount.ToString("N0") ₫</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.InvoiceId">
+                        <i class="bi bi-eye"></i> Xem
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

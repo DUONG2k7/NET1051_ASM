@@ -1,0 +1,71 @@
+﻿@model ASM_1.Models.Food.Combo
+
+@{
+    ViewData["Title"] = "Create Combo with Details";
+}
+
+<h1>Create Combo</h1>
+
+<form asp-action="Create" enctype="multipart/form-data" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="ComboName"></label>
+        <input asp-for="ComboName" class="form-control" />
+        <span asp-validation-for="ComboName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ComboPrice"></label>
+        <input asp-for="ComboPrice" class="form-control" />
+        <span asp-validation-for="ComboPrice" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Discount</label>
+        <select asp-for="DiscountId" class="form-control" asp-items="ViewBag.DiscountId"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Image</label>
+        <input type="file" name="ImageFile" class="form-control" />
+    </div>
+
+    <hr />
+    <h4>Select Food Items for Combo</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Food Item</th>
+                <th>Quantity</th>
+                <th>Select</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.AllFoodItems as SelectList)
+            {
+                var foodItemId = int.Parse(item.Value);
+                <tr>
+                    <td>@item.Text</td>
+                    <td>
+                        <input type="number" name="Quantities" value="1" min="1" class="form-control" />
+                    </td>
+                    <td>
+                        <input type="checkbox" name="SelectedFoodItems" value="@foodItemId" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Create Combo</button>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

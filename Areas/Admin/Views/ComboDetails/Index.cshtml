@@ -1,0 +1,37 @@
+﻿@model IEnumerable<ASM_1.Models.Food.ComboDetail>
+
+@{
+    ViewData["Title"] = "Combo Details";
+}
+
+<h1>Combo Details</h1>
+
+<p>
+    <a asp-action="Create">Create New Combo Details</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Combo</th>
+            <th>Food Item</th>
+            <th>Quantity</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Combo.ComboName</td>
+                <td>@item.FoodItem.Name</td>
+                <td>@item.Quantity</td>
+                <td>
+                    <a asp-action="Edit" asp-route-comboId="@item.ComboId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ComboDetailId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ComboDetailId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

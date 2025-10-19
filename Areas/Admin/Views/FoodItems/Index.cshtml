@@ -1,0 +1,83 @@
+﻿@model IEnumerable<ASM_1.Models.Food.FoodItem>
+
+@{
+    ViewData["Title"] = "Danh sách món ăn";
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-list-ul me-2"></i> Danh sách món ăn
+        </h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Thêm món mới
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ảnh</th>
+                        <th>Tên món</th>
+                        <th>Mô tả</th>
+                        <th>Giá</th>
+                        <th>Danh mục</th>
+                        <th>Tồn kho</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center" style="width:180px;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.Name" class="img-thumbnail rounded"
+                                         style="width:70px; height:70px; object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <img src="~/images/no-image.png" class="img-thumbnail" style="width:70px; height:70px;" />
+                                }
+                            </td>
+                            <td class="fw-semibold">@item.Name</td>
+                            <td class="text-muted text-truncate" style="max-width: 200px;">@item.Description</td>
+                            <td>@item.BasePrice.ToString("C0")</td>
+                            <td>@item.Category?.Name</td>
+                            <td>@item.StockQuantity</td>
+                            <td>
+                                @if (item.IsAvailable)
+                                {
+                                    <span class="badge bg-success">Còn hàng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Hết hàng</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a asp-action="Edit" asp-route-id="@item.FoodItemId" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.FoodItemId" class="btn btn-sm btn-info text-white">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.FoodItemId" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ASM_1.Models.Account.UserRolesViewModel>
+
+<h2>Users and Roles</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>User Id</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserId</td>
+                <td>@user.UserName</td>
+                <td>
+                    @{
+                        var selectedRoles = user.Roles.Where(r => r.IsSelected).Select(r => r.RoleName).ToList();
+                    }
+                    @if (selectedRoles.Any())
+                    {
+                        @string.Join(", ", selectedRoles)
+                    }
+                    else
+                    {
+                        <span class="text-muted">(No roles)</span>
+                    }
+                </td>
+                <td>
+                    <a asp-controller="Admin" asp-action="EditUserRoles" asp-route-userId="@user.UserId" class="btn btn-sm btn-primary">Edit Roles</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

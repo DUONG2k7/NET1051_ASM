@@ -1,0 +1,662 @@
+﻿/* Common About Page Styles */
+.story-page, .team-page, .values-page {
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.page-header {
+    text-align: center;
+    padding: 60px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-bottom: 60px;
+}
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+    }
+
+    .page-header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+/* Story Page Specific */
+.story-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 80px;
+    padding: 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.hero-content h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+.hero-image img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+/* Timeline */
+.timeline-section {
+    margin-bottom: 80px;
+}
+
+    .timeline-section h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 50px;
+        color: #333;
+    }
+
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: #e74c3c;
+        transform: translateX(-50%);
+    }
+
+.timeline-item {
+    position: relative;
+    margin: 40px 0;
+    display: flex;
+    align-items: center;
+}
+
+    .timeline-item:nth-child(odd) {
+        flex-direction: row;
+    }
+
+    .timeline-item:nth-child(even) {
+        flex-direction: row-reverse;
+    }
+
+.timeline-year {
+    background: #e74c3c;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    min-width: 80px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.timeline-content {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin: 0 30px;
+    flex: 1;
+}
+
+    .timeline-content h3 {
+        color: #333;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .timeline-content p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+/* Mission & Vision */
+.mission-vision {
+    margin-bottom: 80px;
+}
+
+.mission-vision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.mission, .vision {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+    .mission .icon, .vision .icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .mission h3, .vision h3 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 16px;
+    }
+
+    .mission p, .vision p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+/* Achievements */
+.achievements {
+    background: white;
+    padding: 60px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+    .achievements h2 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 50px;
+    }
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+}
+
+.achievement-item {
+    text-align: center;
+}
+
+    .achievement-item .number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #e74c3c;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .achievement-item .label {
+        color: #666;
+        font-weight: 500;
+    }
+
+/* Team Page */
+.leadership-section, .departments-section {
+    margin-bottom: 80px;
+}
+
+    .leadership-section h2, .departments-section h2 {
+        text-align: center;
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 50px;
+    }
+
+/* Team Grid - Updated for 4 columns */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(200px, 1fr));
+    gap: 20px;
+}
+.team-member {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+    min-width: 0;
+    width: 100%; /* Đảm bảo full width */
+}
+
+    .team-member:hover {
+        transform: translateY(-5px);
+    }
+
+.member-image {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+    .member-image img {
+        width: 100%;
+        height: 180px; /* Giảm thêm chiều cao */
+        object-fit: cover;
+        display: block; /* Loại bỏ space dưới img */
+    }
+
+.member-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(231, 76, 60, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.team-member:hover .member-overlay {
+    opacity: 1;
+}
+
+.social-links {
+    display: flex;
+    gap: 8px; /* Giảm gap giữa social links */
+}
+
+    .social-links a {
+        width: 32px;
+        height: 32px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #e74c3c;
+        transition: transform 0.2s ease;
+        font-size: 12px;
+    }
+
+        .social-links a:hover {
+            transform: scale(1.1);
+        }
+
+.member-info {
+    padding: 15px;
+    text-align: center;
+}
+    .member-info h3 {
+        color: #333;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+
+.position {
+    color: #e74c3c;
+    font-weight: 500;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.description {
+    color: #666;
+    line-height: 1.4;
+    font-size: 12px;
+    margin: 0;
+}
+
+
+/* Specific responsive breakpoints */
+@media (max-width: 1200px) {
+    .team-grid {
+        max-width: 1200px;
+        gap: 12px;
+    }
+
+    .member-image img {
+        height: 160px;
+    }
+
+    .member-info {
+        padding: 12px;
+    }
+
+    .description {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        max-width: 800px;
+    }
+
+    .member-image img {
+        height: 200px;
+    }
+
+    .member-info {
+        padding: 20px;
+    }
+
+        .member-info h3 {
+            font-size: 1.1rem;
+        }
+
+    .description {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .team-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        max-width: 400px;
+    }
+
+    .member-image img {
+        height: 240px;
+    }
+
+    .member-info {
+        padding: 24px;
+    }
+
+        .member-info h3 {
+            font-size: 1.2rem;
+        }
+
+    .description {
+        font-size: 14px;
+    }
+}
+
+/* Leadership section container */
+.leadership-section {
+    margin-bottom: 80px;
+    overflow-x: auto; /* Thêm scroll ngang nếu cần trên màn hình nhỏ */
+}
+
+    .leadership-section h2 {
+        text-align: center;
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 50px;
+    }
+
+/* Departments */
+.departments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.department {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+    .department:hover {
+        transform: translateY(-5px);
+    }
+
+.dept-icon {
+    width: 60px;
+    height: 60px;
+    background: #e74c3c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.department h3 {
+    color: #333;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.department p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* Join Us */
+.join-us {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 40px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+    .join-us h2 {
+        font-size: 2rem;
+        margin-bottom: 16px;
+    }
+
+    .join-us p {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        opacity: 0.9;
+    }
+
+.join-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: white;
+    color: #667eea;
+}
+
+    .btn-primary:hover {
+        background: #f8f9fa;
+        color: #667eea;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+.btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+    .btn-secondary:hover {
+        background: white;
+        color: #667eea;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+/* Values Page */
+.core-values {
+    margin-bottom: 80px;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.value-item {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+    .value-item:hover {
+        transform: translateY(-5px);
+    }
+
+.value-icon {
+    width: 60px;
+    height: 60px;
+    background: #e74c3c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.value-item h3 {
+    color: #333;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.value-item > p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.value-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.value-details li {
+    padding: 8px 0;
+    color: #666;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+    padding-left: 20px;
+}
+
+    .value-details li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .value-details li:last-child {
+        border-bottom: none;
+    }
+
+/* Values Application */
+.values-application {
+    background: white;
+    padding: 60px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+    .values-application h2 {
+        text-align: center;
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 50px;
+    }
+
+.application-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.application-item {
+    text-align: center;
+    padding: 20px;
+}
+
+    .application-item h3 {
+        color: #333;
+        margin-bottom: 16px;
+        font-weight: 600;
+    }
+
+    .application-item p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .story-hero {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .timeline::before {
+        left: 20px;
+    }
+
+    .timeline-item {
+        flex-direction: row !important;
+        padding-left: 50px;
+    }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row !important;
+        }
+
+    .mission-vision-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .join-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .page-header p {
+        font-size: 1rem;
+    }
+}

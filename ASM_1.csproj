@@ -7,12 +7,41 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\css\admin-layout.css" />
+    <None Include="wwwroot\css\pages\about.css" />
+    <None Include="wwwroot\css\pages\admin-dashboard.css" />
+    <None Include="wwwroot\css\pages\admin-orders.css" />
+    <None Include="wwwroot\css\pages\admin-reports.css" />
+    <None Include="wwwroot\css\pages\admin-reviews.css" />
+    <None Include="wwwroot\css\pages\cart.css" />
+    <None Include="wwwroot\css\pages\checkout.css" />
+    <None Include="wwwroot\css\pages\contact.css" />
+    <None Include="wwwroot\css\pages\create-order.css" />
+    <None Include="wwwroot\css\pages\food-Category-Management.css" />
+    <None Include="wwwroot\css\pages\food-dashboard.css" />
+    <None Include="wwwroot\css\pages\food-detail.css" />
+    <None Include="wwwroot\css\pages\food-menu-management.css" />
+    <None Include="wwwroot\css\pages\food-promotion-management.css" />
+    <None Include="wwwroot\css\pages\food-report.css" />
+    <None Include="wwwroot\css\pages\home.css" />
+    <None Include="wwwroot\css\pages\login.css" />
+    <None Include="wwwroot\css\pages\menu-page.css" />
+    <None Include="wwwroot\css\pages\news.css" />
+    <None Include="wwwroot\css\pages\Register.css" />
+    <None Include="wwwroot\css\pages\sales-dashboard.css" />
+    <None Include="wwwroot\css\pages\user-management.css" />
+    <None Include="wwwroot\css\pages\user-profile.css" />
+    <None Include="wwwroot\css\site.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
   </ItemGroup>
 
 </Project>
