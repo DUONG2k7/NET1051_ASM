@@ -25,6 +25,17 @@ namespace ASM_1.Controllers
 
             return View(model);
         }
+        public async Task<IActionResult> Index1()
+        {
+            var model = new MenuOverviewViewModel
+            {
+                Categories = await _context.Categories.ToListAsync(),
+                Combos = await _context.Combos.Include(c => c.ComboDetails!).ThenInclude(cd => cd.FoodItem).ToListAsync(),
+                FoodItems = await _context.FoodItems.Include(f => f.Category).ToListAsync()
+            };
+
+            return View(model);
+        }
         public async Task<IActionResult> Details(int id)
         {
             var foodItem = await _context.FoodItems

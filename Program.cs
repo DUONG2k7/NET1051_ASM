@@ -46,6 +46,11 @@ app.MapControllerRoute(
     pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
+    name: "foodDetails",
+    pattern: "food/{Slug}",
+    defaults: new { controller = "Food", action = "Detail" });
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Food}/{action=Index}/{id?}")
     .WithStaticAssets();
