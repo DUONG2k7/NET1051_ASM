@@ -3,6 +3,7 @@ using ASM_1.Models.Food;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace ASM_1.Controllers
 {
@@ -103,58 +104,198 @@ namespace ASM_1.Controllers
             return View();
         }
 
-        // THÊM MỚI: Xử lý đặt hàng
+        //    // THÊM MỚI: Xử lý đặt hàng
+        //    [HttpPost]
+        //    [ValidateAntiForgeryToken]
+        //    public async Task<IActionResult> PlaceOrder(string fullName, string phone, string email,
+        //string address, string city, string district, string ward, string note,
+        //string deliveryTime, string paymentMethod)
+        //    {
+        //        // THÊM DEBUG
+        //        Console.WriteLine("=== PlaceOrder method called ===");
+        //        Console.WriteLine($"FullName: {fullName}");
+        //        Console.WriteLine($"Phone: {phone}");
+        //        Console.WriteLine($"DeliveryTime: {deliveryTime}");
+
+        //        if (!User.Identity?.IsAuthenticated ?? true)
+        //        {
+        //            Console.WriteLine("User not authenticated");
+        //            return RedirectToAction("Login", "Account");
+        //        }
+
+        //        string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+        //        Console.WriteLine($"UserId: {userId}");
+
+        //        var cart = await GetCartAsync(userId);
+
+        //        if (!cart.CartItems.Any())
+        //        {
+        //            Console.WriteLine("Cart is empty");
+        //            TempData["ErrorMessage"] = "Giỏ hàng của bạn đang trống.";
+        //            return RedirectToAction("Index");
+        //        }
+
+        //        Console.WriteLine($"Cart has {cart.CartItems.Count} items");
+
+        //        // Xóa giỏ hàng sau khi đặt thành công
+        //        _context.CartItems.RemoveRange(cart.CartItems);
+        //        await _context.SaveChangesAsync();
+
+        //        Console.WriteLine("Cart cleared successfully");
+
+        //        // Truyền thông tin qua TempData
+        //        TempData["OrderSuccess"] = true;
+        //        TempData["CustomerName"] = fullName;
+        //        TempData["CustomerPhone"] = phone;
+        //        TempData["CustomerAddress"] = address + ", " + ward + ", " + district + ", " + city;
+        //        TempData["DeliveryType"] = deliveryTime == "now" ? "Tại chỗ" : "Giao hàng";
+        //        TempData["PaymentMethod"] = paymentMethod;
+
+        //        Console.WriteLine("TempData set, redirecting to Success");
+
+        //        return RedirectToAction("Success");
+        //    }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PlaceOrder(string fullName, string phone, string email,
-    string address, string city, string district, string ward, string note,
-    string deliveryTime, string paymentMethod)
+        public async Task<IActionResult> PlaceOrder(string paymentMethod)
         {
-            // THÊM DEBUG
-            Console.WriteLine("=== PlaceOrder method called ===");
-            Console.WriteLine($"FullName: {fullName}");
-            Console.WriteLine($"Phone: {phone}");
-            Console.WriteLine($"DeliveryTime: {deliveryTime}");
+            string note = null;
+            // 1) Lấy user & giỏ hàng
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cart = await _context.Carts
+                .Include(c => c.CartItems)
+                    .ThenInclude(i => i.Options)
+                .FirstOrDefaultAsync(c => c.UserID == userId);
 
-            if (!User.Identity?.IsAuthenticated ?? true)
+            if (cart == null || cart.CartItems == null || !cart.CartItems.Any())
             {
-                Console.WriteLine("User not authenticated");
-                return RedirectToAction("Login", "Account");
-            }
-
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
-            Console.WriteLine($"UserId: {userId}");
-
-            var cart = await GetCartAsync(userId);
-
-            if (!cart.CartItems.Any())
-            {
-                Console.WriteLine("Cart is empty");
                 TempData["ErrorMessage"] = "Giỏ hàng của bạn đang trống.";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
-            Console.WriteLine($"Cart has {cart.CartItems.Count} items");
+            // 2) Tính tiền
+            var subtotal = cart.CartItems.Sum(x => x.UnitPrice * x.Quantity);
+            decimal shipping = 0m; // tuỳ mô hình giao/nhận
+            var finalAmount = subtotal + shipping;
 
-            // Xóa giỏ hàng sau khi đặt thành công
-            _context.CartItems.RemoveRange(cart.CartItems);
-            await _context.SaveChangesAsync();
+            // 3) Xác định mô hình thanh toán
+            bool isPrepaid = paymentMethod is "momo" or "zalopay" or "vnpay"; // trả trước
+            var nowLocal = DateTime.Now;
 
-            Console.WriteLine("Cart cleared successfully");
+            // 4) Lưu dữ liệu: Invoice + OrderItem (+ InvoiceDetail nếu prepaid)
+            using var tx = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // 4.1 Tạo hóa đơn "khung" (pre-bill); với trả sau thì đây chỉ là bill mở, chưa xuất chi tiết
+                var invoice = new Invoice
+                {
+                    InvoiceCode = NewInvoiceCode(),                // mã hóa đơn
+                    CreatedDate = nowLocal,
+                    TotalAmount = finalAmount,                    // tổng theo thời điểm đặt
+                    FinalAmount = finalAmount,                    // có thể áp mã giảm/fees sau
+                    Status = isPrepaid ? "Paid" : "Pending", // trả trước = Paid, trả sau = Pending
+                    Notes = note
+                };
+                _context.Invoices.Add(invoice);
+                await _context.SaveChangesAsync(); // cần Id cho FK OrderItem
 
-            // Truyền thông tin qua TempData
-            TempData["OrderSuccess"] = true;
-            TempData["CustomerName"] = fullName;
-            TempData["CustomerPhone"] = phone;
-            TempData["CustomerAddress"] = address + ", " + ward + ", " + district + ", " + city;
-            TempData["DeliveryType"] = deliveryTime == "now" ? "Tại chỗ" : "Giao hàng";
-            TempData["PaymentMethod"] = paymentMethod;
+                // 4.2 Chuyển từng CartItem -> OrderItem (+ OrderItemOption snapshot)
+                foreach (var ci in cart.CartItems)
+                {
+                    var oi = new OrderItem
+                    {
+                        InvoiceId = invoice.InvoiceId,
+                        FoodItemId = ci.ProductID,
+                        Quantity = ci.Quantity,
+                        UnitBasePrice = ci.UnitPrice,                  // giả định UnitPrice đã gồm chênh option
+                        OptionsDeltaTotal = 0m,                             // nếu bạn tách delta option, set đúng tại đây
+                        UnitFinalPrice = ci.UnitPrice,
+                        LineTotal = ci.UnitPrice * ci.Quantity,
+                        Note = ci.Note,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.OrderItems.Add(oi);
+                    await _context.SaveChangesAsync(); // cần OrderItemId cho options
 
-            Console.WriteLine("TempData set, redirecting to Success");
+                    if (ci.Options != null && ci.Options.Count > 0)
+                    {
+                        foreach (var opt in ci.Options)
+                        {
+                            // Không có Id nhóm/giá trị từ CartItemOption => lưu snapshot tên (anti-drift)
+                            var oio = new OrderItemOption
+                            {
+                                OrderItemId = oi.OrderItemId,
+                                PriceDelta = 0m, // nếu bạn tách delta option, set chính xác tại đây
+                                OptionGroupNameSnap = opt.OptionTypeName,
+                                OptionValueNameSnap = opt.OptionName,
+                                OptionValueCodeSnap = null,
+                                OptionGroupId = null, // nếu có thể map, gán Id thật để in KDS
+                                OptionValueId = null
+                            };
+                            _context.OrderItemOptions.Add(oio);
+                        }
+                    }
 
-            return RedirectToAction("Success");
+                    // 4.3 Nếu trả trước: sinh chi tiết hóa đơn để in/xuất ngay
+                    if (isPrepaid)
+                    {
+                        var id = new InvoiceDetail
+                        {
+                            InvoiceId = invoice.InvoiceId,
+                            FoodItemId = ci.ProductID,
+                            Quantity = ci.Quantity,
+                            UnitPrice = ci.UnitPrice,
+                            SubTotal = ci.UnitPrice * ci.Quantity
+                        };
+                        _context.InvoiceDetails.Add(id);
+
+                        // Nếu muốn gắn option vào InvoiceDetail:
+                        // cần tra OptionValue/FoodOptionId thật; hiện CartItemOption chỉ có tên,
+                        // nên có thể bỏ qua hoặc cài map riêng trước khi thêm InvoiceDetailFoodOption.
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                // 4.4 (TÙY CHỌN) Liên kết bàn để hỗ trợ chia/gộp bill sau này
+                // Nếu bạn có tableId từ QR/Session: tạo record TableInvoice
+                // _context.TableInvoices.Add(new TableInvoice {
+                //     TableId = tableId, InvoiceId = invoice.InvoiceId, SplitRatio = null, MergeGroupId = null
+                // });
+                // await _context.SaveChangesAsync();
+
+                // 4.5 Xóa giỏ
+                _context.CartItems.RemoveRange(cart.CartItems);
+                await _context.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                // 5) TempData cho trang Success
+                TempData["OrderSuccess"] = true;
+                //TempData["CustomerName"] = fullName;
+                //TempData["CustomerPhone"] = phone;
+                TempData["PaymentMethod"] = paymentMethod;
+
+                return RedirectToAction(nameof(Success));
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                // log ex...
+                TempData["ErrorMessage"] = "Có lỗi khi đặt hàng. Vui lòng thử lại.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
+        // ===== Helpers =====
+
+        private static string NewInvoiceCode()
+        {
+            // Ví dụ: INV-20251021-153045-ABC
+            var ts = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
+            var rnd = Guid.NewGuid().ToString("N")[..3].ToUpperInvariant();
+            return $"INV-{ts}-{rnd}";
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
