@@ -210,10 +210,9 @@
                                     </form>
                                 </div>
 
-                            </div>
-                        </div>
-                    </div>
-                } *@
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@food.Name</h5>
+                            <p class="card-text text-muted mb-2">@food.BasePrice.ToString("C")</p>
 
                 @* Kiểu 2 *@
                 @foreach (var food in Model.FoodItems)

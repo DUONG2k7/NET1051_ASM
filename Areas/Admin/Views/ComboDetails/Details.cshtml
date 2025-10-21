@@ -1,36 +1,33 @@
 ﻿@model ASM_1.Models.Food.ComboDetail
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Combo Detail Info";
 }
 
-<h1>Details</h1>
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0"><i class="bi bi-info-circle"></i> Combo Detail Information</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3 fw-semibold">Combo</dt>
+                <dd class="col-sm-9">@Model.Combo.ComboName</dd>
 
-<div>
-    <h4>ComboDetail</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Combo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Combo.ComboName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FoodItem)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FoodItem.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ComboDetailId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                <dt class="col-sm-3 fw-semibold">Food Item</dt>
+                <dd class="col-sm-9">@Model.FoodItem.Name</dd>
+
+                <dt class="col-sm-3 fw-semibold">Quantity</dt>
+                <dd class="col-sm-9">@Model.Quantity</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-end">
+            <a asp-action="Edit" asp-route-comboId="@Model.ComboId" class="btn btn-warning">
+                <i class="bi bi-pencil-square"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
 </div>

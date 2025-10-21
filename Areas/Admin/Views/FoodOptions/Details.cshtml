@@ -1,54 +1,58 @@
 ﻿@model ASM_1.Models.Food.FoodOption
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Food Option Details";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white d-flex align-items-center">
+                    <i class="bi bi-info-circle me-2 fs-5"></i>
+                    <h4 class="mb-0">Food Option Details</h4>
+                </div>
 
-<div>
-    <h4>FoodOption</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FoodItem)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FoodItem.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OptionName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OptionName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExtraPrice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ExtraPrice)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OptionType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OptionType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsAvailable)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsAvailable)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StockQuantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StockQuantity)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.FoodOptionId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 fw-semibold">@Html.DisplayNameFor(model => model.FoodItem)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.FoodItem.Name)</dd>
+
+                        <dt class="col-sm-4 fw-semibold">@Html.DisplayNameFor(model => model.OptionName)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.OptionName)</dd>
+
+                        <dt class="col-sm-4 fw-semibold">@Html.DisplayNameFor(model => model.ExtraPrice)</dt>
+                        <dd class="col-sm-8">@Model.ExtraPrice.ToString("N0")</dd>
+
+                        <dt class="col-sm-4 fw-semibold">@Html.DisplayNameFor(model => model.OptionType)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.OptionType!.TypeName)</dd>
+
+                        <dt class="col-sm-4 fw-semibold">@Html.DisplayNameFor(model => model.IsAvailable)</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.IsAvailable)
+                            {
+                                <span class="badge bg-success">Available</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Unavailable</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4 fw-semibold">@Html.DisplayNameFor(model => model.StockQuantity)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.StockQuantity)</dd>
+                    </dl>
+                </div>
+
+                <div class="card-footer d-flex justify-content-between bg-light">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@Model?.FoodOptionId" class="btn btn-warning">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

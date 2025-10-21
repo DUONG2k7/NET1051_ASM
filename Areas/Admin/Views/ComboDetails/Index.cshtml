@@ -4,34 +4,47 @@
     ViewData["Title"] = "Combo Details";
 }
 
-<h1>Combo Details</h1>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="bi bi-box-seam"></i> Combo Details
+        </h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Create New
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New Combo Details</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Combo</th>
-            <th>Food Item</th>
-            <th>Quantity</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Combo.ComboName</td>
-                <td>@item.FoodItem.Name</td>
-                <td>@item.Quantity</td>
-                <td>
-                    <a asp-action="Edit" asp-route-comboId="@item.ComboId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ComboDetailId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ComboDetailId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Combo</th>
+                    <th>Food Item</th>
+                    <th>Quantity</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Combo.ComboName</td>
+                        <td>@item.FoodItem.Name</td>
+                        <td>@item.Quantity</td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-comboId="@item.ComboId" class="btn btn-sm btn-warning me-1">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.ComboDetailId" class="btn btn-sm btn-info me-1 text-white">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.ComboDetailId" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

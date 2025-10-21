@@ -23,25 +23,24 @@ namespace ASM_1.Areas.Admin.Controllers
         // GET: Admin/Comboes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Combos.Include(c => c.Discount);
-            return View(await applicationDbContext.ToListAsync());
+            var combos = await _context.Combos
+                .Include(c => c.ComboDetails)
+                    .ThenInclude(cd => cd.FoodItem)
+                .ToListAsync();
+            return View(combos);
         }
 
         // GET: Admin/Comboes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var combo = await _context.Combos
-                .Include(c => c.Discount)
-                .FirstOrDefaultAsync(m => m.ComboId == id);
-            if (combo == null)
-            {
-                return NotFound();
-            }
+                .Include(c => c.ComboDetails)
+                    .ThenInclude(cd => cd.FoodItem)
+                .FirstOrDefaultAsync(c => c.ComboId == id);
+
+            if (combo == null) return NotFound();
 
             return View(combo);
         }
@@ -49,7 +48,6 @@ namespace ASM_1.Areas.Admin.Controllers
         // GET: Admin/Comboes/Create
         public IActionResult Create()
         {
-            ViewData["DiscountId"] = new SelectList(_context.Discounts, "DiscountId", "Code");
             return View();
         }
 
@@ -58,7 +56,7 @@ namespace ASM_1.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ComboId,ComboName,Description,ComboPrice,DiscountId")] Combo combo, IFormFile ImageFile)
+        public async Task<IActionResult> Create([Bind("ComboId,ComboName,Description,DiscountPercentage")] Combo combo, IFormFile ImageFile)
         {
             if (ModelState.IsValid)
             {
@@ -80,7 +78,6 @@ namespace ASM_1.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DiscountId"] = new SelectList(_context.Discounts, "DiscountId", "Code", combo.DiscountId);
             return View(combo);
         }
 
@@ -97,7 +94,6 @@ namespace ASM_1.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["DiscountId"] = new SelectList(_context.Discounts, "DiscountId", "Code", combo.DiscountId);
             return View(combo);
         }
 
@@ -106,7 +102,7 @@ namespace ASM_1.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ComboId,ComboName,Description,ComboPrice,DiscountId")] Combo combo, IFormFile ImageFile)
+        public async Task<IActionResult> Edit(int id, [Bind("ComboId,ComboName,Description,DiscountPercentage")] Combo combo, IFormFile ImageFile)
         {
             if (id != combo.ComboId)
             {
@@ -147,7 +143,6 @@ namespace ASM_1.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DiscountId"] = new SelectList(_context.Discounts, "DiscountId", "Code", combo.DiscountId);
             return View(combo);
         }
 
@@ -160,8 +155,9 @@ namespace ASM_1.Areas.Admin.Controllers
             }
 
             var combo = await _context.Combos
-                .Include(c => c.Discount)
-                .FirstOrDefaultAsync(m => m.ComboId == id);
+                .Include(c => c.ComboDetails)
+                    .ThenInclude(cd => cd.FoodItem)
+                .FirstOrDefaultAsync(c => c.ComboId == id);
             if (combo == null)
             {
                 return NotFound();

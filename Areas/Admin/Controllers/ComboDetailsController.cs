@@ -48,10 +48,10 @@ namespace ASM_1.Areas.Admin.Controllers
         }
 
         // GET: Admin/ComboDetails/Create
-        public IActionResult Create()
+        public IActionResult Create(ComboDetail comboDetail)
         {
-            ViewBag.AllFoodItems = new SelectList(_context.FoodItems, "FoodItemId", "Name");
-
+            ViewBag.AllFoodItems = new SelectList(_context.FoodItems, "FoodItemId", "Name", comboDetail.FoodItemId);
+            ViewBag.ComboId = new SelectList(_context.Combos, "ComboId", "ComboName", comboDetail.ComboId);
             ViewBag.DiscountId = new SelectList(_context.Discounts, "DiscountId", "Code");
 
             return View(new Combo());
@@ -91,21 +91,37 @@ namespace ASM_1.Areas.Admin.Controllers
         }
 
         // GET: Admin/ComboDetails/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? comboId)
         {
-            if (id == null)
+            if (comboId == null)
             {
                 return NotFound();
             }
 
-            var comboDetail = await _context.ComboDetails.FindAsync(id);
-            if (comboDetail == null)
+            // Lấy danh sách chi tiết combo
+            var comboDetails = await _context.ComboDetails
+                .Where(cd => cd.ComboId == comboId)
+                .Include(cd => cd.FoodItem)
+                .Include(cd => cd.Combo)
+                .ToListAsync();
+
+            if (comboDetails == null)
             {
                 return NotFound();
             }
-            ViewData["ComboId"] = new SelectList(_context.Combos, "ComboId", "ComboName", comboDetail.ComboId);
-            ViewData["FoodItemId"] = new SelectList(_context.FoodItems, "FoodItemId", "Name", comboDetail.FoodItemId);
-            return View(comboDetail);
+
+            // Lấy danh sách món ăn
+            ViewBag.AllFoodItems = await _context.FoodItems
+                .Select(fi => new SelectListItem
+                {
+                    Value = fi.FoodItemId.ToString(),
+                    Text = fi.Name
+                })
+                .ToListAsync();
+
+            ViewBag.ComboId = comboId;
+
+            return View(comboDetails);
         }
 
         // POST: Admin/ComboDetails/Edit/5
