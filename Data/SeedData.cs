@@ -109,12 +109,12 @@ namespace ASM_1.Data
 
                 var foodItems = new List<FoodItem>
                 {
-                    new FoodItem { Name = "Coca Cola", BasePrice = 10000, CategoryId = categories.First(c => c.Name == "Nước").CategoryId, StockQuantity = 50 },
-                    new FoodItem { Name = "Pepsi", BasePrice = 10000, CategoryId = categories.First(c => c.Name == "Nước").CategoryId, StockQuantity = 50 },
-                    new FoodItem { Name = "Cơm Gà", BasePrice = 50000, CategoryId = categories.First(c => c.Name == "Cơm").CategoryId, StockQuantity = 30 },
-                    new FoodItem { Name = "Cơm Tấm", BasePrice = 45000, CategoryId = categories.First(c => c.Name == "Cơm").CategoryId, StockQuantity = 30 },
-                    new FoodItem { Name = "Bánh Flan", BasePrice = 20000, CategoryId = categories.First(c => c.Name == "Tráng miệng").CategoryId, StockQuantity = 20 },
-                    new FoodItem { Name = "Chè Thái", BasePrice = 25000, CategoryId = categories.First(c => c.Name == "Tráng miệng").CategoryId, StockQuantity = 20 }
+                    new FoodItem { Name = "Coca Cola", BasePrice = 10000, CategoryId = categories.First(c => c.Name == "Nước").CategoryId, Slug = "coca-cola", StockQuantity = 50, ImageUrl = "~/Images/nuoc-cam.jpg" },
+                    new FoodItem { Name = "Pepsi", BasePrice = 10000, CategoryId = categories.First(c => c.Name == "Nước").CategoryId, Slug = "pepsi", StockQuantity = 50, ImageUrl = "~/Images/nuoc-cam.jpg"  },
+                    new FoodItem { Name = "Cơm Gà", BasePrice = 50000, CategoryId = categories.First(c => c.Name == "Cơm").CategoryId, Slug = "com-ga", StockQuantity = 30, ImageUrl = "~/Images/nuoc-cam.jpg"  },
+                    new FoodItem { Name = "Cơm Tấm", BasePrice = 45000, CategoryId = categories.First(c => c.Name == "Cơm").CategoryId, Slug = "com-tam", StockQuantity = 30, ImageUrl = "~/Images/nuoc-cam.jpg"  },
+                    new FoodItem { Name = "Bánh Flan", BasePrice = 20000, CategoryId = categories.First(c => c.Name == "Tráng miệng").CategoryId, Slug = "banh-flan", StockQuantity = 20, ImageUrl = "~/Images/nuoc-cam.jpg"  },
+                    new FoodItem { Name = "Chè Thái", BasePrice = 25000, CategoryId = categories.First(c => c.Name == "Tráng miệng").CategoryId, Slug = "che-thai", StockQuantity = 20, ImageUrl = "~/Images/nuoc-cam.jpg"  }
                 };
                 context.FoodItems.AddRange(foodItems);
                 await context.SaveChangesAsync();

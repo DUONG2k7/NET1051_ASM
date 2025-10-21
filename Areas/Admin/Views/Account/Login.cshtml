@@ -1,22 +1,72 @@
-﻿@model ASM_1.Models.Account.LoginViewModel
-<h2>Đăng nhập</h2>
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_Layout";
+}
+@model ASM_1.Models.Account.LoginViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/login.css" />
+}
 
-<form asp-action="Login" method="post">
-    <div>
-        <label asp-for="UsernameOrEmail"></label>
-        <input asp-for="UsernameOrEmail" />
-        <span asp-validation-for="UsernameOrEmail"></span>
-    </div>
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <div>
-        <input asp-for="RememberMe" type="checkbox" />
-        <label asp-for="RememberMe"></label>
-    </div>
-    <button type="submit">Đăng nhập</button>
-</form>
+<div class="auth-container">
+    <div class="auth-form">
+        <h2>Đăng nhập</h2>
 
-<div asp-validation-summary="All"></div>
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                @ViewBag.Error
+            </div>
+        }
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            <div class="form-group">
+                <label asp-for="UsernameOrEmail">Email hoặc tên đăng nhập <span style="color:orangered">*</span></label>
+                <input asp-for="UsernameOrEmail" class="form-control" required>
+                <span asp-validation-for="UsernameOrEmail" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password">Mật khẩu <span style="color:orangered">*</span></label>
+                <input asp-for="Password" type="password" class="form-control" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-check">
+                <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label">Ghi nhớ đăng nhập</label>
+            </div>
+            <button type="submit" class="btn-primary">Đăng nhập</button>
+        </form>
+
+        <div class="auth-links">
+            <a href="#" class="forgot-password">Quên mật khẩu?</a>
+            <p>Chưa có tài khoản? <a asp-action="Register">Đăng ký ngay</a></p>
+        </div>
+
+        <div class="social-login">
+            <button class="btn-google">
+                <img src="~/Images/google-icon.png" alt="Google">
+                Đăng nhập với Google
+            </button>
+        </div>
+
+        <script>
+            function loginWithGoogle() {
+                window.open('https://accounts.google.com/v3/signin/identifier?flowName=GlifWebSignIn', '_blank');
+            }
+        </script>
+
+        <!-- Demo Info -->
+        <div class="demo-info">
+            <p><strong>Tài khoản demo:</strong></p>
+            <ul>
+                <li>Khách hàng: <code>user</code> / <code>user</code></li>
+                <li>Nhân viên: <code>staff</code> / <code>staff</code></li>
+                <li>Admin: <code>adminit</code> / <code>adminit</code></li>
+                <li>Quản lý User: <code>admin</code> / <code>admin</code></li>
+                <li>Quản lý Food: <code>admin1</code> / <code>admin1</code></li>
+            </ul>
+        </div>
+    </div>
+</div>

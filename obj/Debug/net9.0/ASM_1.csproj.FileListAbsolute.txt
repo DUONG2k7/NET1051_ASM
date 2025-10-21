@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\appsettings.json
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\ASM_1.staticwebassets.runtime.json
@@ -381,3 +382,5 @@ C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\Syst
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+=======
+>>>>>>> 14b81dbd837422d5df407aebf857ac7b2eb63699

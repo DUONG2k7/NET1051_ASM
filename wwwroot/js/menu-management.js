@@ -73,17 +73,17 @@ function triggerImageUpload() {
 function previewImage() {
     const file = document.getElementById('itemImage').files[0];
     if (file) {
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-            showNotification('Vui lòng chọn file hình ảnh hợp lệ', 'error');
-            return;
-        }
+        //// Validate file type
+        //if (!file.type.startsWith('image/')) {
+        //    showNotification('Vui lòng chọn file hình ảnh hợp lệ', 'error');
+        //    return;
+        //}
 
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            showNotification('Kích thước file không được vượt quá 5MB', 'error');
-            return;
-        }
+        //// Validate file size (max 5MB)
+        //if (file.size > 5 * 1024 * 1024) {
+        //    showNotification('Kích thước file không được vượt quá 5MB', 'error');
+        //    return;
+        //}
 
         const reader = new FileReader();
         reader.onload = function (e) {
@@ -98,7 +98,7 @@ function previewImage() {
 function removeImage() {
     document.getElementById('itemImage').value = '';
     document.getElementById('imagePreview').style.display = 'none';
-    document.querySelector('.upload-box').style.display = 'flex';
+    document.querySelector('.upload-box').style.display = 'block';
 }
 
 // Save Menu Item

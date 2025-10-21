@@ -59,5 +59,94 @@ namespace ASM_1.Controllers
             }
             return View(foodItem);
         }
+
+        // /food/detail/{slug}
+        public IActionResult Detail(string slug)
+        {
+            // 1) Lấy món
+            var item = _context.FoodItems
+                               .AsNoTracking()
+                               .FirstOrDefault(f => f.Slug == slug);
+            if (item == null) return NotFound();
+
+            // 2) Tính giá gốc hiệu lực
+            decimal basePrice = item.DiscountPrice > 0
+                ? item.DiscountPrice
+                : (item.DiscountPercent > 0
+                    ? item.BasePrice * (100 - item.DiscountPercent) / 100
+                    : item.BasePrice);
+
+            // 3) Lấy các nhóm tuỳ chọn đã gắn vào món + values
+            var migs = _context.MenuItemOptionGroups
+                               .AsNoTracking()
+                               .Where(m => m.FoodItemId == item.FoodItemId)
+                               .Include(m => m.OptionGroup)
+                                   .ThenInclude(g => g.Values)
+                               .OrderBy(m => m.DisplayOrder)
+                               .AsSplitQuery()
+                               .ToList();
+
+            // 4) Lấy override giá trị theo món
+            var valueOverrides = _context.MenuItemOptionValues
+                                         .AsNoTracking()
+                                         .Where(v => v.FoodItemId == item.FoodItemId)
+                                         .ToList();
+
+            // 5) Build ViewModel.Groups (đã merge override & loại ẩn)
+            var groups = migs.Select(m =>
+            {
+                var g = m.OptionGroup;
+
+                bool required = m.Required ?? g.Required;
+                int min = m.MinSelect ?? g.MinSelect;
+                int max = m.MaxSelect ?? g.MaxSelect;
+
+                var values = g.Values
+                              .Select(v =>
+                              {
+                                  var ov = valueOverrides.FirstOrDefault(o => o.OptionValueId == v.OptionValueId);
+                                  return new ProductDetailViewModel.ValueVM
+                                  {
+                                      ValueId = v.OptionValueId,
+                                      Name = v.Name,
+                                      Code = v.Code,
+                                      PriceDelta = ov?.PriceDeltaOverride ?? v.PriceDelta,
+                                      IsDefault = ov?.IsDefaultOverride ?? v.IsDefault,
+                                      IsHidden = ov?.IsHidden ?? false,
+                                      SortOrder = ov?.SortOrderOverride ?? v.SortOrder,
+                                      ScaleValue = v.ScaleValue
+                                  };
+                              })
+                              .Where(v => !v.IsHidden)
+                              .OrderBy(v => v.SortOrder)
+                              .ToList();
+
+                return new ProductDetailViewModel.GroupVM
+                {
+                    GroupId = g.OptionGroupId,
+                    Name = g.Name,
+                    GroupType = g.GroupType,
+                    Required = required,
+                    Min = min,
+                    Max = max,
+                    ScaleMin = g.ScaleMin,
+                    ScaleMax = g.ScaleMax,
+                    ScaleStep = g.ScaleStep,
+                    ScaleUnit = g.ScaleUnit,
+                    Values = values
+                };
+            })
+            .ToList();
+
+            // 6) Trả ViewModel cho Razor View detail mới
+            var vm = new ProductDetailViewModel
+            {
+                Item = item,
+                BasePriceEffective = basePrice,
+                Groups = groups
+            };
+
+            return View(vm); // nếu View name khác, đổi: return View("DetailV2", vm);
+        }
     }
 }

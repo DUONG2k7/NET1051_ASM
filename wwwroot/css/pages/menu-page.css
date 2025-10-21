@@ -14,14 +14,14 @@
 /* ===== HEADER ===== */
 .menu-header {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
 }
 
 .menu-title {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 800;
     color: #2c3e50;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -157,7 +157,7 @@
 }
 
 .menu-item-name {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: #2c3e50;
     margin-bottom: 10px;

@@ -1,4 +1,5 @@
-﻿using ASM_1.Models.Account;
+﻿using ASM_1.Models;
+using ASM_1.Models.Account;
 using ASM_1.Models.Food;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,15 @@ namespace ASM_1.Data
         public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
         public DbSet<InvoiceDetailFoodOption> InvoiceDetailFoodOptions { get; set; }
         public DbSet<TableInvoice> TableInvoices { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderItemOption> OrderItemOptions { get; set; }
+        public DbSet<OptionGroup> OptionGroups { get; set; }
+        public DbSet<OptionValue> OptionValues { get; set; }
+        public DbSet<MenuItemOptionGroup> MenuItemOptionGroups { get; set; }
+        public DbSet<MenuItemOptionValue> MenuItemOptionValues { get; set; }
+
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -107,6 +117,109 @@ namespace ASM_1.Data
                 .HasForeignKey(o => o.OptionTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // ======================================================================
+            // 8) OptionGroup ↔ OptionValue (1-n) + enum to string + defaults
+            // ======================================================================
+            builder.Entity<OptionGroup>()
+                .Property(g => g.GroupType)
+                .HasConversion<string>()        // lưu enum thành string
+                .HasMaxLength(20);
+
+            builder.Entity<OptionGroup>()
+                .Property(g => g.IsActive).HasDefaultValue(true);
+            builder.Entity<OptionGroup>()
+                .Property(g => g.IsArchived).HasDefaultValue(false);
+            builder.Entity<OptionGroup>()
+                .Property(g => g.Version).HasDefaultValue(1);
+
+            builder.Entity<OptionGroup>()
+                .HasMany(g => g.Values)
+                .WithOne(v => v.OptionGroup)
+                .HasForeignKey(v => v.OptionGroupId)
+                .OnDelete(DeleteBehavior.Restrict); // tránh xóa dây chuyền gây mất dữ liệu
+
+            builder.Entity<OptionValue>()
+                .HasIndex(v => new { v.OptionGroupId, v.Name }).IsUnique(); // tên không trùng trong nhóm
+            builder.Entity<OptionValue>()
+                .HasIndex(v => new { v.OptionGroupId, v.SortOrder });
+
+            // ======================================================================
+            // 9) MenuItemOptionGroup (item ↔ group) + unique
+            // ======================================================================
+            builder.Entity<MenuItemOptionGroup>()
+                .HasIndex(x => new { x.FoodItemId, x.OptionGroupId })
+                .IsUnique();
+
+            builder.Entity<MenuItemOptionGroup>()
+                .HasOne(x => x.FoodItem)
+                .WithMany() // không bắt buộc nav ngược trong FoodItem
+                .HasForeignKey(x => x.FoodItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<MenuItemOptionGroup>()
+                .HasOne(x => x.OptionGroup)
+                .WithMany(g => g.MenuItemLinks)
+                .HasForeignKey(x => x.OptionGroupId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ======================================================================
+            // 10) MenuItemOptionValue (override value theo món) + unique
+            // ======================================================================
+            builder.Entity<MenuItemOptionValue>()
+                .HasIndex(x => new { x.FoodItemId, x.OptionValueId })
+                .IsUnique();
+
+            builder.Entity<MenuItemOptionValue>()
+                .HasOne(x => x.FoodItem)
+                .WithMany()
+                .HasForeignKey(x => x.FoodItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<MenuItemOptionValue>()
+                .HasOne(x => x.OptionValue)
+                .WithMany()
+                .HasForeignKey(x => x.OptionValueId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ======================================================================
+            // 11) OrderItem
+            // ======================================================================
+            builder.Entity<OrderItem>()
+                .HasOne(x => x.Invoice)
+                .WithMany()                                // không cần nav ngược trên Invoice
+                .HasForeignKey(x => x.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<OrderItem>()
+                .HasOne(x => x.FoodItem)
+                .WithMany()
+                .HasForeignKey(x => x.FoodItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ======================================================================
+            // 12) OrderItemOption
+            // ======================================================================
+            builder.Entity<OrderItemOption>()
+                .HasIndex(x => x.OrderItemId);
+
+            builder.Entity<OrderItemOption>()
+                .HasOne(x => x.OrderItem)
+                .WithMany(i => i.Options)
+                .HasForeignKey(x => x.OrderItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // == Nếu bạn chọn phương án A (có navigation) ==
+            builder.Entity<OrderItemOption>()
+                .HasOne(x => x.OptionValue)
+                .WithMany()
+                .HasForeignKey(x => x.OptionValueId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<OrderItemOption>()
+                .HasOne(x => x.OptionGroup)
+                .WithMany()
+                .HasForeignKey(x => x.OptionGroupId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

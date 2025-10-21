@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Asm_GD1.Services
+namespace ASM_1.Services
 {
     public class SlugGenerator
     {

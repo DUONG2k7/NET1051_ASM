@@ -33,6 +33,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<SlugGenerator>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -56,6 +58,11 @@ app.MapStaticAssets();
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "foodDetails",
+    pattern: "food/{Slug}",
+    defaults: new { controller = "Food", action = "Detail" });
 
 app.MapControllerRoute(
     name: "default",

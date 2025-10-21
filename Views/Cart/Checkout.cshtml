@@ -1,0 +1,206 @@
+﻿@model List<ASM_1.Models.Food.CartItem>
+@{
+    ViewData["Title"] = "Thanh toán";
+    var totalItems = Model?.Sum(x => x.Quantity) ?? 0;
+    var subtotal = Model?.Sum(x => x.UnitPrice * x.Quantity) ?? 0;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/checkout.css" />
+}
+
+<div class="checkout-page">
+    <div class="container">
+        <!-- Progress Steps -->
+        <div class="checkout-progress">
+            <div class="step completed">
+                <div class="step-number">1</div>
+                <span>Giỏ hàng</span>
+            </div>
+            <div class="step active">
+                <div class="step-number">2</div>
+                <span>Thông tin</span>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <span>Hoàn thành</span>
+            </div>
+        </div>
+
+        <div class="checkout-content">
+            <!-- Customer Information -->
+            <div class="checkout-main">
+                <form id="checkoutForm" asp-controller="Cart" asp-action="PlaceOrder" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Payment Method -->
+                    <div class="checkout-section">
+                        <h2><i class="fas fa-credit-card"></i> Phương thức thanh toán</h2>
+                        <div class="payment-methods">
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="cod" checked>
+                                <div class="payment-info">
+                                    <div class="payment-icon">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <div class="payment-details">
+                                        <strong>Thanh toán bằng tiền mặt</strong>
+                                        <span>Thanh toán tại chỗ</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="momo">
+                                <div class="payment-info">
+                                    <div class="payment-icon">
+                                        <img src="~/Images/momo-logo.jpg" alt="MoMo">
+                                    </div>
+                                    <div class="payment-details">
+                                        <strong>Ví điện tử MoMo</strong>
+                                        <span>Thanh toán nhanh chóng qua ví MoMo</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="zalopay">
+                                <div class="payment-info">
+                                    <div class="payment-icon">
+                                        <img src="~/Images/zalopay-logo.jpg" alt="ZaloPay">
+                                    </div>
+                                    <div class="payment-details">
+                                        <strong>Ví điện tử ZaloPay</strong>
+                                        <span>Thanh toán an toàn với ZaloPay</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="vnpay">
+                                <div class="payment-info">
+                                    <div class="payment-icon">
+                                        <img src="~/Images/vnpay-logo.jpg" alt="VNPAY">
+                                    </div>
+                                    <div class="payment-details">
+                                        <strong>VNPAY QR</strong>
+                                        <span>Thanh toán qua ngân hàng với VNPAY</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="checkout-sidebar">
+                <div class="order-summary">
+                    <h3>Đơn hàng của bạn</h3>
+                    <div class="summary-items">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <div class="summary-item">
+                                    <img src="@Url.Content(item.ProductImage)" alt="@item.ProductName">
+                                    <div class="item-info">
+                                        <h4>@item.ProductName</h4>
+
+                                        <!-- Danh sách Option (linh hoạt theo OptionType) -->
+                                        @if (item.Options != null && item.Options.Any())
+                                        {
+                                            <ul class="item-options">
+                                                @foreach (var opt in item.Options)
+                                                {
+                                                    <li>@opt.OptionTypeName: <strong>@opt.OptionName</strong></li>
+                                                }
+                                            </ul>
+                                        }
+
+                                        <!-- Ghi chú -->
+                                        @if (!string.IsNullOrEmpty(item.Note))
+                                        {
+                                            <div class="item-note">
+                                                <em>Ghi chú: @item.Note</em>
+                                            </div>
+                                        }
+
+                                        <span class="item-quantity">x@(item.Quantity)</span>
+                                    </div>
+
+                                    <span class="item-price">
+                                        @((item.UnitPrice * item.Quantity).ToString("N0"))₫
+                                    </span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="empty-cart">Chưa có sản phẩm nào trong đơn hàng.</p>
+                        }
+                    </div>
+
+                    <div class="summary-calculations">
+                        <div class="calc-row">
+                            <span>Tạm tính (@totalItems món):</span>
+                            <span>@subtotal.ToString("N0")₫</span>
+                        </div>
+                        <div class="calc-row">
+                            <span>Phí giao hàng:</span>
+                            <span id="shippingFee">0₫</span>
+                        </div>
+                        <div class="calc-row total">
+                            <span>Tổng cộng:</span>
+                            <span id="totalAmount">@subtotal.ToString("N0")₫</span>
+                        </div>
+                    </div>
+
+                    <div class="checkout-actions">
+                        <a href="@Url.Action("Index", "Cart")" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> Quay lại giỏ hàng
+                        </a>
+
+                        <!-- Nút đặt hàng -->
+                        <button type="submit" class="btn-place-order" form="checkoutForm">
+                            <i class="fas fa-check"></i>
+                            Thanh toán
+                            <span class="order-total">@subtotal.ToString("N0")₫</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // CHỈ XỬ LÝ PHÍ GIAO HÀNG - KHÔNG CÓ VALIDATION PHỨC TẠP
+        document.addEventListener('DOMContentLoaded', function() {
+            var radios = document.getElementsByName('deliveryTime');
+            var schedule = document.getElementById('scheduleOptions');
+            var fee = document.getElementById('shippingFee');
+            var total = document.getElementById('totalAmount');
+            var base = @subtotal;
+
+            function update() {
+                var shipping = 0;
+                for (var i = 0; i < radios.length; i++) {
+                    if (radios[i].checked && radios[i].value === 'delivery') {
+                        shipping = 30000;
+                        if (schedule) schedule.style.display = 'block';
+                        break;
+                    }
+                }
+                if (shipping === 0 && schedule) {
+                    schedule.style.display = 'none';
+                }
+                if (fee) fee.textContent = shipping.toLocaleString('vi-VN') + '₫';
+                if (total) total.textContent = (base + shipping).toLocaleString('vi-VN') + '₫';
+            }
+
+            for (var i = 0; i < radios.length; i++) {
+                radios[i].addEventListener('change', update);
+            }
+            update();
+        });
+    </script>
+}

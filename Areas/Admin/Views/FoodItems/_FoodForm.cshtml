@@ -1,0 +1,129 @@
+﻿@model ASM_1.Models.Food.FoodItem
+
+<!-- Add/Edit Menu Item Modal -->
+<div class="modal" id="menuItemModal">
+    <div class="modal-content large">
+        <div class="modal-header">
+            <h3 id="menuItemModalTitle">Thêm món mới</h3>
+            <button class="modal-close" onclick="closeMenuItemModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Create" asp-controller="FoodItems" asp-area="Admin" method="post" enctype="multipart/form-data" id="foodForm" class="">
+                <div class="form-grid">
+                    <div class="form-section">
+                        <h4>Thông tin cơ bản</h4>
+                        <div class="form-group">
+                            <label asp-for="Name">Tên món ăn *</label>
+                            <input asp-for="Name" class="form-control" required />
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="itemCategory">Danh mục *</label>
+                                <select id="itemCategory" name="itemCategory" required>
+                                    <option value="">Chọn danh mục</option>
+                                    <option value="rice">Cơm</option>
+                                    <option value="noodle">Phở</option>
+                                    <option value="sandwich">Bánh mì</option>
+                                    <option value="drink">Thức uống</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BasePrice">Giá bán *</label>
+                                <input asp-for="BasePrice" type="number" class="form-control" min="0" required>
+                            </div>
+                        </div>
+
+                        @* <div class="form-row">
+                            <div class="form-group">
+                                <label for="itemSize">Kích thước</label>
+                                <div id="size-list"></div>
+                                <button type="button" class="btn btn-success" onclick="addSize()">+ Thêm kích thước</button>
+                            </div>
+                            <div class="form-group">
+                                <label for="itemTopping">Topping</label>
+                                <div id="topping-list"></div>
+                                <button type="button" class="btn btn-success" onclick="addTopping()">+ Thêm topping</button>
+                            </div>
+                        </div> *@
+
+                        @* <div class="form-row">
+                            <div class="form-group">
+                                <label for="prepTime">Thời gian chuẩn bị</label>
+                                <input type="number" id="prepTime" name="prepTime" min="0" placeholder="Phút">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemStatus">Trạng thái</label>
+                                <select id="itemStatus" name="itemStatus">
+                                    <option value="available">Đang bán</option>
+                                    <option value="unavailable">Tạm dừng</option>
+                                    <option value="out_of_stock">Hết hàng</option>
+                                </select>
+                            </div>
+                        </div> *@
+
+                        <div class="form-group">
+                            <label asp-for="Description">Mô tả món ăn</label>
+                            <textarea asp-for="Description" rows="4" placeholder="Mô tả chi tiết về món ăn..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Hình ảnh</h4>
+                        <div class="image-upload-area">
+
+                            <div class="upload-box" onclick="triggerImageUpload()">
+                                <i class="fas fa-camera"></i>
+                                <span>Chọn hình ảnh</span>
+                                <input type="file" name="ImageFile" id="itemImage" accept="image/*" style="display: none;" onchange="previewImage()">
+                                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                            </div>
+                            <div class="image-preview" id="imagePreview" style="display: none;">
+                                <img id="previewImg" src="" alt="Preview">
+                                <button type="button" class="btn-remove-image" onclick="removeImage()">×</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* <div class="form-section">
+                    <h4>Thông tin bổ sung</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="isSpicy" name="isSpicy">
+                                Món cay
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="isVegetarian" name="isVegetarian">
+                                Món chay
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="isSpecial" name="isSpecial">
+                                Món đặc biệt
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ingredients">Nguyên liệu chính</label>
+                        <input type="text" id="ingredients" name="ingredients" placeholder="VD: Thịt bò, bánh phở, hành lá...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="allergens">Cảnh báo dị ứng</label>
+                        <input type="text" id="allergens" name="allergens" placeholder="VD: Gluten, hải sản, đậu phộng...">
+                    </div>
+                </div> *@
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeMenuItemModal()">Hủy</button>
+                    <button type="submit" class="btn-primary" onclick="saveMenuItem()">Lưu món ăn</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
