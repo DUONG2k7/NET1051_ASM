@@ -375,3 +375,9 @@ C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\obj\Debug\net9.0\ASM_
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\obj\Debug\net9.0\ASM_1.genruntimeconfig.cache
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\obj\Debug\net9.0\ref\ASM_1.dll
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\QRCoder.dll
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\System.Drawing.Common.dll
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll

@@ -1,5 +1,6 @@
 ﻿using ASM_1.Data;
 using ASM_1.Models.Food;
+using ASM_1.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,14 +9,34 @@ namespace ASM_1.Controllers
     public class FoodController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly TableCodeService _tableCodeService;
 
-        public FoodController(ApplicationDbContext context)
+        public FoodController(ApplicationDbContext context, TableCodeService tableCodeService)
         {
             _context = context;
+            _tableCodeService = tableCodeService;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet("{tableCode}")]
+        public async Task<IActionResult> Index(string tableCode)
         {
+            var tableId = _tableCodeService.DecryptTableCode(tableCode);
+            if (tableId == null)
+            {
+                return RedirectToAction("InvalidTable");
+            }
+
+            var table = await _context.Tables.FirstOrDefaultAsync(b => b.TableId == tableId);
+            if (table == null)
+            {
+                return RedirectToAction("InvalidTable");
+            }
+
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserSessionId")))
+            {
+                HttpContext.Session.SetString("UserSessionId", Guid.NewGuid().ToString("N"));
+            }
+
             var model = new MenuOverviewViewModel
             {
                 Categories = await _context.Categories.ToListAsync(),
@@ -25,6 +46,7 @@ namespace ASM_1.Controllers
 
             return View(model);
         }
+
         public async Task<IActionResult> Details(int id)
         {
             var foodItem = await _context.FoodItems

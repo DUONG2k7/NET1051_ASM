@@ -163,6 +163,7 @@ wwwroot\uploads\foods\1d62a793-5974-44c8-87e6-29339696831e.jpg
 wwwroot\uploads\foods\317d2c6b-4d6b-44f5-8eb9-01fbda6b4d3b.jpg
 wwwroot\uploads\foods\648ee8de-f26a-42f7-868d-4d7f86cddcc4.jpg
 wwwroot\uploads\foods\ea89d1a3-309d-4d84-83d5-d4a86da09b21.jpg
+wwwroot\uploads\qr\table_1.png
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\admin-layout.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\about.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-dashboard.css
