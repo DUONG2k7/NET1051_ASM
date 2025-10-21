@@ -1,4 +1,4 @@
-using ASM_1.Data;
+﻿using ASM_1.Data;
 using ASM_1.Models.Account;
 using ASM_1.Services;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +12,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddDistributedMemoryCache(); // dùng bộ nhớ trong server để lưu session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10); // thời gian hết hạn session
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddSingleton<ASM_1.Services.ITableTrackerService, ASM_1.Services.TableTrackerService>();
+builder.Services.AddSingleton<ASM_1.Services.TableCodeService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -37,8 +47,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
+app.UseStaticFiles();
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -55,8 +66,8 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Food}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller}/{action}/{id?}",
+    defaults: new { area = "Admin", controller = "Tables", action = "Index" });
 
 
 app.Run();
