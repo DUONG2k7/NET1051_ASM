@@ -14,11 +14,10 @@ namespace ASM_1.Models.Food
         [StringLength(500)]
         public string? Description { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal ComboPrice { get; set; }
+        [NotMapped]
+        public decimal ComboPrice => ComboDetails?.Sum(cd => cd.FoodItem!.BasePrice * cd.Quantity) * (1 - DiscountPercentage/100) ?? 0;
 
-        public int? DiscountId { get; set; }
-        public Discount? Discount { get; set; }
+        public decimal? DiscountPercentage { get; set; }
         public string? ImageUrl { get; set; }
 
         // Navigation

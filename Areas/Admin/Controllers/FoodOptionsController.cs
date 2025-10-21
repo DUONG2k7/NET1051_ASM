@@ -23,7 +23,7 @@ namespace ASM_1.Areas.Admin.Controllers
         // GET: Admin/FoodOptions
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.FoodOptions.Include(f => f.FoodItem);
+            var applicationDbContext = _context.FoodOptions.Include(f => f.FoodItem).Include(f => f.OptionType);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -37,6 +37,7 @@ namespace ASM_1.Areas.Admin.Controllers
 
             var foodOption = await _context.FoodOptions
                 .Include(f => f.FoodItem)
+                .Include(f => f.OptionType)
                 .FirstOrDefaultAsync(m => m.FoodOptionId == id);
             if (foodOption == null)
             {

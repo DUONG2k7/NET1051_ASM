@@ -250,9 +250,9 @@ namespace ASM_1.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ComboName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    ComboPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DiscountId = table.Column<int>(type: "int", nullable: true),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DiscountPercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DiscountId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

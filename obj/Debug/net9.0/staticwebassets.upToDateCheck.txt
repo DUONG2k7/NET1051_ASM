@@ -149,13 +149,19 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\uploads\combos\1fd3f8ef-123a-46cd-b899-bcbf349492c6.jpg
 wwwroot\uploads\combos\72ae77b7-a0bd-4d0c-a2df-e3bcd94091e3.png
+wwwroot\uploads\combos\739643d9-bb64-4c21-8cbf-f6c812e1bed5.jpg
 wwwroot\uploads\combos\82fb838b-25ab-4b4a-a855-a01f90f49c1d.jpg
 wwwroot\uploads\combos\d2df9fe1-baed-420a-8e70-9355bd714c68.jpg
+wwwroot\uploads\combos\dbe1661d-0be4-4ca1-9c23-c1cbf5a3b8c1.jpg
+wwwroot\uploads\combos\e5bb6cd9-dab0-41dc-a8a7-3ec8165ab71b.png
 wwwroot\uploads\combos\fdf59929-d64e-4fb0-88ae-f42509bb88fe.jpg
 wwwroot\uploads\foods\0c0447dc-5c35-4ef7-9eb3-2d2fdff899db.jpg
 wwwroot\uploads\foods\1b86596d-cd86-4b74-8c7e-02894b483063.png
 wwwroot\uploads\foods\1d62a793-5974-44c8-87e6-29339696831e.jpg
+wwwroot\uploads\foods\317d2c6b-4d6b-44f5-8eb9-01fbda6b4d3b.jpg
+wwwroot\uploads\foods\648ee8de-f26a-42f7-868d-4d7f86cddcc4.jpg
 wwwroot\uploads\foods\ea89d1a3-309d-4d84-83d5-d4a86da09b21.jpg
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\admin-layout.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\about.css

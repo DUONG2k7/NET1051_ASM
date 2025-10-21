@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASM_1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251019104337_InitialCreate")]
+    [Migration("20251020034851_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -152,15 +152,15 @@ namespace ASM_1.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<decimal>("ComboPrice")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("DiscountId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("DiscountPercentage")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -594,11 +594,9 @@ namespace ASM_1.Migrations
 
             modelBuilder.Entity("ASM_1.Models.Food.Combo", b =>
                 {
-                    b.HasOne("ASM_1.Models.Food.Discount", "Discount")
+                    b.HasOne("ASM_1.Models.Food.Discount", null)
                         .WithMany("Combos")
                         .HasForeignKey("DiscountId");
-
-                    b.Navigation("Discount");
                 });
 
             modelBuilder.Entity("ASM_1.Models.Food.ComboDetail", b =>
