@@ -1,0 +1,138 @@
+﻿.cart-page {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cart-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: white;
+}
+
+    .cart-item img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 16px;
+    }
+
+.item-info {
+    flex-grow: 1;
+}
+
+    .item-info h4 {
+        margin: 0 0 4px 0;
+        color: #333;
+    }
+
+    .item-info p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+.item-price {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 20px;
+}
+
+.qty-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.item-total {
+    font-weight: bold;
+    color: #333;
+    min-width: 80px;
+    text-align: right;
+}
+
+.remove-item {
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 12px;
+}
+
+.cart-summary {
+    background: #f8f9fa;
+    padding: 24px;
+    border-radius: 8px;
+    height: fit-content;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+}
+
+    .summary-row.discount {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+.coupon-input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.apply-coupon {
+    padding: 8px 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.summary-row.total {
+    border-top: 2px solid #ddd;
+    padding-top: 12px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 16px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}

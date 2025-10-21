@@ -1,0 +1,172 @@
+﻿@model List<ASM_1.Models.Food.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    var totalItems = Model.Sum(x => x.Quantity);
+    var subtotal = Model.Sum(x => x.UnitPrice * x.Quantity);
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/cart.css" />
+}
+
+<!-- GIỮ NGUYÊN: Tất cả HTML hiện tại, CHỈ thay đổi JavaScript -->
+<div class="cart-page">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+            <span class="separator">></span>
+            <a asp-controller="Food" asp-action="Order">Thực đơn</a>
+            <span class="separator">></span>
+            <span class="current">Giỏ hàng</span>
+        </nav>
+        <h1 class="page-title">
+            <i class="fas fa-shopping-cart"></i>
+            Giỏ hàng của bạn
+        </h1>
+        @if (Model != null && Model.Any())
+        {
+            <div class="cart-content">
+                <!-- Cart Items -->
+                <div class="cart-items-section">
+                    <div class="cart-header">
+                        <h2>Danh sách món ăn (@totalItems món)</h2>
+                        <form asp-controller="Cart" asp-action="ClearCart" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-clear-cart">
+                                <i class="fas fa-trash"></i> Xóa tất cả
+                            </button>
+                        </form>
+                    </div>
+                    <div class="cart-items" id="cartItemsList">
+                        @foreach (var item in Model)
+                        {
+                            <div class="cart-item" data-id="@item.CartItemID">
+                                <div class="item-image">
+                                    <img src="@Url.Content(item.ProductImage)" alt="@item.ProductName" />
+                                </div>
+
+                                <div class="item-details">
+                                    <h3 class="item-name">@item.ProductName</h3>
+
+                                    <!-- Hiển thị tất cả Option động (không chỉ size/topping) -->
+                                    <div class="item-options">
+                                        @if (item.Options != null && item.Options.Any())
+                                        {
+                                            foreach (var opt in item.Options)
+                                            {
+                                                <span class="option">@opt.OptionTypeName: @opt.OptionName</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="option">Không có tùy chọn</span>
+                                        }
+
+                                        <span class="note">Ghi chú: @(string.IsNullOrWhiteSpace(item.Note) ? "Không có ghi chú" : item.Note)</span>
+                                    </div>
+
+                                    <div class="item-price">
+                                        <span class="unit-price">@item.UnitPrice.ToString("N0") VNĐ/món</span>
+                                    </div>
+                                </div>
+
+                                <div class="item-controls">
+                                    <div class="quantity-controls">
+                                        <!-- Giảm 1 -->
+                                        <form asp-controller="Cart"
+                                              asp-action="ChangeQuantity"
+                                              asp-route-cartItemId="@item.CartItemID"
+                                              asp-route-delta="-1"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="qty-btn minus" aria-label="Giảm">-</button>
+                                        </form>
+
+                                        <!-- Hiển thị số lượng -->
+                                        <input type="number" class="quantity" value="@item.Quantity" min="1" max="10" readonly />
+
+                                        <!-- Tăng 1 -->
+                                        <form asp-controller="Cart"
+                                              asp-action="ChangeQuantity"
+                                              asp-route-cartItemId="@item.CartItemID"
+                                              asp-route-delta="1"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="qty-btn plus" aria-label="Tăng">+</button>
+                                        </form>
+                                    </div>
+
+                                    <div class="item-total">
+                                        <span class="total-price">@item.TotalPrice.ToString("N0") VNĐ</span>
+                                    </div>
+
+                                    <!-- Xóa món -->
+                                    <form asp-controller="Cart"
+                                          asp-action="RemoveFromCart"
+                                          asp-route-cartItemId="@item.CartItemID"
+                                          method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-remove" title="Xóa món">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="continue-shopping">
+                        <a asp-controller="Home" asp-action="Index" class="btn-continue">
+                            <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+                        </a>
+                    </div>
+                </div>
+                <!-- Cart Summary & Checkout -->
+                <div class="cart-summary-section">
+                    <div class="cart-summary">
+                        <h3>Tóm tắt đơn hàng</h3>
+                        <div class="summary-details">
+                            <div class="summary-row">
+                                <span>Tạm tính (@totalItems món):</span>
+                                <span>@subtotal.ToString("N0") VNĐ</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Phí giao hàng:</span>
+                                <span id="shippingFee">15,000 VNĐ</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Tổng cộng:</span>
+                                <span class="total-amount">@((subtotal + 15000).ToString("N0")) VNĐ</span>
+                            </div>
+                        </div>
+                        <button class="btn-checkout" onclick="proceedToCheckout()">
+                            <i class="fas fa-credit-card"></i> Tiến hành thanh toán
+                            <span class="checkout-amount">@((subtotal + 15000).ToString("N0")) VNĐ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="empty-cart">
+                <div class="empty-cart-content">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>Giỏ hàng của bạn đang trống</h2>
+                    <a asp-controller="Food" asp-action="Index" class="btn-shop-now">
+                        <i class="fas fa-utensils"></i> Đặt món ngay
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- CẬP NHẬT: JavaScript để chuyển đến Checkout -->
+@section Scripts {
+    <script>
+        function proceedToCheckout() {
+            window.location.href = '@Url.Action("Checkout", "Cart")';
+        }
+    </script>
+}

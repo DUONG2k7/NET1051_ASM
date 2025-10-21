@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ASM_1.Data;
+using ASM_1.Models.Food;
+using ASM_1.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ASM_1.Data;
-using ASM_1.Models.Food;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ASM_1.Areas.Admin.Controllers
 {
@@ -14,10 +15,11 @@ namespace ASM_1.Areas.Admin.Controllers
     public class FoodItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public FoodItemsController(ApplicationDbContext context)
+        private readonly SlugGenerator _slugGenerator;
+        public FoodItemsController(ApplicationDbContext context, SlugGenerator slugGenerator)
         {
             _context = context;
+            _slugGenerator = slugGenerator;
         }
 
         // GET: Admin/FoodItems
@@ -74,6 +76,21 @@ namespace ASM_1.Areas.Admin.Controllers
                     }
 
                     foodItem.ImageUrl = "/uploads/foods/" + fileName;
+                }
+
+                if (string.IsNullOrWhiteSpace(foodItem.Slug))
+                {
+                    var slug = _slugGenerator.GenerateSlug(foodItem.Name);
+                    var baseSlug = slug;
+                    int counter = 1;
+
+                    while (await _context.FoodItems.AnyAsync(p => p.Slug == slug))
+                    {
+                        slug = $"{baseSlug}-{counter}";
+                        counter++;
+                    }
+
+                    foodItem.Slug = slug;
                 }
 
                 foodItem.IsAvailable = foodItem.StockQuantity > 0;
