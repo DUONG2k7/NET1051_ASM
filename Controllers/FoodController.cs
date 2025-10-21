@@ -44,25 +44,31 @@ namespace ASM_1.Controllers
                 FoodItems = await _context.FoodItems.Include(f => f.Category).ToListAsync()
             };
 
+            HttpContext.Session.SetString("CurrentTableCode", tableCode);
+
             return View(model);
         }
 
-        public async Task<IActionResult> Details(int id)
-        {
-            var foodItem = await _context.FoodItems
-                .Include(f => f.Category)
-                .Include(f => f.FoodOptions)
-                .FirstOrDefaultAsync(f => f.FoodItemId == id);
-            if (foodItem == null)
-            {
-                return NotFound();
-            }
-            return View(foodItem);
-        }
+        //public async Task<IActionResult> Details(int id)
+        //{
+        //    var foodItem = await _context.FoodItems
+        //        .Include(f => f.Category)
+        //        .Include(f => f.FoodOptions)
+        //        .FirstOrDefaultAsync(f => f.FoodItemId == id);
+        //    if (foodItem == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(foodItem);
+        //}
 
-        // /food/detail/{slug}
-        public IActionResult Detail(string slug)
+        // /{tableCode}/food/{slug}
+        [HttpGet("{tableCode}/food/{slug}")]
+        public IActionResult Detail(string tableCode, string slug)
         {
+            var tableId = _tableCodeService.DecryptTableCode(tableCode);
+            if (tableId == null) return RedirectToAction("InvalidTable");
+
             // 1) Lấy món
             var item = _context.FoodItems
                                .AsNoTracking()

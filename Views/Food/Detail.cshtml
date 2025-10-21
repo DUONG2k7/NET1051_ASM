@@ -5,6 +5,7 @@
     ViewData["Title"] = "Chi tiết món ăn";
     var item = Model.Item;
     var basePrice = Model.BasePriceEffective;
+    var tableCode = Context.Session.GetString("CurrentTableCode");
 }
 
 @section Styles {
@@ -15,10 +16,10 @@
     <div class="container">
         <!-- Breadcrumb -->
         <nav class="breadcrumb">
-            <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+            <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode">Trang chủ</a>
             <span class="separator">></span>
-            <a asp-controller="Food" asp-action="Order">Thực đơn</a>
-            <span class="separator">></span>
+            @* <a asp-controller="Food" asp-action="Order">Thực đơn</a>
+            <span class="separator">></span> *@
             <span class="current">@item.Name</span>
         </nav>
 
@@ -34,7 +35,7 @@
             <div class="food-info">
                 <form id="addToCartForm"
                       asp-controller="Cart" asp-action="AddToCart"
-                      method="post" asp-route-id="@item.FoodItemId" class="order-section">
+                      method="post" asp-route-id="@item.FoodItemId" asp-route-tableCode="@tableCode" class="order-section">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="FoodItemId" value="@item.FoodItemId" />
                     <input type="hidden" name="SelectionsJson" id="SelectionsJson" /> <!-- gửi JSON lựa chọn -->

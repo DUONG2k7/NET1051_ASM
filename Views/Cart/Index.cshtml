@@ -3,6 +3,7 @@
     ViewData["Title"] = "Giỏ hàng";
     var totalItems = Model.Sum(x => x.Quantity);
     var subtotal = Model.Sum(x => x.UnitPrice * x.Quantity);
+    var tableCode = Context.Session.GetString("CurrentTableCode");
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/cart.css" />
@@ -13,10 +14,10 @@
     <div class="container">
         <!-- Breadcrumb -->
         <nav class="breadcrumb">
-            <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+            <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode">Trang chủ</a>
             <span class="separator">></span>
-            <a asp-controller="Food" asp-action="Order">Thực đơn</a>
-            <span class="separator">></span>
+            @* <a asp-controller="Food" asp-action="Order" asp-route-tableCode="@tableCode">Thực đơn</a>
+            <span class="separator">></span> *@
             <span class="current">Giỏ hàng</span>
         </nav>
         <h1 class="page-title">
@@ -30,7 +31,7 @@
                 <div class="cart-items-section">
                     <div class="cart-header">
                         <h2>Danh sách món ăn (@totalItems món)</h2>
-                        <form asp-controller="Cart" asp-action="ClearCart" method="post">
+                        <form asp-controller="Cart" asp-action="ClearCart" asp-route-tableCode="@tableCode" method="post">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn-clear-cart">
                                 <i class="fas fa-trash"></i> Xóa tất cả
@@ -77,6 +78,7 @@
                                               asp-action="ChangeQuantity"
                                               asp-route-cartItemId="@item.CartItemID"
                                               asp-route-delta="-1"
+                                              asp-route-tableCode="@tableCode"
                                               method="post">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="qty-btn minus" aria-label="Giảm">-</button>
@@ -90,6 +92,7 @@
                                               asp-action="ChangeQuantity"
                                               asp-route-cartItemId="@item.CartItemID"
                                               asp-route-delta="1"
+                                              asp-route-tableCode="@tableCode"
                                               method="post">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="qty-btn plus" aria-label="Tăng">+</button>
@@ -104,6 +107,7 @@
                                     <form asp-controller="Cart"
                                           asp-action="RemoveFromCart"
                                           asp-route-cartItemId="@item.CartItemID"
+                                          asp-route-tableCode="@tableCode"
                                           method="post">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="btn-remove" title="Xóa món">
@@ -116,7 +120,7 @@
                     </div>
 
                     <div class="continue-shopping">
-                        <a asp-controller="Home" asp-action="Index" class="btn-continue">
+                        <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode" class="btn-continue">
                             <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
                         </a>
                     </div>
@@ -153,7 +157,7 @@
                 <div class="empty-cart-content">
                     <i class="fas fa-shopping-cart"></i>
                     <h2>Giỏ hàng của bạn đang trống</h2>
-                    <a asp-controller="Food" asp-action="Index" class="btn-shop-now">
+                    <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode" class="btn-shop-now">
                         <i class="fas fa-utensils"></i> Đặt món ngay
                     </a>
                 </div>
@@ -166,7 +170,7 @@
 @section Scripts {
     <script>
         function proceedToCheckout() {
-            window.location.href = '@Url.Action("Checkout", "Cart")';
+            window.location.href = '@Url.Action("Checkout", "Cart", new { tableCode = tableCode })';
         }
     </script>
 }

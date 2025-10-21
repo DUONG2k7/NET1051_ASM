@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Đặt hàng thành công";
+    var tableCode = Context.Session.GetString("CurrentTableCode");
 }
 
 @section Styles {
@@ -119,10 +120,10 @@
 
         <!-- ACTION BUTTONS -->
         <div class="success-actions">
-            <a href="@Url.Action("Index", "Food")" class="btn-continue">
+            <a href="@Url.Action("Index", "Food", new { tableCode })" class="btn-continue">
                 <i class="fas fa-home"></i> Về trang chủ
             </a>
-            <a href="@Url.Action("Index", "Food")" class="btn-continue">
+            <a href="@Url.Action("Index", "Food", new { tableCode })" class="btn-continue">
                 <i class="fas fa-utensils"></i> Đặt món khác
             </a>
         </div>

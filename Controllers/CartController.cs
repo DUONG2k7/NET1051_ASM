@@ -1,5 +1,6 @@
 ﻿using ASM_1.Data;
 using ASM_1.Models.Food;
+using ASM_1.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -9,21 +10,26 @@ namespace ASM_1.Controllers
 {
     public class CartController : BaseController
     {
+        private readonly TableCodeService _tableCodeService;
 
-        public CartController(ApplicationDbContext context) : base(context)
+        public CartController(ApplicationDbContext context, TableCodeService tableCodeService) : base(context)
         {
-
+            _tableCodeService = tableCodeService;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet("{tableCode}/cart")]
+        public async Task<IActionResult> Index(string tableCode)
         {
-            if (!User.Identity?.IsAuthenticated ?? true)
-            {
-                TempData["ErrorMessage"] = "Bạn cần đăng nhập để xem giỏ hàng.";
-                return RedirectToAction("Login", "Account");
-            }
+            //if (!User.Identity?.IsAuthenticated ?? true)
+            //{
+            //    TempData["ErrorMessage"] = "Bạn cần đăng nhập để xem giỏ hàng.";
+            //    return RedirectToAction("Login", "Account");
+            //}
 
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+            var tableId = _tableCodeService.DecryptTableCode(tableCode);
+            if (tableId == null) return RedirectToAction("InvalidTable");
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? tableCode; // ✅ an toàn
 
             var cart = await GetCartAsync(userId);
             return View(cart.CartItems);
@@ -51,7 +57,7 @@ namespace ASM_1.Controllers
             return cart;
         }
 
-        [HttpGet]
+        [HttpGet("{tableCode}/cart/count")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> CartCountValue()
         {
@@ -74,13 +80,17 @@ namespace ASM_1.Controllers
         }
 
         // THÊM MỚI: Action Checkout
-        public async Task<IActionResult> Checkout()
+        [HttpGet("{tableCode}/cart/check")]
+        public async Task<IActionResult> Checkout(string tableCode)
         {
-            if (!User.Identity?.IsAuthenticated ?? true)
-            {
-                TempData["ErrorMessage"] = "Bạn cần đăng nhập để thanh toán.";
-                return RedirectToAction("Login", "Account");
-            }
+            //if (!User.Identity?.IsAuthenticated ?? true)
+            //{
+            //    TempData["ErrorMessage"] = "Bạn cần đăng nhập để thanh toán.";
+            //    return RedirectToAction("Login", "Account");
+            //}
+
+            var tableId = _tableCodeService.DecryptTableCode(tableCode);
+            if (tableId == null) return RedirectToAction("InvalidTable");
 
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
             var cart = await GetCartAsync(userId);
@@ -88,18 +98,19 @@ namespace ASM_1.Controllers
             if (!cart.CartItems.Any())
             {
                 TempData["ErrorMessage"] = "Giỏ hàng của bạn đang trống.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { tableCode });
             }
 
             return View(cart.CartItems);
         }
 
         //THÊM MỚI: Thanh toán thành công
-        public IActionResult Success()
+        [HttpGet("{tableCode}/cart/success")]
+        public IActionResult Success(string tableCode)
         {
             if (TempData["OrderSuccess"] == null)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Food", new { tableCode });
             }
             return View();
         }
@@ -156,13 +167,16 @@ namespace ASM_1.Controllers
         //        return RedirectToAction("Success");
         //    }
 
-        [HttpPost]
+        [HttpPost("{tableCode}/cart/place-order")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PlaceOrder(string paymentMethod)
+        public async Task<IActionResult> PlaceOrder(string tableCode, string paymentMethod)
         {
+            var tableId = _tableCodeService.DecryptTableCode(tableCode);
+            if (tableId == null) return RedirectToAction("InvalidTable");
             string note = null;
+
             // 1) Lấy user & giỏ hàng
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? tableCode;
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                     .ThenInclude(i => i.Options)
@@ -276,14 +290,14 @@ namespace ASM_1.Controllers
                 //TempData["CustomerPhone"] = phone;
                 TempData["PaymentMethod"] = paymentMethod;
 
-                return RedirectToAction(nameof(Success));
+                return RedirectToAction(nameof(Success), new { tableCode });
             }
             catch (Exception ex)
             {
                 await tx.RollbackAsync();
                 // log ex...
                 TempData["ErrorMessage"] = "Có lỗi khi đặt hàng. Vui lòng thử lại.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { tableCode });
             }
         }
 
@@ -297,9 +311,10 @@ namespace ASM_1.Controllers
             return $"INV-{ts}-{rnd}";
         }
 
-        [HttpPost]
+        [HttpPost("{tableCode}/cart/add")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(
+            string tableCode,
             int id,                               // FoodItemId
             [FromForm] int[]? selectedOptionIds,  // danh sách FoodOptionId mà user chọn (nhiều loại OptionType)
             int quantity,
@@ -382,12 +397,12 @@ namespace ASM_1.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Food");
+            return RedirectToAction("Index", "Food", new { tableCode });
         }
 
-        [HttpPost]
+        [HttpPost("{tableCode}/cart/item/{cartItemId}/remove")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveFromCart(int cartItemId)
+        public async Task<IActionResult> RemoveFromCart(int cartItemId, string tableCode)
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
             var cart = await GetCartAsync(userId);
@@ -397,12 +412,12 @@ namespace ASM_1.Controllers
                 cart.CartItems.Remove(item);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { tableCode });
         }
 
-        [HttpPost]
+        [HttpPost("{tableCode}/cart/clear")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ClearCart()
+        public async Task<IActionResult> ClearCart(string tableCode)
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
             var cart = await GetCartAsync(userId);
@@ -414,12 +429,12 @@ namespace ASM_1.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { tableCode });
         }
 
-        [HttpPost]
+        [HttpPost("{tableCode}/cart/item/{cartItemId}/qty/{delta}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangeQuantity(int cartItemId, int delta)
+        public async Task<IActionResult> ChangeQuantity(string tableCode, int cartItemId, int delta)
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
             var cart = await GetCartAsync(userId);
@@ -430,7 +445,7 @@ namespace ASM_1.Controllers
             item.TotalPrice = item.UnitPrice * item.Quantity;
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { tableCode });
         }
 
     }

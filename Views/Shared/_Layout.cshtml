@@ -1,4 +1,7 @@
 ﻿@using System.Security.Claims
+@{
+    var tableCode = Context.Session.GetString("CurrentTableCode");
+}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -54,7 +57,7 @@
         <nav class="navbar">
             <div class="container">
                 <!-- Logo -->
-                <a asp-controller="Food" asp-action="Index" class="logo">
+                <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode" class="logo">
                     <img src="~/Images/Food-logo.jpg" alt="Food Ordering" />
                     <div class="logo-text">
                         <span class="brand-name">FoodOrder</span>
@@ -65,7 +68,7 @@
                 <!-- Desktop Navigation Menu -->
                 <ul class="nav-menu">
                     <li class="nav-item">
-                        <a asp-controller="Food" asp-action="Index" class="nav-link">
+                        <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode" class="nav-link">
                             <i class="fas fa-home"></i>
                             <span>Trang chủ</span>
                         </a>
@@ -99,7 +102,10 @@
                 <!-- Right Actions -->
                 <div class="nav-actions">
                     <!-- Cart Button -->
-                    <a asp-controller="Cart" asp-action="Index" class="cart-btn">
+                    <a asp-controller="Cart"
+                       asp-action="Index"
+                       asp-route-tableCode="@tableCode"
+                       class="cart-btn">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-count">0</span>
                         <span class="cart-text">Đơn hàng</span>
