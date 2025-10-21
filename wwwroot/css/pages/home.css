@@ -1,7 +1,7 @@
 ﻿/* Hero Section */
 .hero {
     position: relative;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
 }
 
     .hero img {
@@ -36,18 +36,15 @@
     margin: 40px 0;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
 .highlights h2 {
     text-align: center;
-    margin-bottom: 40px;
     color: #333;
     font-size: 2rem;
     font-weight: bold;
+}
+
+.container h3 {
+    font-size: 1.55rem;
 }
 
 .food-grid {
@@ -59,6 +56,7 @@
 
 /* Food Card */
 .food-card {
+    display: block;
     background: white;
     border-radius: 12px;
     overflow: hidden;
@@ -85,6 +83,32 @@
 }
 
 .food-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Combo Card */
+.combo-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+    .combo-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+.combo-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.combo-card:hover img {
     transform: scale(1.05);
 }
 
@@ -154,19 +178,18 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 16px;
 }
 
 .price {
     color: #e74c3c;
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 .old-price {
     color: #999;
     text-decoration: line-through;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 /* Card Actions */

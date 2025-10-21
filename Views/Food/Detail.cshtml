@@ -1,1 +1,371 @@
-﻿
+﻿@model ASM_1.Models.Food.ProductDetailViewModel
+@using ASM_1.Models.Food
+
+@{
+    ViewData["Title"] = "Chi tiết món ăn";
+    var item = Model.Item;
+    var basePrice = Model.BasePriceEffective;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/food-detail.css" />
+}
+
+<div class="food-detail-page">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+            <span class="separator">></span>
+            <a asp-controller="Food" asp-action="Order">Thực đơn</a>
+            <span class="separator">></span>
+            <span class="current">@item.Name</span>
+        </nav>
+
+        <div class="food-detail-content">
+            <!-- Hình ảnh -->
+            <div class="food-images">
+                <div class="main-image">
+                    <img src="@Url.Content(item.ImageUrl ?? "~/images/placeholder.png")" alt="@item.Name">
+                </div>
+            </div>
+
+            <!-- Thông tin & đặt món -->
+            <div class="food-info">
+                <form id="addToCartForm"
+                      asp-controller="Cart" asp-action="AddToCart"
+                      method="post" asp-route-id="@item.FoodItemId" class="order-section">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="FoodItemId" value="@item.FoodItemId" />
+                    <input type="hidden" name="SelectionsJson" id="SelectionsJson" /> <!-- gửi JSON lựa chọn -->
+                    <input type="hidden" name="UnitBasePrice" value="@basePrice" />
+
+                    <h1 class="food-title">@item.Name</h1>
+
+                    <div class="food-price">
+                        <span class="current-price">@basePrice.ToString("N0") VNĐ</span>
+                        @if (item.DiscountPrice > 0 || item.DiscountPercent > 0)
+                        {
+                            <span class="original-price">@item.BasePrice.ToString("N0") VNĐ</span>
+                        }
+                    </div>
+
+                    <div class="food-description">
+                        <h3>Mô tả món ăn</h3>
+                        <p>@item.Description</p>
+                    </div>
+
+                    <!-- NHÓM TUỲ CHỌN (động theo OptionGroupType) -->
+                    <div class="food-options">
+                        @foreach (var g in Model.Groups.OrderBy(x => x.Name))
+                        {
+                            var groupDataStepsJson = System.Text.Json.JsonSerializer.Serialize(
+                            g.Values
+                            .Where(v => v.ScaleValue.HasValue)
+                            .OrderBy(v => v.ScaleValue)
+                            .Select(v => new { sv = v.ScaleValue, delta = v.PriceDelta, vid = v.ValueId })
+                            );
+
+                            <div class="option-group"
+                                 data-group-id="@g.GroupId"
+                                 data-group-type="@g.GroupType"
+                                 data-required="@(g.Required.ToString().ToLower())"
+                                 data-min="@g.Min" data-max="@g.Max"
+                                 data-scalemin="@g.ScaleMin" data-scalemax="@g.ScaleMax"
+                                 data-scalestep="@g.ScaleStep" data-scaleunit="@g.ScaleUnit"
+                                 data-steps='@Html.Raw(groupDataStepsJson)'>
+                                <h4>
+                                    @g.Name
+                                    @if (g.Required)
+                                    {
+                                        <small>(bắt buộc)</small>
+                                    }
+                                </h4>
+
+                                @switch (g.GroupType)
+                                {
+                                    case OptionGroupType.SINGLE:
+                                        <div class="option-buttons">
+                                            @foreach (var v in g.Values.Where(v => !v.IsHidden).OrderBy(v => v.SortOrder))
+                                            {
+                                                var cid = $"g{g.GroupId}_v{v.ValueId}";
+                                                <label class="radio-pill" for="@cid">
+                                                    <input type="radio"
+                                                           id="@cid"
+                                                           name="g-@g.GroupId"
+                                                           value="@v.ValueId"
+                                                           data-delta="@v.PriceDelta"
+                                                           @(v.IsDefault ? "checked" : "") />
+                                                    <span>@v.Name</span>
+                                                    <em>@(v.PriceDelta == 0 ? "" : $"+{v.PriceDelta:N0}đ")</em>
+                                                </label>
+                                            }
+                                        </div>
+                                        break;
+
+                                    case OptionGroupType.MULTI:
+                                        <div class="topping-options" data-min="@g.Min" data-max="@g.Max">
+                                            @foreach (var v in g.Values.Where(v => !v.IsHidden).OrderBy(v => v.SortOrder))
+                                            {
+                                                var cid = $"g{g.GroupId}_v{v.ValueId}";
+                                                <label class="checkbox-chip" for="@cid">
+                                                    <input type="checkbox"
+                                                           id="@cid"
+                                                           name="g-@g.GroupId"
+                                                           value="@v.ValueId"
+                                                           data-delta="@v.PriceDelta"
+                                                           @(v.IsDefault ? "checked" : "") />
+                                                    <span>@v.Name</span>
+                                                    <em>@(v.PriceDelta == 0 ? "" : $"+{v.PriceDelta:N0}đ")</em>
+                                                </label>
+                                            }
+                                            <small class="hint">Chọn @g.Min–@g.Max mục</small>
+                                        </div>
+                                        break;
+
+                                    case OptionGroupType.QUANTITY:
+                                        <div class="qty-options">
+                                            @foreach (var v in g.Values.Where(v => !v.IsHidden).OrderBy(v => v.SortOrder))
+                                            {
+                                                var cid = $"g{g.GroupId}_v{v.ValueId}";
+                                                <div class="qty-row">
+                                                    <span class="name">@v.Name</span>
+                                                    <span class="price">@((v.PriceDelta >= 0 ? "+" : "") + v.PriceDelta.ToString("N0"))đ</span>
+                                                    <div class="qty-ctrl">
+                                                        <button type="button" class="minus" data-target="@cid">-</button>
+                                                        <input type="number" id="@cid" class="qty-input"
+                                                               data-value-id="@v.ValueId"
+                                                               data-delta="@v.PriceDelta"
+                                                               value="0" min="0" />
+                                                        <button type="button" class="plus" data-target="@cid">+</button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        break;
+
+                                    case OptionGroupType.SCALE:
+                                        {
+                                            var def = g.Values.FirstOrDefault(x => x.IsDefault)?.ScaleValue
+                                            ?? g.ScaleMin ?? 0;
+                                            var inputId = $"scale_{g.GroupId}";
+                                            <div class="scale-row">
+                                                <input type="range"
+                                                       id="@inputId"
+                                                       class="scale-input"
+                                                       min="@g.ScaleMin" max="@g.ScaleMax" step="@g.ScaleStep"
+                                                       value="@def" />
+                                                <span class="scale-value" data-unit="@g.ScaleUnit">@def@("" + g.ScaleUnit)</span>
+                                                <div class="scale-marks">
+                                                    @foreach (var v in g.Values.Where(v => v.ScaleValue.HasValue).OrderBy(v => v.ScaleValue))
+                                                    {
+                                                        <span class="mark">@v.ScaleValue@("" + g.ScaleUnit)</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                        break;
+
+                                    case OptionGroupType.BOOLEAN:
+                                        {
+                                            var v = g.Values.FirstOrDefault(x => !x.IsHidden);
+                                            if (v != null)
+                                            {
+                                                var cid = $"g{g.GroupId}_v{v.ValueId}";
+                                                <label class="toggle" for="@cid">
+                                                    <input type="checkbox"
+                                                           id="@cid"
+                                                           name="g-@g.GroupId"
+                                                           value="@v.ValueId"
+                                                           data-delta="@v.PriceDelta"
+                                                           @(v.IsDefault ? "checked" : "") />
+                                                    <span>@v.Name</span>
+                                                    <em>@(v.PriceDelta == 0 ? "" : $"+{v.PriceDelta:N0}đ")</em>
+                                                </label>
+                                            }
+                                        }
+                                        break;
+                                }
+                            </div>
+                        }
+
+                        <!-- Ghi chú -->
+                        <div class="option-group">
+                            <h4>Ghi chú đặc biệt</h4>
+                            <textarea class="special-note" name="Note" placeholder="Ví dụ: ít cay, không hành..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Số lượng -->
+                    <div class="quantity-selector">
+                        <label>Số lượng:</label>
+                        <div class="quantity-controls">
+                            <button type="button" class="qty-btn minus" data-q="-1">-</button>
+                            <input type="number" class="quantity" id="quantity" name="Quantity" value="1" min="1" max="50" readonly>
+                            <button type="button" class="qty-btn plus" data-q="1">+</button>
+                        </div>
+                    </div>
+
+                    <div class="total-price">
+                        <span class="total-label">Tổng cộng:</span>
+                        <span class="total-amount" id="totalPrice">@basePrice.ToString("N0") VNĐ</span>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn-add-cart">Đặt món</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- (Các tabs thông tin phụ giữ nguyên như bạn có thể tái sử dụng) -->
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const basePrice = @basePrice;
+
+            // tiện ích
+            const toNum = v => {
+                const n = Number(v); return isNaN(n) ? 0 : n;
+            };
+            const nearestStep = (steps, x) => {
+                if (!steps || steps.length === 0) return { delta:0, vid:null, sv:x };
+                let best = steps[0], d = Math.abs(x - steps[0].sv);
+                for (let i=1;i<steps.length;i++){
+                    const dd = Math.abs(x - steps[i].sv);
+                    if (dd < d) { d = dd; best = steps[i]; }
+                }
+                return best; // {sv, delta, vid}
+            };
+
+            // tính tổng
+            function calcTotal() {
+                let delta = 0;
+
+                document.querySelectorAll('.option-group').forEach(g => {
+                    const type = g.dataset.groupType;
+
+                    if (type === 'SINGLE') {
+                        const r = g.querySelector('input[type=radio]:checked');
+                        if (r) delta += toNum(r.dataset.delta);
+                    }
+                    else if (type === 'MULTI') {
+                        let count = 0;
+                        g.querySelectorAll('input[type=checkbox]').forEach(chk => {
+                            if (chk.checked) { delta += toNum(chk.dataset.delta); count++; }
+                        });
+                        // enforce min/max
+                        const min = toNum(g.dataset.min), max = toNum(g.dataset.max);
+                        if (max > 0) {
+                            const arr = [...g.querySelectorAll('input[type=checkbox]')];
+                            if (count >= max) arr.forEach(c => { if(!c.checked) c.disabled = true; });
+                            else arr.forEach(c => c.disabled = false);
+                        }
+                    }
+                    else if (type === 'QUANTITY') {
+                        g.querySelectorAll('.qty-input').forEach(inp => {
+                            delta += toNum(inp.dataset.delta) * toNum(inp.value);
+                        });
+                    }
+                    else if (type === 'SCALE') {
+                        const slider = g.querySelector('.scale-input');
+                        const steps = JSON.parse(g.dataset.steps || "[]");
+                        const pick = toNum(slider.value);
+                        const best = nearestStep(steps, pick);
+                        delta += toNum(best.delta || 0);
+                        const sv = g.querySelector('.scale-value');
+                        if (sv) { const unit = sv.dataset.unit || ''; sv.textContent = pick + unit; }
+                    }
+                    else if (type === 'BOOLEAN') {
+                        const c = g.querySelector('input[type=checkbox]');
+                        if (c && c.checked) delta += toNum(c.dataset.delta);
+                    }
+                });
+
+                const qty = toNum(document.getElementById('quantity').value) || 1;
+                const total = (basePrice + delta) * qty;
+                document.getElementById('totalPrice').textContent = total.toLocaleString('vi-VN') + ' VNĐ';
+            }
+
+            // số lượng tổng
+            document.querySelectorAll('.qty-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const delta = Number(btn.dataset.q);
+                    const inp = document.getElementById('quantity');
+                    let v = Number(inp.value)+delta;
+                    const min = Number(inp.min)||1, max = Number(inp.max)||99;
+                    if (v < min) v = min; if (v > max) v = max;
+                    inp.value = v; calcTotal();
+                });
+            });
+
+            // listeners từng kiểu
+            document.querySelectorAll('.option-group').forEach(g => {
+                const type = g.dataset.groupType;
+
+                if (type === 'SINGLE' || type === 'BOOLEAN' || type === 'MULTI') {
+                    g.addEventListener('change', calcTotal);
+                }
+                if (type === 'QUANTITY') {
+                    g.querySelectorAll('.minus').forEach(b => b.addEventListener('click', () => {
+                        const id = b.dataset.target; const inp = document.getElementById(id);
+                        inp.value = Math.max(0, Number(inp.value) - 1); calcTotal();
+                    }));
+                    g.querySelectorAll('.plus').forEach(b => b.addEventListener('click', () => {
+                        const id = b.dataset.target; const inp = document.getElementById(id);
+                        inp.value = Number(inp.value) + 1; calcTotal();
+                    }));
+                    g.querySelectorAll('.qty-input').forEach(inp => inp.addEventListener('input', calcTotal));
+                }
+                if (type === 'SCALE') {
+                    const slider = g.querySelector('.scale-input');
+                    slider.addEventListener('input', calcTotal);
+                }
+            });
+
+            // Đóng gói lựa chọn thành JSON trước khi submit
+            document.getElementById('addToCartForm').addEventListener('submit', (e) => {
+                const payload = [];
+                document.querySelectorAll('.option-group').forEach(g => {
+                    const gid = Number(g.dataset.groupId);
+                    const type = g.dataset.groupType;
+                    if (type === 'SINGLE') {
+                        const r = g.querySelector('input[type=radio]:checked');
+                        if (r) payload.push({ groupId: gid, type, optionValueId: Number(r.value), qty: 1 });
+                    }
+                    else if (type === 'MULTI') {
+                        g.querySelectorAll('input[type=checkbox]:checked').forEach(chk => {
+                            payload.push({ groupId: gid, type, optionValueId: Number(chk.value), qty: 1 });
+                        });
+                    }
+                    else if (type === 'QUANTITY') {
+                        g.querySelectorAll('.qty-input').forEach(inp => {
+                            const q = Number(inp.value);
+                            const vid = Number(inp.dataset.valueId);
+                            if (q > 0) payload.push({ groupId: gid, type, optionValueId: vid, qty: q });
+                        });
+                    }
+                    else if (type === 'SCALE') {
+                        const slider = g.querySelector('.scale-input');
+                        const steps = JSON.parse(g.dataset.steps || "[]");
+                        const pick = Number(slider.value);
+                        const best = nearestStep(steps, pick);
+                        payload.push({ groupId: gid, type, optionValueId: Number(best.vid || 0), scalePicked: pick, qty: 1 });
+                    }
+                    else if (type === 'BOOLEAN') {
+                        const c = g.querySelector('input[type=checkbox]');
+                        if (c && c.checked) payload.push({ groupId: gid, type, optionValueId: Number(c.value), qty: 1 });
+                    }
+                });
+
+                document.getElementById('SelectionsJson').value = JSON.stringify(payload);
+            });
+
+            // init
+            calcTotal();
+        })();
+    </script>
+}

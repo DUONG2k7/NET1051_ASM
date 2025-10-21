@@ -1,5 +1,6 @@
 using ASM_1.Data;
 using ASM_1.Models.Account;
+using ASM_1.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<SlugGenerator>();
 
 var app = builder.Build();
 

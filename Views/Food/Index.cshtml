@@ -1,101 +1,268 @@
 ﻿@model ASM_1.Models.Food.MenuOverviewViewModel
 
-<!-- Bootstrap 5 -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@{
+    ViewData["Title"] = "FoodOrder - Trang Chủ";
+}
 
-<div class="container py-5">
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/home.css" />
+    <link rel="stylesheet" href="~/css/pages/menu-page.css" />
+    <link rel="stylesheet" href="~/css/pages/bs5grid.css" />
+}
 
-    <!-- =================== CATEGORY BAR =================== -->
-    <div class="mb-4 border-bottom pb-3 text-center">
-        <div class="d-flex flex-wrap justify-content-center gap-2">
-            <button class="btn btn-primary active category-btn" data-category="0">
-                <i class="bi bi-grid me-1"></i> Tất cả
+<section class="hero">
+    <img src="~/Images/banner1.jpg" alt="Banner khuyến mãi" />
+    <div class="hero-content">
+        <h1>Đặt đồ ăn ngon - Giao hàng nhanh</h1>
+        <p>Thưởng thức những món ăn tuyệt vời từ chúng tôi</p>
+    </div>
+</section>
+
+<section class="highlights">
+    <div class="container">
+
+        <!-- Header -->
+        <div class="menu-header">
+            <h2 class="menu-title">Thực đơn của chúng tôi</h2>
+            <p class="menu-subtitle">Khám phá những món ăn đặc sắc và hương vị tuyệt vời</p>
+        </div>
+
+        <!-- =================== CATEGORY BAR =================== -->
+        <div class="menu-categories">
+            <button class="active category-btn" data-category="0">
+                <i class="fas fa-th-large"></i> Tất cả
             </button>
 
             @foreach (var cat in Model.Categories)
             {
-                <button class="btn btn-outline-secondary category-btn" data-category="@cat.CategoryId">
-                    <i class="bi bi-tags me-1"></i> @cat.Name
+                <button class="category-btn" data-category="@cat.CategoryId">
+                    <i class="fa fa-tags"></i> @cat.Name
                 </button>
             }
         </div>
-    </div>
 
-    <!-- =================== COMBO SECTION =================== -->
-    <div class="mb-5">
-        <h3 class="fw-bold mb-3">
-            <i class="bi bi-box-seam me-2 text-primary"></i> Combo nổi bật
-        </h3>
+        <!-- Category Filter -->
+        @* <div class="menu-categories">
+        <button class="category-btn @(currentCategory == "all" ? "active" : "")" data-category="all">
+            <i class="fas fa-th-large"></i>
+            Tất cả
+        </button>
+        <button class="category-btn @(currentCategory == "com" ? "active" : "")" data-category="com">
+            <i class="fas fa-bowl-rice"></i>
+            Cơm
+        </button>
+        <button class="category-btn @(currentCategory == "pho" ? "active" : "")" data-category="pho">
+            <i class="fas fa-bowl-food"></i>
+            Phở
+        </button>
+        <button class="category-btn @(currentCategory == "banh-mi" ? "active" : "")" data-category="banh-mi">
+            <i class="fas fa-bread-slice"></i>
+            Bánh mì
+        </button>
+        <button class="category-btn @(currentCategory == "bun" ? "active" : "")" data-category="bun">
+            <i class="fas fa-utensils"></i>
+            Bún
+        </button>
+        <button class="category-btn @(currentCategory == "hu-tieu" ? "active" : "")" data-category="hu-tieu">
+            <i class="fas fa-seedling"></i>
+            Hủ tiếu
+        </button>
+        <button class="category-btn @(currentCategory == "do-uong" ? "active" : "")" data-category="do-uong">
+            <i class="fas fa-coffee"></i>
+            Đồ uống
+        </button>
+        <button class="category-btn @(currentCategory == "trang-mieng" ? "active" : "")" data-category="trang-mieng">
+            <i class="fas fa-ice-cream"></i>
+            Tráng miệng
+        </button>
+    </div> *@
 
-        <div id="combo-section" class="row g-4">
-            @foreach (var combo in Model.Combos)
-            {
-                <div class="col-md-4 col-lg-3">
-                    <div class="card h-100 shadow-sm combo-card" data-category="@string.Join(",", combo.ComboDetails!.Select(cd => cd.FoodItem!.CategoryId).Distinct())">
-                        <!-- Ảnh combo -->
-                        <img src="@Url.Content(!string.IsNullOrEmpty(combo.ImageUrl) ? combo.ImageUrl : "~/images/no-image.png")"
-                             class="card-img-top"
-                             alt="@combo.ComboName"
-                             style="height:180px; object-fit:cover; border-bottom: 1px solid #eee;">
+        <!-- =================== COMBO SECTION =================== -->
+        <div class="mb-5">
+            <h3 class="fw-bold mb-3">
+                <i class="bi bi-box-seam me-2 text-primary"></i> Combo nổi bật
+            </h3>
 
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">@combo.ComboName</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">@combo.ComboPrice.ToString("C")</h6>
+            <div id="combo-section" class="row g-4">
+                @foreach (var combo in Model.Combos)
+                {
+                    <div class="col-md-4 col-lg-3">
+                        <a href="@Url.Action("Detail", "Food", new { slug = combo.Slug })"
+                           style="text-decoration: none;"
+                           class="menu-item-card combo-card"
+                           data-category="@string.Join(",", combo.ComboDetails!.Select(cd => cd.FoodItem!.CategoryId).Distinct())">
+                            <!-- Ảnh combo -->
+                            @* <img src="@Url.Content(!string.IsNullOrEmpty(combo.ImageUrl) ? combo.ImageUrl : "~/images/no-image.png")"
+                                 class="card-img-top"
+                                 alt="@combo.ComboName"
+                                 style="height:180px; object-fit:cover; border-bottom: 1px solid #eee;"> *@
 
-                            <ul class="small text-muted mb-3">
-                                @foreach (var name in combo.ComboDetails!.Select(cd => cd.FoodItem!.Name))
+                            <div class="menu-item-image-wrapper">
+                                <div class="food-image">
+                                    <img src="@Url.Content(!string.IsNullOrEmpty(combo.ImageUrl) ? combo.ImageUrl : "~/images/no-image.png")"
+                                         alt="@combo.ComboName"
+                                         class="menu-item-image">
+                                    @* @if (combo.DiscountPercent > 0)
+                                    {
+                                        <div class="discount-badge">-@combo.DiscountPercent%</div>
+                                    } *@
+                                </div>
+                                <div class="menu-item-overlay">
+                                    <div class="btn-view-detail">
+                                        <i class="fas fa-eye"></i>
+                                        Xem chi tiết
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">@combo.ComboName</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@combo.ComboPrice.ToString("C")</h6>
+
+                                <ul class="small text-muted mb-3">
+                                    @foreach (var name in combo.ComboDetails!.Select(cd => cd.FoodItem!.Name))
+                                    {
+                                        <li>@name</li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <div class="menu-item-content">
+                                <h3 class="menu-item-name">@combo.ComboName</h3>
+                                <p class="menu-item-description">@combo.Description</p>
+
+                                <ul class="small text-muted mb-3">
+                                    @foreach (var name in combo.ComboDetails!.Select(cd => cd.FoodItem!.Name))
+                                    {
+                                        <li>@name</li>
+                                    }
+                                </ul>
+
+                                <div class="rating">
+                                    <span class="stars">★★★★★</span>
+                                    <span class="rating-text">(4.8)</span>
+                                </div>
+
+                                <div class="price-section">
+                                    @* @if (combo.DiscountPrice > 0)
+                                    {
+                                        <span class="old-price">@combo.BasePrice.ToString("N0") VNĐ</span>
+                                        <span class="price">
+                                            @((combo.BasePrice * (100 - combo.DiscountPercent) / 100).ToString("N0")) VNĐ
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="price">@combo.BasePrice.ToString("N0") VNĐ</span>
+                                    } *@
+                                    <span class="price">@combo.ComboPrice.ToString("N0") VNĐ</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- =================== FOOD SECTION =================== -->
+        <div>
+            <h3 class="fw-bold mb-3">
+                <i class="bi bi-egg-fried me-2 text-warning"></i> Món ăn đơn
+            </h3>
+
+            <div id="food-section" class="row g-4">
+
+                @* Kiểu 1 onerror="this.src='/images/placeholder.jpg'"*@
+                @* @foreach (var food in Model.FoodItems)
+                {
+                    <div class="col-md-4 col-lg-3">
+                        <div class="food-card" data-category="@food.CategoryId">
+                            <div class="food-image">
+                                <img src="@Url.Content(food.ImageUrl)" alt="@food.Name" class="menu-item-image">
+                                @if (food.DiscountPercent > 0)
                                 {
-                                    <li>@name</li>
+                                    <div class="discount-badge">-@food.DiscountPercent%</div>
                                 }
-                            </ul>
+                            </div>
+                            <div class="food-info">
+                                <h3>@food.Name</h3>
+                                <p>@food.Description</p>
+                                <div class="rating">
+                                    <span class="stars">★★★★★</span>
+                                    <span class="rating-text">(4.8)</span>
+                                </div>
+                                <div class="price-section">
+                                    @if (food.DiscountPrice > 0)
+                                    {
+                                        <span class="old-price">@food.BasePrice.ToString("N0") VNĐ</span>
+                                        <span class="price">
+                                            @((food.BasePrice * (100 - food.DiscountPercent) / 100).ToString("N0")) VNĐ
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="price">@food.BasePrice.ToString("N0") VNĐ</span>
+                                    }
+                                </div>
+                                <div class="card-actions">
+                                    <form asp-controller="Food" asp-action="Detail" asp-route-Slug="@food?.Slug">
+                                        <button type="submit" class="btn-detail">Xem chi tiết</button>
+                                    </form>
+                                </div>
 
-                            <div class="mt-auto text-center">
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
-    </div>
+                } *@
 
-    <!-- =================== FOOD SECTION =================== -->
-    <div>
-        <h3 class="fw-bold mb-3">
-            <i class="bi bi-egg-fried me-2 text-warning"></i> Món ăn đơn
-        </h3>
-
-        <div id="food-section" class="row g-4">
-            @foreach (var food in Model.FoodItems)
-            {
-                <div class="col-md-4 col-lg-3">
-                    <div class="card h-100 shadow-sm food-card" data-category="@food.CategoryId">
-                        <!-- Ảnh món ăn -->
-                        <img src="@Url.Content(!string.IsNullOrEmpty(food.ImageUrl) ? food.ImageUrl : "~/images/no-image.png")"
-                             class="card-img-top"
-                             alt="@food.Name"
-                             style="height:180px; object-fit:cover; border-bottom: 1px solid #eee;">
-
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">@food.Name</h5>
-                            <p class="card-text text-muted mb-2">@food.BasePrice.ToString("C")</p>
-
-                            <div class="mt-auto text-center">
-                                <form asp-controller="Food" asp-action="Detail" asp-route-id="@food.FoodItemId">
-                                    <input type="submit" value="Chi tiết" class="btn btn-primary" />
-                                </form>
+                @* Kiểu 2 *@
+                @foreach (var food in Model.FoodItems)
+                {
+                    <div class="col-md-4 col-lg-3">
+                        <a href="@Url.Action("Detail", "Food", new { slug = food.Slug })" style="text-decoration: none;" class="menu-item-card food-card" data-category="@food.CategoryId">
+                            <div class="menu-item-image-wrapper">
+                                <div class="food-image">
+                                    <img src="@Url.Content(food.ImageUrl)" alt="@food.Name" class="menu-item-image">
+                                    @if (food.DiscountPercent > 0)
+                                    {
+                                        <div class="discount-badge">-@food.DiscountPercent%</div>
+                                    }
+                                </div>
+                                <div class="menu-item-overlay">
+                                    <div class="btn-view-detail">
+                                        <i class="fas fa-eye"></i>
+                                        Xem chi tiết
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="menu-item-content">
+                                <h4 class="menu-item-name">@food.Name</h4>
+                                <p class="menu-item-description">@food.Description</p>
+                                @* <div class="rating">
+                                    <span class="stars">★★★★★</span>
+                                    <span class="rating-text">(4.8)</span>
+                                </div> *@
+                                <div class="price-section">
+                                    @if (food.DiscountPrice > 0)
+                                    {
+                                        <span class="old-price">@food.BasePrice.ToString("N0") VNĐ</span>
+                                        <span class="price">
+                                            @((food.BasePrice * (100 - food.DiscountPercent) / 100).ToString("N0")) VNĐ
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="price">@food.BasePrice.ToString("N0") VNĐ</span>
+                                    }
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
     </div>
-</div>
+</section>
 
 @section Scripts {
     <script>
@@ -116,8 +283,9 @@
 
                     // Ẩn / hiện combo
                     comboCards.forEach(card => {
+                        const categories = card.dataset.category.split(',');
                         card.parentElement.style.display =
-                            (selectedCat === "0" || card.dataset.category === selectedCat) ? "block" : "none";
+                            (selectedCat === "0" || categories.includes(selectedCat)) ? "block" : "none";
                     });
 
                     // Ẩn / hiện món ăn
@@ -129,4 +297,5 @@
             });
         });
     </script>
+    <script src="~/js/menu-page.js"></script>
 }

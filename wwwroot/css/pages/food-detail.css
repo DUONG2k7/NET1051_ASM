@@ -7,9 +7,10 @@
 /* Breadcrumb */
 .breadcrumb {
     margin-bottom: 30px;
-    padding: 12px 0;
+    padding: 12px;
     background: white;
     border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     display: flex;
     align-items: center;
     gap: 8px;
