@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Enhanced cart functions
 function viewDetail(slug) {
-    window.location.href = `/Food/Detail/${slug}`;
+    window.location.href = `/food/${slug}`;
 }
 
 function addToCart(foodId) {
@@ -321,7 +321,7 @@ function orderNow() {
 
     // Redirect to cart page after a short delay
     setTimeout(() => {
-        window.location.href = '/Cart';
+        window.location.href = '/cart';
     }, 1000);
 }
 
@@ -950,12 +950,12 @@ function proceedToCheckout() {
     sessionStorage.setItem('cartData', JSON.stringify(cartData));
 
     // Redirect to checkout
-    window.location.href = '/Checkout';
+    window.location.href = '/checkout';
 }
 
 // Checkout page functions
 function goBackToCart() {
-    window.location.href = '/Cart';
+    window.location.href = '/cart';
 }
 
 // Delivery time toggle
@@ -1045,7 +1045,10 @@ function handleCheckoutSubmission() {
         setTimeout(() => {
             console.log('Order data:', orderData);
             sessionStorage.removeItem('cartData');
-            window.location.href = '/Checkout/Success';
+            // Ưu tiên helper đã phát từ Razor
+            window.location.href = (window.ROUTES && window.ROUTES.checkoutSuccess)
+                ? window.ROUTES.checkoutSuccess
+                : `/${window.TABLE_CODE}/cart/success`;
         }, 2000);
     }
 
@@ -1054,7 +1057,7 @@ function handleCheckoutSubmission() {
 
 document.addEventListener('DOMContentLoaded', function () {
     // CHỈ BIND KHI KHÔNG PHẢI TRANG CHECKOUT
-    if (!window.location.pathname.includes('/Cart/Checkout')) {
+    if (!window.location.pathname.includes(`/${window.TABLE_CODE}/cart/checkout`)) {
         const checkoutForm = document.getElementById('checkoutForm');
         if (checkoutForm) {
             checkoutForm.addEventListener('submit', function (e) {
@@ -1063,6 +1066,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
+
     // Update cart count in navigation (enhanced version)
     function updateCartCount(change = 0, newTotal = null) {
         const cartCount = document.querySelector('.cart-count');

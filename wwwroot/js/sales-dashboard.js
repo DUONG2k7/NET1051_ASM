@@ -81,7 +81,7 @@ function callCustomer(phoneNumber) {
 }
 
 function viewOrderDetail(orderId) {
-    window.location.href = `/SalesStaff/OrderDetail/${orderId}`;
+    window.location.href = `/sales-staff/order-detail/${orderId}`;
 }
 
 function removeOrderFromList(orderId) {
@@ -112,22 +112,22 @@ function checkEmptyOrdersList() {
 
 // Quick actions
 function createNewOrder() {
-    window.location.href = '/SalesStaff/CreateOrder';
+    window.location.href = '/sales-staff/create-order';
 }
 
 function registerCustomer() {
-    window.location.href = '/SalesStaff/RegisterCustomer';
+    window.location.href = '/sales-staff/register-customer';
 }
 
 function searchOrder() {
     const searchTerm = prompt('Nhập mã đơn hàng hoặc số điện thoại:');
     if (searchTerm && searchTerm.trim()) {
-        window.location.href = `/SalesStaff/SearchOrder?q=${encodeURIComponent(searchTerm)}`;
+        window.location.href = `/sales-staff/search-order?q=${encodeURIComponent(searchTerm)}`;
     }
 }
 
 function viewShiftReport() {
-    window.location.href = '/SalesStaff/ShiftReport';
+    window.location.href = '/sales-staff/shift-report';
 }
 
 // Filter functions

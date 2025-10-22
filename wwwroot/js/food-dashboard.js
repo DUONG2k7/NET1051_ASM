@@ -156,32 +156,32 @@ function updateBestsellers() {
 
 // Quick action functions
 function addNewItem() {
-    window.location.href = '/FoodAdmin/MenuManagement?action=add';
+    window.location.href = '/food-admin/menu-management?action=add';
 }
 
 function manageCategories() {
-    window.location.href = '/FoodAdmin/CategoryManagement';
+    window.location.href = '/food-admin/category-management';
 }
 
 function createDiscount() {
-    window.location.href = '/FoodAdmin/DiscountManagement?action=create';
+    window.location.href = '/food-admin/discount-management?action=create';
 }
 
 function viewReports() {
-    window.location.href = '/FoodAdmin/SalesReport';
+    window.location.href = '/food-admin/sales-report';
 }
 
 // Alert functions
 function checkExpiredDiscounts() {
-    window.location.href = '/FoodAdmin/DiscountManagement?filter=expiring';
+    window.location.href = '/food-admin/discount-management?filter=expiring';
 }
 
 function checkLowStock() {
-    window.location.href = '/FoodAdmin/MenuManagement?filter=low_stock';
+    window.location.href = '/food-admin/menu-management?filter=low_stock';
 }
 
 function viewNewItems() {
-    window.location.href = '/FoodAdmin/MenuManagement?filter=recent';
+    window.location.href = '/food-admin/menu-management?filter=recent';
 }
 
 // Chart switching

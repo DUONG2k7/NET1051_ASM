@@ -59,14 +59,19 @@ app.MapControllerRoute(
     pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
+    name: "foodHome",
+    pattern: "{tableCode}/home",
+    defaults: new { controller = "Food", action = "Index" });
+
+app.MapControllerRoute(
     name: "foodDetails",
-    pattern: "food/{Slug}",
+    pattern: "{tableCode}/food/{slug}",
     defaults: new { controller = "Food", action = "Detail" });
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action}/{id?}",
-    defaults: new { area = "Admin", controller = "Tables", action = "Index" });
+    defaults: new { area = "Admin", controller = "Admin", action = "Index" });
 
 
 app.Run();

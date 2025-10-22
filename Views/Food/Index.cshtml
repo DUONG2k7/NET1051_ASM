@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "FoodOrder - Trang Chủ";
+    var tableCode = Context.Session.GetString("CurrentTableCode");
 }
 
 @section Styles {
@@ -87,7 +88,7 @@
                 @foreach (var combo in Model.Combos)
                 {
                     <div class="col-md-4 col-lg-3">
-                        <a href="@Url.Action("Detail", "Food", new { slug = combo.Slug })"
+                        <a href="@Url.Action("Detail", "Food", new { tableCode = tableCode, slug = combo.Slug })"
                            style="text-decoration: none;"
                            class="menu-item-card combo-card"
                            data-category="@string.Join(",", combo.ComboDetails!.Select(cd => cd.FoodItem!.CategoryId).Distinct())">
@@ -138,10 +139,10 @@
                                     }
                                 </ul>
 
-                                <div class="rating">
+                                @* <div class="rating">
                                     <span class="stars">★★★★★</span>
                                     <span class="rating-text">(4.8)</span>
-                                </div>
+                                </div> *@
 
                                 <div class="price-section">
                                     @* @if (combo.DiscountPrice > 0)
@@ -218,7 +219,7 @@
                 @foreach (var food in Model.FoodItems)
                 {
                     <div class="col-md-4 col-lg-3">
-                        <a href="@Url.Action("Detail", "Food", new { slug = food.Slug })" style="text-decoration: none;" class="menu-item-card food-card" data-category="@food.CategoryId">
+                        <a href="@Url.Action("Detail", "Food", new { tableCode = tableCode, slug = food.Slug })" style="text-decoration: none;" class="menu-item-card food-card" data-category="@food.CategoryId">
                             <div class="menu-item-image-wrapper">
                                 <div class="food-image">
                                     <img src="@Url.Content(food.ImageUrl)" alt="@food.Name" class="menu-item-image">

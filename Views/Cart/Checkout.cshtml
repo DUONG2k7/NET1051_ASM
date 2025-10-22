@@ -3,6 +3,7 @@
     ViewData["Title"] = "Thanh toán";
     var totalItems = Model?.Sum(x => x.Quantity) ?? 0;
     var subtotal = Model?.Sum(x => x.UnitPrice * x.Quantity) ?? 0;
+    var tableCode = Context.Session.GetString("CurrentTableCode");
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/checkout.css" />
@@ -29,7 +30,7 @@
         <div class="checkout-content">
             <!-- Customer Information -->
             <div class="checkout-main">
-                <form id="checkoutForm" asp-controller="Cart" asp-action="PlaceOrder" method="post">
+                <form id="checkoutForm" asp-controller="Cart" asp-action="PlaceOrder" asp-route-tableCode="@tableCode" method="post">
                     @Html.AntiForgeryToken()
 
                     <!-- Payment Method -->
@@ -153,7 +154,7 @@
                     </div>
 
                     <div class="checkout-actions">
-                        <a href="@Url.Action("Index", "Cart")" class="btn-back">
+                        <a href="@Url.Action("Index", "Cart", new { tableCode = tableCode })" class="btn-back">
                             <i class="fas fa-arrow-left"></i> Quay lại giỏ hàng
                         </a>
 

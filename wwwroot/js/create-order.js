@@ -779,7 +779,7 @@ function printOrder(orderId) {
 }
 
 function goToDashboard() {
-    window.location.href = '/SalesStaff/Dashboard';
+    window.location.href = '/sales-staff/dashboard';
 }
 
 // ===== UTILITY FUNCTIONS =====

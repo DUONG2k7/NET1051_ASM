@@ -1,6 +1,7 @@
 ﻿using ASM_1.Data;
 using ASM_1.Models.Food;
 using ASM_1.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace ASM_1.Areas.Admin.Controllers
         }
 
         // GET: Admin/Tables
+        //[Authorize]
         public async Task<IActionResult> Index()
         {
             var tables = await _context.Tables.ToListAsync();

@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\views\\cart\\checkout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:views\\cart\\checkout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -11,68 +15,32 @@
       "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:views\\food\\detail.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\wwwroot\\js\\create-order.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:wwwroot\\js\\create-order.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\views\\cart\\success.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:views\\cart\\success.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\wwwroot\\js\\food-dashboard.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:wwwroot\\js\\food-dashboard.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\controllers\\basecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:controllers\\basecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\optiontype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\optiontype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\table.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\table.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\optionvalue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\optionvalue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\areas\\admin\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:areas\\admin\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\orderitemoption.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\orderitemoption.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\optiongroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\optiongroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\menuitemoptiongroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\menuitemoptiongroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\models\\food\\menuitemoptionvalue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:models\\food\\menuitemoptionvalue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\areas\\admin\\controllers\\fooditemscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:areas\\admin\\controllers\\fooditemscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\services\\tabletrackerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|solutionrelative:services\\tabletrackerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1AF94150-FE4B-2F88-7728-C3510259DCED}|ASM_1.csproj|d:\\fall2025\\net1051 - l\u1EADp tr\u00ECnh c#5\\assignment\\source\\repos\\net1051_asm\\areas\\admin\\views\\fooditems\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -90,7 +58,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -99,234 +67,136 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Detail.cshtml",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Food\\Detail.cshtml",
-              "RelativeDocumentMoniker": "Views\\Food\\Detail.cshtml",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Food\\Detail.cshtml",
-              "RelativeToolTip": "Views\\Food\\Detail.cshtml",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAwCQAAABGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-21T09:32:36.939Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Success.cshtml",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Cart\\Success.cshtml",
-              "RelativeDocumentMoniker": "Views\\Cart\\Success.cshtml",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Cart\\Success.cshtml",
-              "RelativeToolTip": "Views\\Cart\\Success.cshtml",
-              "ViewState": "AgIAAG0AAAAAAAAAAAAAwH0AAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-21T09:32:05.632Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CartItem.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\CartItem.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\CartItem.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\CartItem.cs",
-              "RelativeToolTip": "Models\\Food\\CartItem.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAswAkAAAA/AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T09:30:31.439Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "Checkout.cshtml",
               "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Cart\\Checkout.cshtml",
               "RelativeDocumentMoniker": "Views\\Cart\\Checkout.cshtml",
               "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Cart\\Checkout.cshtml",
               "RelativeToolTip": "Views\\Cart\\Checkout.cshtml",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAAlwCAAAABUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-21T09:18:27.414Z",
+              "WhenOpened": "2025-10-21T22:38:45.15Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "CartController.cs",
               "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Controllers\\CartController.cs",
               "RelativeDocumentMoniker": "Controllers\\CartController.cs",
               "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Controllers\\CartController.cs",
               "RelativeToolTip": "Controllers\\CartController.cs",
-              "ViewState": "AgIAAOAAAAAAAAAAAAAkwPMAAAAyAAAAAAAAAA==",
+              "ViewState": "AgIAABIBAAAAAAAAAAAQwCsBAABIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T08:51:12.922Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "OptionType.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\OptionType.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\OptionType.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\OptionType.cs",
-              "RelativeToolTip": "Models\\Food\\OptionType.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T07:44:36.014Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Data\\ApplicationDbContext.cs",
-              "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Data\\ApplicationDbContext.cs",
-              "RelativeToolTip": "Data\\ApplicationDbContext.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAAA0wCMAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T08:54:37.84Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "BaseController.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Controllers\\BaseController.cs",
-              "RelativeDocumentMoniker": "Controllers\\BaseController.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Controllers\\BaseController.cs",
-              "RelativeToolTip": "Controllers\\BaseController.cs",
-              "ViewState": "AgIAABwAAAAAAAAAAAAwwDAAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T08:52:20.459Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAFUAAAAAAAAAAAAjwGUAAAAXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-21T08:44:48.747Z",
+              "WhenOpened": "2025-10-21T20:28:34.136Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Cart\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\Cart\\Index.cshtml",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Cart\\Index.cshtml",
-              "RelativeToolTip": "Views\\Cart\\Index.cshtml",
-              "ViewState": "AgIAAIwAAAAAAAAAAAAAwJsAAABVAAAAAAAAAA==",
+              "Title": "food-dashboard.js",
+              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\wwwroot\\js\\food-dashboard.js",
+              "RelativeDocumentMoniker": "wwwroot\\js\\food-dashboard.js",
+              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\wwwroot\\js\\food-dashboard.js",
+              "RelativeToolTip": "wwwroot\\js\\food-dashboard.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-10-21T22:11:44.244Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "create-order.js",
+              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\wwwroot\\js\\create-order.js",
+              "RelativeDocumentMoniker": "wwwroot\\js\\create-order.js",
+              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\wwwroot\\js\\create-order.js",
+              "RelativeToolTip": "wwwroot\\js\\create-order.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-10-21T22:11:27.652Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Detail.cshtml",
+              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Food\\Detail.cshtml",
+              "RelativeDocumentMoniker": "Views\\Food\\Detail.cshtml",
+              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Food\\Detail.cshtml",
+              "RelativeToolTip": "Views\\Food\\Detail.cshtml",
+              "ViewState": "AgIAACoAAAAAAAAAAADwvyQAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-21T08:40:29.412Z",
+              "WhenOpened": "2025-10-21T21:43:55.787Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "Cart.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\Cart.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\Cart.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\Cart.cs",
-              "RelativeToolTip": "Models\\Food\\Cart.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAVAAAAAAAAAA==",
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Cart\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Cart\\Index.cshtml",
+              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Cart\\Index.cshtml",
+              "RelativeToolTip": "Views\\Cart\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-21T21:30:16.607Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-21T20:30:29.878Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAAEUAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T09:22:11.948Z",
+              "WhenOpened": "2025-10-21T20:16:17.555Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Areas\\Admin\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Controllers\\AdminController.cs",
+              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Areas\\Admin\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "Areas\\Admin\\Controllers\\AdminController.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-21T19:41:31.337Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TableTrackerService.cs",
+              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Services\\TableTrackerService.cs",
+              "RelativeDocumentMoniker": "Services\\TableTrackerService.cs",
+              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Services\\TableTrackerService.cs",
+              "RelativeToolTip": "Services\\TableTrackerService.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACAAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-21T19:08:21.051Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 11,
-              "Title": "Table.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\Table.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\Table.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\Table.cs",
-              "RelativeToolTip": "Models\\Food\\Table.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T08:18:42.292Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "OptionValue.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\OptionValue.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\OptionValue.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\OptionValue.cs",
-              "RelativeToolTip": "Models\\Food\\OptionValue.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAzwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T07:47:49.286Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "MenuItemOptionValue.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\MenuItemOptionValue.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\MenuItemOptionValue.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\MenuItemOptionValue.cs",
-              "RelativeToolTip": "Models\\Food\\MenuItemOptionValue.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T07:46:47.608Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "OrderItemOption.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\OrderItemOption.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\OrderItemOption.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\OrderItemOption.cs",
-              "RelativeToolTip": "Models\\Food\\OrderItemOption.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T07:45:38.324Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "MenuItemOptionGroup.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\MenuItemOptionGroup.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\MenuItemOptionGroup.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\MenuItemOptionGroup.cs",
-              "RelativeToolTip": "Models\\Food\\MenuItemOptionGroup.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T07:45:27.417Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "OptionGroup.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\OptionGroup.cs",
-              "RelativeDocumentMoniker": "Models\\Food\\OptionGroup.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Models\\Food\\OptionGroup.cs",
-              "RelativeToolTip": "Models\\Food\\OptionGroup.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAABBAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T07:44:34.732Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "FoodItemsController.cs",
-              "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Areas\\Admin\\Controllers\\FoodItemsController.cs",
-              "RelativeDocumentMoniker": "Areas\\Admin\\Controllers\\FoodItemsController.cs",
-              "ToolTip": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Areas\\Admin\\Controllers\\FoodItemsController.cs",
-              "RelativeToolTip": "Areas\\Admin\\Controllers\\FoodItemsController.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAYwFIAAABIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-21T06:47:07.745Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
               "Title": "Create.cshtml",
               "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Areas\\Admin\\Views\\FoodItems\\Create.cshtml",
               "RelativeDocumentMoniker": "Areas\\Admin\\Views\\FoodItems\\Create.cshtml",
@@ -338,7 +208,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 10,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\FALL2025\\NET1051 - L\u1EADp tr\u00ECnh C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\Areas\\Admin\\Views\\FoodItems\\Index.cshtml",
               "RelativeDocumentMoniker": "Areas\\Admin\\Views\\FoodItems\\Index.cshtml",
