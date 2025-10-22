@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\FALL2025\\NET1051 - Lập trình C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\ASM_1.csproj": {}
+    "C:\\Users\\PC\\Documents\\Tin Học\\NET1051\\Bailam\\ASM_1\\ASM_1\\ASM_1.csproj": {}
   },
   "projects": {
-    "D:\\FALL2025\\NET1051 - Lập trình C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\ASM_1.csproj": {
+    "C:\\Users\\PC\\Documents\\Tin Học\\NET1051\\Bailam\\ASM_1\\ASM_1\\ASM_1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\FALL2025\\NET1051 - Lập trình C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\ASM_1.csproj",
+        "projectUniqueName": "C:\\Users\\PC\\Documents\\Tin Học\\NET1051\\Bailam\\ASM_1\\ASM_1\\ASM_1.csproj",
         "projectName": "ASM_1",
-        "projectPath": "D:\\FALL2025\\NET1051 - Lập trình C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\ASM_1.csproj",
-        "packagesPath": "C:\\Users\\kieut\\.nuget\\packages\\",
-        "outputPath": "D:\\FALL2025\\NET1051 - Lập trình C#5\\Assignment\\Source\\Repos\\NET1051_ASM\\obj\\",
+        "projectPath": "C:\\Users\\PC\\Documents\\Tin Học\\NET1051\\Bailam\\ASM_1\\ASM_1\\ASM_1.csproj",
+        "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\PC\\Documents\\Tin Học\\NET1051\\Bailam\\ASM_1\\ASM_1\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\kieut\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -93,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

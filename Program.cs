@@ -27,7 +27,6 @@ builder.Services.AddSingleton<ASM_1.Services.TableCodeService>();
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Admin/Account/Login";
-    options.AccessDeniedPath = "/Admin/Account/AccessDenied";
 });
 
 // Add services to the container.

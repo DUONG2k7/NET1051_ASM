@@ -4,6 +4,7 @@ wwwroot\css\pages\admin-dashboard.css
 wwwroot\css\pages\admin-orders.css
 wwwroot\css\pages\admin-reports.css
 wwwroot\css\pages\admin-reviews.css
+wwwroot\css\pages\bs5grid.css
 wwwroot\css\pages\cart.css
 wwwroot\css\pages\checkout.css
 wwwroot\css\pages\contact.css
@@ -161,15 +162,21 @@ wwwroot\uploads\foods\0c0447dc-5c35-4ef7-9eb3-2d2fdff899db.jpg
 wwwroot\uploads\foods\1b86596d-cd86-4b74-8c7e-02894b483063.png
 wwwroot\uploads\foods\1d62a793-5974-44c8-87e6-29339696831e.jpg
 wwwroot\uploads\foods\317d2c6b-4d6b-44f5-8eb9-01fbda6b4d3b.jpg
+wwwroot\uploads\foods\63aa896f-c50a-432e-9f61-57757cdd3789.png
 wwwroot\uploads\foods\648ee8de-f26a-42f7-868d-4d7f86cddcc4.jpg
 wwwroot\uploads\foods\ea89d1a3-309d-4d84-83d5-d4a86da09b21.jpg
 wwwroot\uploads\qr\table_1.png
+wwwroot\uploads\qr\table_2.png
+wwwroot\uploads\qr\table_5.png
+wwwroot\uploads\qr\table_6.png
+wwwroot\uploads\qr\table_7.png
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\admin-layout.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\about.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-dashboard.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-orders.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-reports.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-reviews.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\bs5grid.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\cart.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\checkout.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\contact.css
