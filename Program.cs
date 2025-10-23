@@ -61,7 +61,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "foodHome",
-    pattern: "{tableCode}/home",
+    pattern: "{tableCode}",
     defaults: new { controller = "Food", action = "Index" });
 
 app.MapControllerRoute(

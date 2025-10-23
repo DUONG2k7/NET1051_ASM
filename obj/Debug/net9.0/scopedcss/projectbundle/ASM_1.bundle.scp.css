@@ -1,0 +1,188 @@
+/* _content/ASM_1/Views/Cart/Index.cshtml.rz.scp.css */
+.cart-page[b-cm8p07xwkq] {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cart-content[b-cm8p07xwkq] {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.cart-item[b-cm8p07xwkq] {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: white;
+}
+
+    .cart-item img[b-cm8p07xwkq] {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 16px;
+    }
+
+.item-info[b-cm8p07xwkq] {
+    flex-grow: 1;
+}
+
+    .item-info h4[b-cm8p07xwkq] {
+        margin: 0 0 4px 0;
+        color: #333;
+    }
+
+    .item-info p[b-cm8p07xwkq] {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+.item-price[b-cm8p07xwkq] {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.quantity-controls[b-cm8p07xwkq] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 20px;
+}
+
+.qty-btn[b-cm8p07xwkq] {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.item-total[b-cm8p07xwkq] {
+    font-weight: bold;
+    color: #333;
+    min-width: 80px;
+    text-align: right;
+}
+
+.remove-item[b-cm8p07xwkq] {
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 12px;
+}
+
+.cart-summary[b-cm8p07xwkq] {
+    background: #f8f9fa;
+    padding: 24px;
+    border-radius: 8px;
+    height: fit-content;
+}
+
+.summary-row[b-cm8p07xwkq] {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+}
+
+    .summary-row.discount[b-cm8p07xwkq] {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+.coupon-input[b-cm8p07xwkq] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.apply-coupon[b-cm8p07xwkq] {
+    padding: 8px 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.summary-row.total[b-cm8p07xwkq] {
+    border-top: 2px solid #ddd;
+    padding-top: 12px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.checkout-btn[b-cm8p07xwkq] {
+    width: 100%;
+    padding: 16px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+/* _content/ASM_1/Views/Shared/_Layout.cshtml.rz.scp.css */
+/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand[b-aso4lv9m5j] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-aso4lv9m5j] {
+  color: #0077cc;
+}
+
+.btn-primary[b-aso4lv9m5j] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active[b-aso4lv9m5j], .nav-pills .show > .nav-link[b-aso4lv9m5j] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-aso4lv9m5j] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-aso4lv9m5j] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-aso4lv9m5j] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-aso4lv9m5j] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.footer[b-aso4lv9m5j] {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}

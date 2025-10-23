@@ -134,19 +134,23 @@
                                 <span>Tạm tính (@totalItems món):</span>
                                 <span>@subtotal.ToString("N0") VNĐ</span>
                             </div>
-                            <div class="summary-row">
+                            @* <div class="summary-row">
                                 <span>Phí giao hàng:</span>
                                 <span id="shippingFee">15,000 VNĐ</span>
-                            </div>
+                            </div> *@
                             <div class="summary-row total">
                                 <span>Tổng cộng:</span>
-                                <span class="total-amount">@((subtotal + 15000).ToString("N0")) VNĐ</span>
+                                <span class="total-amount">@(subtotal.ToString("N0")) VNĐ</span>
                             </div>
                         </div>
                         <button class="btn-checkout" onclick="proceedToCheckout()">
+                            Xác nhận
+                            @* <span class="checkout-amount">@((subtotal + 15000).ToString("N0")) VNĐ</span> *@
+                        </button>
+                        @* <button class="btn-checkout mt-2" onclick="proceedToCheckout()">
                             <i class="fas fa-credit-card"></i> Tiến hành thanh toán
                             <span class="checkout-amount">@((subtotal + 15000).ToString("N0")) VNĐ</span>
-                        </button>
+                        </button> *@
                     </div>
                 </div>
             </div>
