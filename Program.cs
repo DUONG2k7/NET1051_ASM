@@ -60,12 +60,12 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "foodHome",
-    pattern: "{tableCode}/home",
+    pattern: "{tableCode:regex(^((?!admin$).)*$)}/home",
     defaults: new { controller = "Food", action = "Index" });
 
 app.MapControllerRoute(
     name: "foodDetails",
-    pattern: "{tableCode}/food/{slug}",
+    pattern: "{tableCode:regex(^((?!admin$).)*$)}/food/{slug}",
     defaults: new { controller = "Food", action = "Detail" });
 
 app.MapControllerRoute(

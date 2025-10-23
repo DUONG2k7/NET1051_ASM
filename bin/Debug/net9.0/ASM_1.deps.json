@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v9.0": {
       "ASM_1/1.0.0": {
         "dependencies": {
+          "Hashids.net": "1.7.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "9.0.10",
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
           "Microsoft.EntityFrameworkCore.Tools": "9.0.10",
@@ -50,6 +51,14 @@
           "lib/netstandard2.0/Azure.Identity.dll": {
             "assemblyVersion": "1.11.4.0",
             "fileVersion": "1.1100.424.31005"
+          }
+        }
+      },
+      "Hashids.net/1.7.0": {
+        "runtime": {
+          "lib/net7.0/Hashids.net.dll": {
+            "assemblyVersion": "1.7.0.0",
+            "fileVersion": "1.7.0.0"
           }
         }
       },
@@ -2194,6 +2203,13 @@
       "sha512": "sha512-Sf4BoE6Q3jTgFkgBkx7qztYOFELBCo+wQgpYDwal/qJ1unBH73ywPztIJKXBXORRzAeNijsuxhk94h0TIMvfYg==",
       "path": "azure.identity/1.11.4",
       "hashPath": "azure.identity.1.11.4.nupkg.sha512"
+    },
+    "Hashids.net/1.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TuQ8ns5c+eeIOHSgJdwCLb0nWzKqn2gCPSLFoz6nWdhw3tS5Wa43qrwRXT4UJT7XVgHqKssacVU1SGlAOWjeIg==",
+      "path": "hashids.net/1.7.0",
+      "hashPath": "hashids.net.1.7.0.nupkg.sha512"
     },
     "Humanizer/2.14.1": {
       "type": "package",
