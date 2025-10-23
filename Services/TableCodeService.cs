@@ -1,31 +1,31 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using HashidsNet;
+using Microsoft.AspNetCore.DataProtection;
 using System.Net;
 
 namespace ASM_1.Services
 {
     public class TableCodeService
     {
-        private readonly IDataProtector _protector;
+        private readonly Hashids _hashids;
 
-        public TableCodeService(IDataProtectionProvider provider)
+        public TableCodeService()
         {
-            _protector = provider.CreateProtector("TableCode.v1");
+            _hashids = new Hashids("TableCodeSalt_v1", 6);
         }
 
         public string EncryptTableId(int tableId)
         {
-            string plain = tableId.ToString();
-            string protectedText = _protector.Protect(plain);
-            return WebUtility.UrlEncode(protectedText);
+            return _hashids.Encode(tableId);
         }
 
         public int? DecryptTableCode(string code)
         {
             try
             {
-                string decoded = WebUtility.UrlDecode(code);
-                string plain = _protector.Unprotect(decoded);
-                return int.Parse(plain);
+                int[] numbers = _hashids.Decode(code);
+                if (numbers.Length > 0)
+                    return numbers[0];
+                return null;
             }
             catch
             {

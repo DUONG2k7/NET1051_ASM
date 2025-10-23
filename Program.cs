@@ -27,7 +27,6 @@ builder.Services.AddSingleton<ASM_1.Services.TableCodeService>();
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Admin/Account/Login";
-    options.AccessDeniedPath = "/Admin/Account/AccessDenied";
 });
 
 // Add services to the container.
@@ -61,12 +60,12 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "foodHome",
-    pattern: "{tableCode}",
+    pattern: "{tableCode:regex(^((?!admin$).)*$)}/home",
     defaults: new { controller = "Food", action = "Index" });
 
 app.MapControllerRoute(
     name: "foodDetails",
-    pattern: "{tableCode}/food/{slug}",
+    pattern: "{tableCode:regex(^((?!admin$).)*$)}/food/{slug}",
     defaults: new { controller = "Food", action = "Detail" });
 
 app.MapControllerRoute(

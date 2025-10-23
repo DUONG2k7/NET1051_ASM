@@ -8,6 +8,10 @@
     ".NETCoreApp,Version=v9.0": {
       "ASM_1/1.0.0": {
         "dependencies": {
+<<<<<<< HEAD
+=======
+          "Hashids.net": "1.7.0",
+>>>>>>> 3b7feb86ffc0466db7113dea278f7893bc80014d
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "9.0.10",
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.10",
           "Microsoft.EntityFrameworkCore.Tools": "9.0.10",
@@ -53,6 +57,17 @@
           }
         }
       },
+<<<<<<< HEAD
+=======
+      "Hashids.net/1.7.0": {
+        "runtime": {
+          "lib/net7.0/Hashids.net.dll": {
+            "assemblyVersion": "1.7.0.0",
+            "fileVersion": "1.7.0.0"
+          }
+        }
+      },
+>>>>>>> 3b7feb86ffc0466db7113dea278f7893bc80014d
       "Humanizer/2.14.1": {
         "dependencies": {
           "Humanizer.Core.af": "2.14.1",
@@ -2048,7 +2063,18 @@
           }
         }
       },
+<<<<<<< HEAD
       "System.Formats.Asn1/9.0.10": {},
+=======
+      "System.Formats.Asn1/9.0.10": {
+        "runtime": {
+          "lib/net9.0/System.Formats.Asn1.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.1025.47515"
+          }
+        }
+      },
+>>>>>>> 3b7feb86ffc0466db7113dea278f7893bc80014d
       "System.IdentityModel.Tokens.Jwt/6.35.0": {
         "dependencies": {
           "Microsoft.IdentityModel.JsonWebTokens": "6.35.0",
@@ -2155,7 +2181,18 @@
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
+<<<<<<< HEAD
       "System.Text.Json/9.0.10": {},
+=======
+      "System.Text.Json/9.0.10": {
+        "runtime": {
+          "lib/net9.0/System.Text.Json.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.1025.47515"
+          }
+        }
+      },
+>>>>>>> 3b7feb86ffc0466db7113dea278f7893bc80014d
       "System.Threading.Channels/7.0.0": {},
       "System.Threading.Tasks.Dataflow/8.0.0": {},
       "System.Threading.Tasks.Extensions/4.5.4": {}
@@ -2181,6 +2218,16 @@
       "path": "azure.identity/1.11.4",
       "hashPath": "azure.identity.1.11.4.nupkg.sha512"
     },
+<<<<<<< HEAD
+=======
+    "Hashids.net/1.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TuQ8ns5c+eeIOHSgJdwCLb0nWzKqn2gCPSLFoz6nWdhw3tS5Wa43qrwRXT4UJT7XVgHqKssacVU1SGlAOWjeIg==",
+      "path": "hashids.net/1.7.0",
+      "hashPath": "hashids.net.1.7.0.nupkg.sha512"
+    },
+>>>>>>> 3b7feb86ffc0466db7113dea278f7893bc80014d
     "Humanizer/2.14.1": {
       "type": "package",
       "serviceable": true,

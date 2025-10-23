@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ASM_1.Controllers
 {
+    [Route("{tableCode:regex(^((?!admin$).)*$)}")]
     public class FoodController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,7 +18,7 @@ namespace ASM_1.Controllers
             _tableCodeService = tableCodeService;
         }
 
-        [HttpGet("{tableCode}")]
+        [HttpGet]
         public async Task<IActionResult> Index(string tableCode)
         {
             var tableId = _tableCodeService.DecryptTableCode(tableCode);
@@ -63,7 +64,7 @@ namespace ASM_1.Controllers
         //}
 
         // /{tableCode}/food/{slug}
-        [HttpGet("{tableCode}/food/{slug}")]
+        [HttpGet("/food/{slug}")]
         public IActionResult Detail(string tableCode, string slug)
         {
             var tableId = _tableCodeService.DecryptTableCode(tableCode);
