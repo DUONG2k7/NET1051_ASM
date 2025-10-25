@@ -143,10 +143,15 @@
                                 <span class="total-amount">@(subtotal.ToString("N0")) VNĐ</span>
                             </div>
                         </div>
-                        <button class="btn-checkout" onclick="proceedToCheckout()">
-                            Xác nhận
-                            @* <span class="checkout-amount">@((subtotal + 15000).ToString("N0")) VNĐ</span> *@
-                        </button>
+
+                        <form id="checkoutForm" asp-controller="Cart" asp-action="PlaceOrder" asp-route-tableCode="@tableCode" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit" class="btn-checkout" form="checkoutForm">
+                                Xác nhận
+                                @* <span class="checkout-amount">@((subtotal + 15000).ToString("N0")) VNĐ</span> *@
+                            </button>
+                        </form>
                         @* <button class="btn-checkout mt-2" onclick="proceedToCheckout()">
                             <i class="fas fa-credit-card"></i> Tiến hành thanh toán
                             <span class="checkout-amount">@((subtotal + 15000).ToString("N0")) VNĐ</span>
@@ -176,5 +181,12 @@
         function proceedToCheckout() {
             window.location.href = '@Url.Action("Checkout", "Cart", new { tableCode = tableCode })';
         }
+
+        document.getElementById('checkoutForm').addEventListener('submit', function() {
+            const btn = document.querySelector('.btn-checkout');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+        });
+
     </script>
 }

@@ -110,21 +110,19 @@
         <!-- ORDER INFO từ TempData -->
         <div class="order-info">
             <h3><i class="fas fa-receipt"></i> Thông tin đơn hàng</h3>
-            <p><strong>Họ và tên:</strong> @TempData["CustomerName"]</p>
-            <p><strong>Số điện thoại:</strong> @TempData["CustomerPhone"]</p>
-            <p><strong>Địa chỉ giao hàng:</strong> @TempData["CustomerAddress"]</p>
-            <p><strong>Hình thức nhận hàng:</strong> @TempData["DeliveryType"]</p>
-            <p><strong>Phương thức thanh toán:</strong> @TempData["PaymentMethod"]</p>
+            <p><strong>Bàn:</strong> @TempData["TableName"]</p>
+            <p><strong>Tên:</strong> @TempData["CustomerName"]</p>
+            @* <p><strong>Phương thức thanh toán:</strong> @TempData["PaymentMethod"]</p> *@
             <p><strong>Thời gian đặt:</strong> @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
         </div>
 
         <!-- ACTION BUTTONS -->
         <div class="success-actions">
             <a href="@Url.Action("Index", "Food", new { tableCode })" class="btn-continue">
-                <i class="fas fa-home"></i> Về trang chủ
+                <i class="fas fa-utensils"></i> Đặt món khác
             </a>
             <a href="@Url.Action("Index", "Food", new { tableCode })" class="btn-continue">
-                <i class="fas fa-utensils"></i> Đặt món khác
+                <i class="fas fa-utensils"></i> Trạng thái đơn hàng
             </a>
         </div>
     </div>

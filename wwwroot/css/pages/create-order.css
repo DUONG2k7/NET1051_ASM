@@ -185,7 +185,7 @@
     }
 
 .menu-item-content {
-    padding: 25px;
+    padding: 15px;
 }
 
 .menu-item-name {
@@ -200,7 +200,7 @@
     color: #6c757d;
     font-size: 0.95rem;
     line-height: 1.6;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .menu-item-footer {
@@ -420,7 +420,7 @@
     }
 
     .menu-item-content {
-        padding: 20px;
+        padding: 15px;
     }
 
     .menu-item-footer {
