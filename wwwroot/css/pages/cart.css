@@ -545,7 +545,7 @@
 
     .cart-tabs .tab-btn {
         padding: 10px 14px;
-        border: 1px solid #eee;
+        border: 2px solid #eee;
         background: white;
         border-radius: 8px;
         cursor: pointer;
@@ -558,6 +558,7 @@
 
         .cart-tabs .tab-btn:hover {
             border-color: var(--primary-color);
+            transform: translateY(-1px);
         }
 
         .cart-tabs .tab-btn.active {

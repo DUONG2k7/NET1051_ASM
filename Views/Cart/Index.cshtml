@@ -22,12 +22,12 @@
 
         <!-- Tabs -->
         <div class="cart-tabs">
-            <button class="tab-btn active" data-tab="tab-items">
+            <a class="tab-btn active" data-tab="tab-items">
                 <i class="fa-solid fa-bag-shopping"></i> Giỏ hàng
-            </button>
-            <button class="tab-btn" data-tab="tab-status">
+            </a>
+            <a class="tab-btn" data-tab="tab-status">
                 <i class="fa-solid fa-clipboard-list"></i> Trạng thái đơn
-            </button>
+            </a>
         </div>
 
         <!-- TAB 1: Giỏ hàng (bọc toàn bộ cart-content & empty state) -->
@@ -197,77 +197,22 @@
                         @foreach (var item in Model)
                         {
                             <div class="cart-item" data-id="@item.CartItemID">
-                                <div class="item-image">
-                                    <img src="@Url.Content(item.ProductImage)" alt="@item.ProductName" />
-                                </div>
-
                                 <div class="item-details">
                                     <h3 class="item-name">@item.ProductName</h3>
 
-                                    <!-- Hiển thị Option động -->
-                                    <div class="item-options">
-                                        @if (item.Options != null && item.Options.Any())
-                                        {
-                                            foreach (var opt in item.Options)
-                                            {
-                                                <span class="option">@opt.OptionTypeName: @opt.OptionName</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span class="option">Không có tùy chọn</span>
-                                        }
-                                        <span class="note">Ghi chú: @(string.IsNullOrWhiteSpace(item.Note) ? "Không có ghi chú" : item.Note)</span>
-                                    </div>
-
                                     <div class="item-price">
-                                        <span class="unit-price">@item.UnitPrice.ToString("N0") VNĐ/món</span>
+                                        <span class="unit-price"></span>
                                     </div>
                                 </div>
 
                                 <div class="item-controls">
                                     <div class="quantity-controls">
-                                        <!-- Giảm 1 -->
-                                        <form asp-controller="Cart"
-                                              asp-action="ChangeQuantity"
-                                              asp-route-cartItemId="@item.CartItemID"
-                                              asp-route-delta="-1"
-                                              asp-route-tableCode="@tableCode"
-                                              method="post">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="qty-btn minus" aria-label="Giảm">-</button>
-                                        </form>
 
-                                        <!-- Hiển thị số lượng -->
-                                        <input type="number" class="quantity" value="@item.Quantity" min="1" max="10" readonly />
-
-                                        <!-- Tăng 1 -->
-                                        <form asp-controller="Cart"
-                                              asp-action="ChangeQuantity"
-                                              asp-route-cartItemId="@item.CartItemID"
-                                              asp-route-delta="1"
-                                              asp-route-tableCode="@tableCode"
-                                              method="post">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="qty-btn plus" aria-label="Tăng">+</button>
-                                        </form>
                                     </div>
 
                                     <div class="item-total">
                                         <span class="total-price">@item.TotalPrice.ToString("N0") VNĐ</span>
                                     </div>
-
-                                    <!-- Xóa món -->
-                                    <form asp-controller="Cart"
-                                          asp-action="RemoveFromCart"
-                                          asp-route-cartItemId="@item.CartItemID"
-                                          asp-route-tableCode="@tableCode"
-                                          method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn-remove" title="Xóa món">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </form>
                                 </div>
                             </div>
                         }
