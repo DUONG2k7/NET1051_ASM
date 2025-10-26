@@ -11,11 +11,13 @@ namespace ASM_1.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly TableCodeService _tableCodeService;
+        private readonly UserSessionService _userSessionService;
 
-        public FoodController(ApplicationDbContext context, TableCodeService tableCodeService)
+        public FoodController(ApplicationDbContext context, TableCodeService tableCodeService, UserSessionService userSessionService)
         {
             _context = context;
             _tableCodeService = tableCodeService;
+            _userSessionService = userSessionService;
         }
 
         [HttpGet]
@@ -33,10 +35,7 @@ namespace ASM_1.Controllers
                 return RedirectToAction("InvalidTable");
             }
 
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserSessionId")))
-            {
-                HttpContext.Session.SetString("UserSessionId", Guid.NewGuid().ToString("N"));
-            }
+            _userSessionService.GetOrCreateUserSessionId(tableCode);
 
             var model = new MenuOverviewViewModel
             {

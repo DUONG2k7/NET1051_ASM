@@ -25,17 +25,17 @@ namespace ASM_1.Controllers
             HttpContext.Session.SetInt32(SessionCartIdKey, cartId);
         }
 
-        protected async Task<Cart> GetOrCreateActiveCartAsync(string userId)
+        protected async Task<Cart> GetOrCreateActiveCartAsync(string UserSessionId)
         {
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.UserID == userId);
+                .FirstOrDefaultAsync(c => c.UserID == UserSessionId);
 
             if (cart == null)
             {
                 cart = new Cart
                 {
-                    UserID = userId,
+                    UserID = UserSessionId,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -46,19 +46,19 @@ namespace ASM_1.Controllers
             return cart;
         }
 
-        protected async Task<Cart> GetCartAsync(string userId)
+        protected async Task<Cart> GetCartAsync(string UserSessionId)
         {
             var cartId = GetCartIdFromSession();
             if (cartId.HasValue)
             {
                 var cart = await _context.Carts
                     .Include(c => c.CartItems)
-                    .FirstOrDefaultAsync(c => c.CartID == cartId && c.UserID == userId);
+                    .FirstOrDefaultAsync(c => c.CartID == cartId && c.UserID == UserSessionId);
 
                 if (cart != null) return cart;
             }
 
-            var newCart = await GetOrCreateActiveCartAsync(userId);
+            var newCart = await GetOrCreateActiveCartAsync(UserSessionId);
             SetCartIdToSession(newCart.CartID);
             return newCart;
         }

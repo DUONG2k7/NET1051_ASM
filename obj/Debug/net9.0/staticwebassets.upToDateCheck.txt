@@ -170,6 +170,7 @@ wwwroot\uploads\foods\ea89d1a3-309d-4d84-83d5-d4a86da09b21.jpg
 wwwroot\uploads\qr\table_1.png
 wwwroot\uploads\qr\table_2.png
 wwwroot\uploads\qr\table_3.png
+wwwroot\uploads\qr\table_4.png
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\LICENSE.txt
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.slim.min.map
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.slim.min.js
