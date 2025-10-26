@@ -14,7 +14,7 @@ namespace ASM_1.Data
             var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
             // --- 1. Tạo role ---
-            string[] roles = { "Admin", "AccountAdmin", "FoodAdmin" };
+            string[] roles = { "Admin", "AccountAdmin", "FoodAdmin", "Cashier", "Chef" };
             foreach (var roleName in roles)
             {
                 if (!await roleManager.RoleExistsAsync(roleName))
@@ -46,25 +46,9 @@ namespace ASM_1.Data
             }
 
             // --- Tạo thêm user bình thường ---
-            var AccAdminEmail = "AccAdmin@demo.com";
-            var AccAdminPassword = "AccAdmin@123";
-
-            var AccAdminUser = await userManager.FindByEmailAsync(AccAdminEmail);
-            if (AccAdminUser == null)
-            {
-                AccAdminUser = new AppUser
-                {
-                    UserName = AccAdminEmail,
-                    Email = AccAdminEmail,
-                    EmailConfirmed = true
-                };
-                await userManager.CreateAsync(AccAdminUser, AccAdminPassword);
-            }
-
-            if (!await userManager.IsInRoleAsync(AccAdminUser, "AccountAdmin"))
-            {
-                await userManager.AddToRoleAsync(AccAdminUser, "AccountAdmin");
-            }
+            await EnsureUserInRole(userManager, "AccAdmin@demo.com", "AccAdmin@123", "AccountAdmin");
+            await EnsureUserInRole(userManager, "cashier@demo.com", "Cashier@123", "Cashier");
+            await EnsureUserInRole(userManager, "chef@demo.com", "Chef@123", "Chef");
 
             // =======================
             // 2. Seed Category
@@ -156,6 +140,26 @@ namespace ASM_1.Data
                     }
                 }
                 await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task EnsureUserInRole(UserManager<AppUser> userManager, string email, string password, string role)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new AppUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(user, password);
+            }
+
+            if (!await userManager.IsInRoleAsync(user, role))
+            {
+                await userManager.AddToRoleAsync(user, role);
             }
         }
     }

@@ -1,4 +1,116 @@
-﻿// Dashboard Functions
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.querySelector('.admin-sidebar');
+    const body = document.body;
+    const sidebarToggleBtns = document.querySelectorAll('.sidebar-toggle');
+    const searchForm = document.querySelector('.search-form');
+    const themeToggleBtn = document.querySelector('.theme-toggle');
+    const themeIcon = themeToggleBtn ? themeToggleBtn.querySelector('.theme-icon') : null;
+    const themeText = themeToggleBtn ? themeToggleBtn.querySelector('.theme-text') : null;
+    const menuLinks = document.querySelectorAll('.menu-link');
+
+    const updateThemeIndicators = () => {
+        const isCollapsed = sidebar ? sidebar.classList.contains('collapsed') : false;
+        const shouldLockScroll = !!sidebar && !isCollapsed && window.innerWidth <= 768;
+        body.classList.toggle('sidebar-open', shouldLockScroll);
+
+        if (!themeIcon) {
+            return;
+        }
+
+        const isDark = body.classList.contains('dark-theme');
+        themeIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+
+        if (themeText) {
+            themeText.textContent = isDark ? 'Chế độ sáng' : 'Chế độ tối';
+        }
+    };
+
+    const applyTheme = (useDark) => {
+        body.classList.toggle('dark-theme', useDark);
+        updateThemeIndicators();
+    };
+
+    const initializeTheme = () => {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+        const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark && prefersDark.matches);
+        applyTheme(!!shouldUseDark);
+
+        if (prefersDark) {
+            prefersDark.addEventListener('change', (event) => {
+                if (!localStorage.getItem('theme')) {
+                    applyTheme(event.matches);
+                }
+            });
+        }
+    };
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = !body.classList.contains('dark-theme');
+            applyTheme(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
+
+    if (sidebar) {
+        const ensureResponsiveState = () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('collapsed');
+            } else {
+                sidebar.classList.add('collapsed');
+            }
+            updateThemeIndicators();
+        };
+
+        ensureResponsiveState();
+        sidebar.classList.remove('sidebar--initial');
+
+        sidebarToggleBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                updateThemeIndicators();
+            });
+        });
+
+        window.addEventListener('resize', ensureResponsiveState);
+
+        if (searchForm) {
+            searchForm.addEventListener('click', () => {
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    const searchInput = searchForm.querySelector('input');
+                    if (searchInput) {
+                        searchInput.focus();
+                    }
+                    updateThemeIndicators();
+                }
+            });
+        }
+    }
+
+    const highlightActiveLink = () => {
+        const currentPath = window.location.pathname.toLowerCase();
+
+        menuLinks.forEach((link) => {
+            const href = link.getAttribute('href');
+            if (!href) {
+                return;
+            }
+
+            const linkPath = new URL(href, window.location.origin).pathname.toLowerCase();
+            const isMatch = currentPath === linkPath || currentPath.startsWith(linkPath + '/');
+            link.classList.toggle('active', isMatch);
+        });
+    };
+
+    initializeTheme();
+    highlightActiveLink();
+    updateThemeIndicators();
+});
+
+
+// Dashboard Functions
 function refreshDashboard() {
     showNotification('Đang làm mới dữ liệu...', 'info');
 

@@ -1,0 +1,643 @@
+@using ASM_1.Models.Food
+@model OrderDetailsViewModel
+@{
+    ViewData["Title"] = $"Đơn {Model.OrderCode}";
+    string BadgeClass(OrderStatus status) => status switch
+    {
+        OrderStatus.Canceled => "badge-pill badge-CANCELLED",
+        _ => $"badge-pill badge-{status.ToString().ToUpperInvariant()}"
+    };
+
+    string BadgeText(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending => "Đang gửi",
+        OrderStatus.Confirmed => "Đã xác nhận",
+        OrderStatus.In_Kitchen => "Đang chế biến",
+        OrderStatus.Ready => "Sẵn sàng",
+        OrderStatus.Served => "Đã phục vụ",
+        OrderStatus.Requested_Bill => "Yêu cầu tính tiền",
+        OrderStatus.Paid => "Đã thanh toán",
+        OrderStatus.Canceled => "Đã huỷ",
+        _ => status.ToString()
+    };
+
+    string PaymentMethodText(string? method)
+    {
+        if (string.IsNullOrWhiteSpace(method))
+        {
+            return "Chưa xác định";
+        }
+
+        static string Map(string value) => value switch
+        {
+            "card" => "Thanh toán thẻ",
+            "momo" => "Ví MoMo",
+            "cash" => "Tiền mặt tại quầy",
+            _ => value
+        };
+
+        var parts = method
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(p => Map(p.ToLowerInvariant()))
+            .Where(p => !string.IsNullOrWhiteSpace(p))
+            .ToList();
+
+        return parts.Count > 0 ? string.Join(", ", parts) : "Chưa xác định";
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/order-details.css" asp-append-version="true" />
+}
+
+<div class="order-details-page"
+     data-order-id="@Model.OrderId"
+     data-table-code="@Model.TableCode">
+    <div class="order-details-header">
+        <a class="back-link" asp-controller="Cart" asp-action="Index" asp-route-tableCode="@Model.TableCode">
+            <i class="fa-solid fa-arrow-left"></i> Trở lại trạng thái đơn
+        </a>
+        <div class="order-code">@Model.OrderCode</div>
+    </div>
+
+    <div class="order-summary">
+        <div class="order-status-line">
+            <span class="status-label">Trạng thái:</span>
+            <span class="order-status @BadgeClass(Model.Status)" data-role="order-status">@BadgeText(Model.Status)</span>
+        </div>
+        <div class="order-meta">
+            <div>
+                <span class="meta-label">Bàn:</span>
+                <span data-role="order-table">@Model.TableName</span>
+            </div>
+            <div>
+                <span class="meta-label">Đặt lúc:</span>
+                <span data-role="order-created">@Model.CreatedAt.ToLocalTime().ToString("HH:mm dd/MM/yyyy")</span>
+            </div>
+            <div>
+                <span class="meta-label">Cập nhật:</span>
+                <span data-role="order-updated">@Model.UpdatedAt.ToLocalTime().ToString("HH:mm dd/MM/yyyy")</span>
+            </div>
+            <div>
+                <span class="meta-label">Thanh toán:</span>
+                <span data-role="order-payment">@PaymentMethodText(Model.PaymentMethod)</span>
+            </div>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.Note))
+        {
+            <div class="order-note" data-role="order-note">
+                <i class="fa-regular fa-note-sticky"></i>
+                <span>@Model.Note</span>
+            </div>
+        }
+        else
+        {
+            <div class="order-note" data-role="order-note" style="display:none"></div>
+        }
+        <div class="order-total" data-role="order-total">Tổng cộng: @Model.TotalAmount.ToString("N0") VNĐ</div>
+    </div>
+
+    <div class="order-payment-section" data-role="payment-section" hidden>
+        <h3>Thanh toán &amp; chia hóa đơn</h3>
+        <p class="payment-intro">Tất cả khách cùng bàn có thể thống nhất hình thức thanh toán phù hợp.</p>
+        <div class="payment-summary" data-role="payment-summary"></div>
+        <div class="payment-invoice" data-role="payment-invoice"></div>
+        <div class="payment-feedback" data-role="payment-feedback"></div>
+
+        <form class="payment-form" data-role="payment-form">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label for="payment-split-mode">Kiểu chia hóa đơn</label>
+                <select id="payment-split-mode" name="splitMode" data-role="payment-split">
+                    <option value="full">Một người thanh toán toàn bộ</option>
+                    <option value="even">Chia đều cho mọi người</option>
+                    <option value="percentage">Chia theo phần trăm</option>
+                    <option value="items">Ai đặt gì thanh toán món đó</option>
+                </select>
+            </div>
+
+            <div class="form-group" data-mode-section="even">
+                <label for="payment-participants">Số người chia đều</label>
+                <input id="payment-participants" type="number" min="1" max="20" step="1" data-role="payment-participants" placeholder="Ví dụ: 3" />
+            </div>
+
+            <div class="form-group" data-mode-section="percentage">
+                <label for="payment-percentage">Phần trăm bạn thanh toán</label>
+                <input id="payment-percentage" type="number" min="1" max="100" step="1" data-role="payment-percentage" placeholder="Ví dụ: 40" />
+            </div>
+
+            <div class="form-group" data-mode-section="items">
+                <span class="form-label">Chọn món của bạn</span>
+                <div class="payment-items" data-role="payment-items"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="payment-method">Phương thức thanh toán</label>
+                <select id="payment-method" name="paymentMethod" data-role="payment-method"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="payment-display-name">Tên hiển thị (tuỳ chọn)</label>
+                <input id="payment-display-name" type="text" maxlength="60" data-role="payment-display-name" placeholder="Ví dụ: Bạn A" />
+            </div>
+
+            <button type="submit" class="payment-submit">Xác nhận thanh toán</button>
+        </form>
+
+        <div class="payment-shares" data-role="payment-shares"></div>
+    </div>
+
+    <div class="order-items" data-role="order-items">
+        @foreach (var item in Model.Items)
+        {
+            <div class="order-item" data-item-id="@item.OrderItemId">
+                <div class="item-header">
+                    <div>
+                        <div class="item-name">@item.Name</div>
+                        <div class="item-qty">Số lượng: @item.Quantity</div>
+                    </div>
+                    <div class="item-status">
+                        <span class="@BadgeClass(item.Status)">@BadgeText(item.Status)</span>
+                    </div>
+                </div>
+                <div class="item-body">
+                    <div class="item-price">@item.LineTotal.ToString("N0") VNĐ</div>
+                    @if (item.Options.Any())
+                    {
+                        <div class="item-options">
+                            <i class="fa-solid fa-list"></i>
+                            <span>@string.Join(", ", item.Options)</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(item.Note))
+                    {
+                        <div class="item-note">
+                            <i class="fa-regular fa-comment"></i>
+                            <span>@item.Note</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script>
+        (() => {
+            const page = document.querySelector('.order-details-page');
+            if (!page) return;
+
+            const orderId = Number(page.dataset.orderId);
+            const tableCode = page.dataset.tableCode;
+            const statusEl = page.querySelector('[data-role="order-status"]');
+            const tableEl = page.querySelector('[data-role="order-table"]');
+            const createdEl = page.querySelector('[data-role="order-created"]');
+            const updatedEl = page.querySelector('[data-role="order-updated"]');
+            const paymentEl = page.querySelector('[data-role="order-payment"]');
+            const noteEl = page.querySelector('[data-role="order-note"]');
+            const totalEl = page.querySelector('[data-role="order-total"]');
+            const itemsEl = page.querySelector('[data-role="order-items"]');
+
+            const paymentSection = page.querySelector('[data-role="payment-section"]');
+            const paymentSummaryEl = page.querySelector('[data-role="payment-summary"]');
+            const paymentInvoiceEl = page.querySelector('[data-role="payment-invoice"]');
+            const paymentFeedbackEl = page.querySelector('[data-role="payment-feedback"]');
+            const paymentSharesEl = page.querySelector('[data-role="payment-shares"]');
+            const paymentForm = page.querySelector('[data-role="payment-form"]');
+            const paymentSplitSelect = page.querySelector('[data-role="payment-split"]');
+            const paymentParticipantsInput = page.querySelector('[data-role="payment-participants"]');
+            const paymentPercentageInput = page.querySelector('[data-role="payment-percentage"]');
+            const paymentItemsContainer = page.querySelector('[data-role="payment-items"]');
+            const paymentMethodSelect = page.querySelector('[data-role="payment-method"]');
+            const paymentDisplayNameInput = page.querySelector('[data-role="payment-display-name"]');
+
+            const badgeText = (status) => ({
+                PENDING: 'Đang gửi',
+                CONFIRMED: 'Đã xác nhận',
+                IN_KITCHEN: 'Đang chế biến',
+                READY: 'Sẵn sàng',
+                SERVED: 'Đã phục vụ',
+                REQUESTED_BILL: 'Yêu cầu tính tiền',
+                PAID: 'Đã thanh toán',
+                CANCELED: 'Đã huỷ',
+                CANCELLED: 'Đã huỷ'
+            })[status] || status || '';
+
+            const badgeClass = (status) => {
+                if (!status) return 'badge-pill';
+                if (status === 'CANCELED' || status === 'CANCELLED') {
+                    return 'badge-pill badge-CANCELLED';
+                }
+                return `badge-pill badge-${status}`;
+            };
+            const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[ch] || ch);
+            const money = (value) => (Number(value || 0)).toLocaleString('vi-VN') + ' VNĐ';
+            const formatTime = (iso) => {
+                if (!iso) return '';
+                const d = new Date(iso);
+                return d.toLocaleTimeString('vi-VN', { hour12: false }) + ' ' + d.toLocaleDateString('vi-VN');
+            };
+            const friendlyPaymentMethod = (method) => {
+                const raw = (method || '').toString().trim();
+                if (!raw) return 'Chưa xác định';
+                const parts = raw.split(',').map(part => part.trim()).filter(Boolean);
+                if (parts.length === 0) return 'Chưa xác định';
+                const mapped = parts.map(part => {
+                    const normalized = part.toLowerCase();
+                    switch (normalized) {
+                        case 'card':
+                            return 'Thanh toán thẻ';
+                        case 'momo':
+                            return 'Ví MoMo';
+                        case 'cash':
+                            return 'Tiền mặt tại quầy';
+                        default:
+                            return part;
+                    }
+                });
+                return mapped.join(', ');
+            };
+
+            let paymentState = null;
+            let paymentToken = null;
+
+            if (paymentForm) {
+                const tokenInput = paymentForm.querySelector('input[name="__RequestVerificationToken"]');
+                paymentToken = tokenInput ? tokenInput.value : null;
+            }
+
+            function updateModeSections(mode) {
+                const sections = page.querySelectorAll('[data-mode-section]');
+                sections.forEach((section) => {
+                    const sectionMode = section.getAttribute('data-mode-section');
+                    section.hidden = sectionMode !== mode;
+                });
+            }
+
+            function renderOrder(payload) {
+                if (!payload || !payload.order) return;
+                const data = payload.order;
+                const statusKey = (data.status || '').toUpperCase();
+
+                if (statusEl) {
+                    statusEl.className = `order-status ${badgeClass(statusKey)}`;
+                    statusEl.textContent = badgeText(statusKey);
+                }
+
+                if (tableEl) tableEl.textContent = data.table || '';
+                if (createdEl) createdEl.textContent = formatTime(data.placedAt);
+                if (updatedEl) updatedEl.textContent = formatTime(data.updatedAt);
+                if (paymentEl) paymentEl.textContent = friendlyPaymentMethod(data.paymentMethod);
+
+                if (typeof data.total !== 'undefined' && totalEl) {
+                    totalEl.textContent = `Tổng cộng: ${money(data.total)}`;
+                }
+
+                if (noteEl) {
+                    if (data.note) {
+                        noteEl.style.display = '';
+                        noteEl.innerHTML = `<i class="fa-regular fa-note-sticky"></i><span>${escapeHtml(data.note)}</span>`;
+                    } else {
+                        noteEl.style.display = 'none';
+                        noteEl.innerHTML = '';
+                    }
+                }
+
+                if (Array.isArray(data.items) && itemsEl) {
+                    itemsEl.innerHTML = data.items.map(item => {
+                        const itemStatus = (item.status || '').toUpperCase();
+                        const safeIdNumber = Number(item.id);
+                        const dataId = Number.isFinite(safeIdNumber) ? safeIdNumber : '';
+                        const optionsText = Array.isArray(item.options) && item.options.length
+                            ? `<div class="item-options"><i class="fa-solid fa-list"></i><span>${item.options.map(escapeHtml).join(', ')}</span></div>`
+                            : '';
+                        const noteText = item.note
+                            ? `<div class="item-note"><i class="fa-regular fa-comment"></i><span>${escapeHtml(item.note)}</span></div>`
+                            : '';
+
+                        return `
+                            <div class="order-item" data-item-id="${dataId}">
+                                <div class="item-header">
+                                    <div>
+                                        <div class="item-name">${escapeHtml(item.name || '')}</div>
+                                        <div class="item-qty">Số lượng: ${item.quantity ?? ''}</div>
+                                    </div>
+                                    <div class="item-status">
+                                        <span class="${badgeClass(itemStatus)}">${badgeText(itemStatus)}</span>
+                                    </div>
+                                </div>
+                                <div class="item-body">
+                                    <div class="item-price">${money(item.lineTotal)}</div>
+                                    ${optionsText}
+                                    ${noteText}
+                                </div>
+                            </div>`;
+                    }).join('');
+                }
+            }
+
+            function renderPayment() {
+                if (!paymentSection) return;
+
+                paymentSection.hidden = false;
+                const data = paymentState;
+                const session = data?.session;
+                const items = Array.isArray(data?.items) ? data.items : [];
+                const itemMap = new Map(items.map(item => [item.orderItemId, item]));
+                const shares = Array.isArray(session?.shares) ? session.shares : [];
+                const currentShare = shares.find(s => s.isCurrentUser);
+
+                if (paymentSummaryEl) {
+                    if (!session) {
+                        paymentSummaryEl.textContent = 'Chưa có thông tin thanh toán. Bạn có thể là người đầu tiên thiết lập.';
+                    } else {
+                        const parts = [
+                            `Tổng: ${money(session.totalAmount)}`,
+                            `Đã thanh toán: ${money(session.paidAmount)}`,
+                            `Còn lại: ${money(session.outstandingAmount)}`
+                        ];
+                        const percentTotal = Number(session.totalPercentage);
+                        if (!Number.isNaN(percentTotal)) {
+                            parts.push(`Tổng phần trăm: ${percentTotal.toFixed(1)}%`);
+                        }
+                        paymentSummaryEl.innerHTML = parts.join(' · ');
+                    }
+                }
+
+                if (paymentInvoiceEl) {
+                    if (data?.invoice) {
+                        paymentInvoiceEl.innerHTML = `Hóa đơn <strong>${escapeHtml(data.invoice.invoiceCode)}</strong> · Trạng thái: ${escapeHtml(data.invoice.status)} · Giá trị: ${money(data.invoice.finalAmount)}`;
+                    } else {
+                        paymentInvoiceEl.textContent = '';
+                    }
+                }
+
+                if (paymentFeedbackEl) {
+                    paymentFeedbackEl.textContent = '';
+                    paymentFeedbackEl.className = 'payment-feedback';
+                }
+
+                if (paymentMethodSelect) {
+                    const previous = paymentMethodSelect.value;
+                    paymentMethodSelect.innerHTML = Array.isArray(data?.availableMethods)
+                        ? data.availableMethods.map(m => `<option value="${escapeHtml(m.key)}">${escapeHtml(m.label)}</option>`).join('')
+                        : '';
+                    if (currentShare?.paymentMethod) {
+                        paymentMethodSelect.value = currentShare.paymentMethod;
+                    } else if (previous) {
+                        paymentMethodSelect.value = previous;
+                    }
+                }
+
+                if (paymentSplitSelect) {
+                    const mode = session?.splitModeKey || paymentSplitSelect.value || 'full';
+                    paymentSplitSelect.value = mode;
+                    const hasOtherShares = shares.some(share => !share.isCurrentUser);
+                    paymentSplitSelect.disabled = Boolean(session?.paymentSessionId) && hasOtherShares;
+                    updateModeSections(mode);
+                }
+
+                if (paymentParticipantsInput) {
+                    if (session?.participantCount) {
+                        paymentParticipantsInput.value = session.participantCount;
+                    } else if (!paymentParticipantsInput.value) {
+                        paymentParticipantsInput.value = '';
+                    }
+                }
+
+                if (paymentPercentageInput) {
+                    if (currentShare?.percentage != null) {
+                        paymentPercentageInput.value = currentShare.percentage;
+                    } else if (!paymentPercentageInput.value) {
+                        paymentPercentageInput.value = '';
+                    }
+                }
+
+                if (paymentDisplayNameInput) {
+                    paymentDisplayNameInput.value = currentShare?.displayName ?? paymentDisplayNameInput.value ?? '';
+                }
+
+                if (paymentItemsContainer) {
+                    const takenByOthers = new Set();
+                    shares.filter(s => !s.isCurrentUser).forEach(s => {
+                        if (Array.isArray(s.itemIds)) {
+                            s.itemIds.forEach(id => takenByOthers.add(id));
+                        }
+                    });
+                    const currentItems = new Set(Array.isArray(currentShare?.itemIds) ? currentShare.itemIds : []);
+
+                    paymentItemsContainer.innerHTML = items.map(item => {
+                        const disabled = takenByOthers.has(item.orderItemId) && !currentItems.has(item.orderItemId);
+                        const checked = currentItems.has(item.orderItemId);
+                        return `
+                            <label class="payment-item ${disabled ? 'is-disabled' : ''}">
+                                <input type="checkbox" value="${item.orderItemId}" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} />
+                                <span>
+                                    <strong>${escapeHtml(item.name)}</strong>
+                                    <small> · ${money(item.lineTotal)} · SL: ${item.quantity}</small>
+                                </span>
+                            </label>`;
+                    }).join('');
+                }
+
+                if (paymentSharesEl) {
+                    if (shares.length === 0) {
+                        paymentSharesEl.innerHTML = '<div class="payment-share-card empty">Chưa có ai ghi nhận thanh toán.</div>';
+                    } else {
+                        paymentSharesEl.innerHTML = shares.map(share => {
+                            const name = escapeHtml(share.displayName || (share.isCurrentUser ? 'Bạn' : `Khách ${share.paymentShareId}`));
+                            const method = friendlyPaymentMethod(share.paymentMethod);
+                            const percentText = share.percentage != null && !Number.isNaN(Number(share.percentage))
+                                ? ` · ${Number(share.percentage).toFixed(1)}%`
+                                : '';
+                            const itemsText = Array.isArray(share.itemIds) && share.itemIds.length
+                                ? ' · Món: ' + share.itemIds.map(id => escapeHtml(itemMap.get(id)?.name || `#${id}`)).join(', ')
+                                : '';
+                            const youTag = share.isCurrentUser ? '<span class="share-pill">Bạn</span>' : '';
+                            return `
+                                <div class="payment-share-card">
+                                    <div class="share-header">
+                                        <span>${name} ${youTag}</span>
+                                        <strong>${money(share.amount)}</strong>
+                                    </div>
+                                    <div class="share-body">${escapeHtml(method)}${percentText}${itemsText}</div>
+                                </div>`;
+                        }).join('');
+                    }
+                }
+
+                if (paymentForm) {
+                    const submitBtn = paymentForm.querySelector('.payment-submit');
+                    const isDisabled = Boolean(session?.isFinalized) || (session?.outstandingAmount !== undefined && session.outstandingAmount <= 0);
+                    paymentForm.classList.toggle('is-disabled', isDisabled);
+                    if (submitBtn) submitBtn.disabled = isDisabled;
+                    if (isDisabled && paymentFeedbackEl) {
+                        paymentFeedbackEl.textContent = 'Đơn hàng đã thanh toán xong.';
+                        paymentFeedbackEl.className = 'payment-feedback success';
+                    }
+                }
+            }
+
+            async function fetchLatest() {
+                if (!tableCode) return;
+                try {
+                    const res = await fetch(`/orders/details/${orderId}/json?tableCode=${encodeURIComponent(tableCode)}`, { cache: 'no-store' });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    renderOrder(data);
+                } catch (err) {
+                    console.error('Không thể cập nhật đơn hàng', err);
+                }
+            }
+
+            async function fetchPayment() {
+                if (!tableCode || !paymentSection) return;
+                try {
+                    const res = await fetch(`/orders/${orderId}/payment?tableCode=${encodeURIComponent(tableCode)}`, { cache: 'no-store' });
+                    if (!res.ok) return;
+                    paymentState = await res.json();
+                    renderPayment();
+                } catch (err) {
+                    console.error('Không thể tải thông tin thanh toán', err);
+                }
+            }
+
+            if (paymentSplitSelect) {
+                paymentSplitSelect.addEventListener('change', () => {
+                    updateModeSections(paymentSplitSelect.value);
+                });
+            }
+
+            if (paymentForm) {
+                paymentForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    if (!tableCode) return;
+
+                    const splitMode = paymentSplitSelect ? paymentSplitSelect.value : 'full';
+                    const displayNameRaw = paymentDisplayNameInput ? paymentDisplayNameInput.value.trim() : '';
+                    const payload = {
+                        splitMode,
+                        paymentMethod: paymentMethodSelect ? paymentMethodSelect.value : 'cash',
+                        displayName: displayNameRaw ? displayNameRaw : null
+                    };
+
+                    if (splitMode === 'even' && paymentParticipantsInput) {
+                        const participants = parseInt(paymentParticipantsInput.value, 10);
+                        if (!Number.isFinite(participants) || participants < 1) {
+                            if (paymentFeedbackEl) {
+                                paymentFeedbackEl.textContent = 'Vui lòng nhập số người chia hợp lệ.';
+                                paymentFeedbackEl.className = 'payment-feedback error';
+                            }
+                            return;
+                        }
+                        payload.participantCount = participants;
+                    }
+
+                    if (splitMode === 'percentage' && paymentPercentageInput) {
+                        const percent = Number(paymentPercentageInput.value);
+                        if (!Number.isFinite(percent) || percent <= 0) {
+                            if (paymentFeedbackEl) {
+                                paymentFeedbackEl.textContent = 'Vui lòng nhập phần trăm hợp lệ (> 0).';
+                                paymentFeedbackEl.className = 'payment-feedback error';
+                            }
+                            return;
+                        }
+                        payload.percentage = percent;
+                    }
+
+                    if (splitMode === 'items' && paymentItemsContainer) {
+                        const selected = Array.from(paymentItemsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+                            .map(input => Number(input.value))
+                            .filter(id => Number.isFinite(id));
+                        if (selected.length === 0) {
+                            if (paymentFeedbackEl) {
+                                paymentFeedbackEl.textContent = 'Vui lòng chọn ít nhất một món để thanh toán.';
+                                paymentFeedbackEl.className = 'payment-feedback error';
+                            }
+                            return;
+                        }
+                        payload.itemIds = selected;
+                    }
+
+                    const submitBtn = paymentForm.querySelector('.payment-submit');
+                    if (submitBtn) submitBtn.disabled = true;
+
+                    try {
+                        const res = await fetch(`/orders/${orderId}/payment?tableCode=${encodeURIComponent(tableCode)}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                ...(paymentToken ? { 'RequestVerificationToken': paymentToken } : {})
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!res.ok) {
+                            const error = await res.json().catch(() => ({}));
+                            if (paymentFeedbackEl) {
+                                paymentFeedbackEl.textContent = error?.message || 'Không thể ghi nhận thanh toán.';
+                                paymentFeedbackEl.className = 'payment-feedback error';
+                            }
+                            return;
+                        }
+
+                        paymentState = await res.json();
+                        renderPayment();
+                        if (paymentFeedbackEl) {
+                            paymentFeedbackEl.textContent = 'Ghi nhận thanh toán thành công.';
+                            paymentFeedbackEl.className = 'payment-feedback success';
+                        }
+                    } catch (err) {
+                        console.error('Không thể gửi thanh toán', err);
+                        if (paymentFeedbackEl) {
+                            paymentFeedbackEl.textContent = 'Có lỗi khi gửi thanh toán. Vui lòng thử lại.';
+                            paymentFeedbackEl.className = 'payment-feedback error';
+                        }
+                    } finally {
+                        if (submitBtn) submitBtn.disabled = false;
+                    }
+                });
+            }
+
+            fetchLatest();
+            fetchPayment();
+
+            if (typeof signalR !== 'undefined') {
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl('/hubs/order-status')
+                    .withAutomaticReconnect()
+                    .build();
+
+                connection.on('OrderDetailsUpdated', (payload) => {
+                    if (!payload || !payload.order) return;
+                    if (Number(payload.order.id) !== orderId) return;
+                    renderOrder(payload);
+                    fetchPayment();
+                });
+
+                connection.onreconnected(() => {
+                    if (tableCode) connection.invoke('JoinTable', tableCode);
+                    connection.invoke('JoinOrder', orderId);
+                    fetchLatest();
+                    fetchPayment();
+                });
+
+                connection.onclose(() => {
+                    setTimeout(() => connection.start().then(() => {
+                        if (tableCode) connection.invoke('JoinTable', tableCode);
+                        connection.invoke('JoinOrder', orderId);
+                    }).catch(() => {}), 3000);
+                });
+
+                connection.start().then(() => {
+                    if (tableCode) connection.invoke('JoinTable', tableCode);
+                    connection.invoke('JoinOrder', orderId);
+                }).catch(err => console.error('SignalR', err));
+            }
+        })();
+    </script>
+}

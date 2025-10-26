@@ -5,7 +5,12 @@
     ViewData["Title"] = "Chi tiết món ăn";
     var item = Model.Item;
     var basePrice = Model.BasePriceEffective;
+    var finalPrice = Model.FinalPrice;
+    var hasDynamic = Model.DynamicPriceFactor.HasValue && Model.DynamicPriceFactor.Value != 0;
     var tableCode = Context.Session.GetString("CurrentTableCode");
+    var stockQuantity = Math.Max(0, item.StockQuantity);
+    var isOutOfStock = !item.IsAvailable || stockQuantity <= 0;
+    var maxOrderable = stockQuantity > 0 ? Math.Min(stockQuantity, 50) : 0;
 }
 
 @section Styles {
@@ -44,16 +49,42 @@
                     <h1 class="food-title">@item.Name</h1>
 
                     <div class="food-price">
-                        <span class="current-price">@basePrice.ToString("N0") VNĐ</span>
-                        @if (item.DiscountPrice > 0 || item.DiscountPercent > 0)
+                        @if (hasDynamic)
                         {
-                            <span class="original-price">@item.BasePrice.ToString("N0") VNĐ</span>
+                            <span class="current-price text-primary">@finalPrice.ToString("N0") VNĐ</span>
+                            <span class="original-price">@basePrice.ToString("N0") VNĐ</span>
+                            <div class="small text-info">
+                                Giá động x@Model.DynamicPriceFactor!.Value.ToString("0.##")
+                                @if (!string.IsNullOrWhiteSpace(Model.DynamicPricingLabel))
+                                {
+                                    @($"- {Model.DynamicPricingLabel}")
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="current-price">@basePrice.ToString("N0") VNĐ</span>
+                            @if (item.DiscountPrice > 0 || item.DiscountPercent > 0)
+                            {
+                                <span class="original-price">@item.BasePrice.ToString("N0") VNĐ</span>
+                            }
                         }
                     </div>
 
                     <div class="food-description">
                         <h3>Mô tả món ăn</h3>
                         <p>@item.Description</p>
+                    </div>
+
+                    <div class="stock-status @(isOutOfStock ? "out-of-stock" : "in-stock")">
+                        @if (isOutOfStock)
+                        {
+                            <span>Hết hàng</span>
+                        }
+                        else
+                        {
+                            <span>Còn lại: @stockQuantity suất</span>
+                        }
                     </div>
 
                     <!-- NHÓM TUỲ CHỌN (động theo OptionGroupType) -->
@@ -201,9 +232,17 @@
                     <div class="quantity-selector">
                         <label>Số lượng:</label>
                         <div class="quantity-controls">
-                            <button type="button" class="qty-btn minus" data-q="-1">-</button>
-                            <input type="number" class="quantity" id="quantity" name="Quantity" value="1" min="1" max="50" readonly>
-                            <button type="button" class="qty-btn plus" data-q="1">+</button>
+                            <button type="button" class="qty-btn minus" data-q="-1" @(isOutOfStock ? "disabled" : null)>-</button>
+                            <input type="number"
+                                   class="quantity"
+                                   id="quantity"
+                                   name="Quantity"
+                                   value="@(isOutOfStock ? 0 : 1)"
+                                   min="@(isOutOfStock ? 0 : 1)"
+                                   max="@maxOrderable"
+                                   data-out-of-stock="@(isOutOfStock.ToString().ToLower())"
+                                   @(isOutOfStock ? "readonly disabled" : "readonly") />
+                            <button type="button" class="qty-btn plus" data-q="1" @(isOutOfStock ? "disabled" : null)>+</button>
                         </div>
                     </div>
 
@@ -213,7 +252,7 @@
                     </div>
 
                     <div class="action-buttons">
-                        <button type="submit" class="btn-add-cart" onclick="addToCart(@item.FoodItemId)">Đặt món</button>
+                        <button type="submit" class="btn-add-cart" onclick="addToCart(@item.FoodItemId)" @(isOutOfStock ? "disabled" : null)>Đặt món</button>
                     </div>
                 </form>
             </div>
@@ -251,6 +290,9 @@
     <script>
         (() => {
             const basePrice = @basePrice;
+            const quantityInput = document.getElementById('quantity');
+            if (!quantityInput) return;
+            const isOutOfStock = quantityInput.dataset.outOfStock === 'true';
 
             // tiện ích
             const toNum = v => {
@@ -310,22 +352,46 @@
                     }
                 });
 
-                const qty = toNum(document.getElementById('quantity').value) || 1;
+                let qty = Number(quantityInput.value);
+                if (!Number.isFinite(qty)) {
+                    qty = 0;
+                }
+
+                if (!isOutOfStock) {
+                    const minAttr = Number(quantityInput.min);
+                    const minQty = Number.isFinite(minAttr) ? minAttr : 1;
+                    const maxAttr = Number(quantityInput.max);
+                    const hasMax = Number.isFinite(maxAttr) && maxAttr > 0;
+
+                    if (qty < minQty) {
+                        qty = minQty;
+                        quantityInput.value = minQty;
+                    } else if (hasMax && qty > maxAttr) {
+                        qty = maxAttr;
+                        quantityInput.value = maxAttr;
+                    }
+                }
+                else {
+                    qty = 0;
+                }
+
                 const total = (basePrice + delta) * qty;
                 document.getElementById('totalPrice').textContent = total.toLocaleString('vi-VN') + ' VNĐ';
             }
 
             // số lượng tổng
-            document.querySelectorAll('.qty-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const delta = Number(btn.dataset.q);
-                    const inp = document.getElementById('quantity');
-                    let v = Number(inp.value)+delta;
-                    const min = Number(inp.min)||1, max = Number(inp.max)||99;
-                    if (v < min) v = min; if (v > max) v = max;
-                    inp.value = v; calcTotal();
+            if (!isOutOfStock) {
+                document.querySelectorAll('.qty-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const delta = Number(btn.dataset.q);
+                        const inp = quantityInput;
+                        let v = Number(inp.value)+delta;
+                        const min = Number(inp.min)||1, max = Number(inp.max)||99;
+                        if (v < min) v = min; if (max > 0 && v > max) v = max;
+                        inp.value = v; calcTotal();
+                    });
                 });
-            });
+            }
 
             // listeners từng kiểu
             document.querySelectorAll('.option-group').forEach(g => {

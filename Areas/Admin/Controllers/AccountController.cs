@@ -79,6 +79,7 @@ namespace ASM_1.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -105,7 +106,7 @@ namespace ASM_1.Areas.Admin.Controllers
                     }
                 }
 
-                ModelState.AddModelError("", "Tên đăng nhập hoặc mật khẩu không đúng");
+                ViewBag.Error = "Tên đăng nhập hoặc mật khẩu không đúng!";
             }
             return View(model);
         }
@@ -149,6 +150,7 @@ namespace ASM_1.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

@@ -77,6 +77,8 @@
                 bool isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
                 bool isAccountAdmin = await UserManager.IsInRoleAsync(user, "AccountAdmin");
                 bool isFoodAdmin = await UserManager.IsInRoleAsync(user, "FoodAdmin");
+                bool isChef = await UserManager.IsInRoleAsync(user, "Chef");
+                bool isCashier = await UserManager.IsInRoleAsync(user, "Cashier");
 
                 if (isAdmin || isAccountAdmin)
                 {
@@ -139,6 +141,27 @@
                             <span>Quản lý giảm giá</span>
                         </a>
                     </div>
+                }
+                if (isChef)
+                {
+                    <li class="menu-section">Khu bếp</li>
+                    <li class="menu-item">
+                        <a asp-area="Staff" asp-controller="Kitchen" asp-action="Index" class="menu-link">
+                            <span class="material-symbols-rounded" aria-hidden="true">soup_kitchen</span>
+                            <span class="menu-label">KDS - Đơn cần chế biến</span>
+                        </a>
+                    </li>
+                }
+
+                if (isCashier)
+                {
+                    <li class="menu-section">Thu ngân</li>
+                    <li class="menu-item">
+                        <a asp-area="Staff" asp-controller="Cashier" asp-action="Index" class="menu-link">
+                            <span class="material-symbols-rounded" aria-hidden="true">point_of_sale</span>
+                            <span class="menu-label">Quản lý đơn &amp; in hóa đơn</span>
+                        </a>
+                    </li>
                 }
             }
 
@@ -208,10 +231,13 @@
                             Cài đặt
                         </a>
 
-                        <a asp-controller="Account" asp-action="Logout" method="post" class="user-dropdown-item logout-item">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Đăng xuất</span>
-                        </a>
+                        <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" class="admin-logout-form" style="display: contents;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="user-dropdown-item logout-item">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Đăng xuất</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

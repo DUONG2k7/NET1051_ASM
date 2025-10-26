@@ -19,7 +19,9 @@
             </div>
         }
 
-        <form asp-controller="Account" asp-action="Login" method="post">
+        @* <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div> *@
+        <form asp-area="Admin" asp-controller="Account" asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
             <div class="form-group">
                 <label asp-for="UsernameOrEmail">Email hoặc tên đăng nhập <span style="color:orangered">*</span></label>
                 <input asp-for="UsernameOrEmail" class="form-control" required>

@@ -1,0 +1,434 @@
+@model KitchenDashboardViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    ViewData["Title"] = "KDS Bếp";
+    var antiforgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+    var dashboardUrl = Url.Action("DashboardData", "Kitchen", new { area = "Staff" });
+    var startAction = Url.Action("Start", "Kitchen", new { area = "Staff" });
+    var markReadyAction = Url.Action("MarkReady", "Kitchen", new { area = "Staff" });
+}
+
+<div class="container-fluid py-4"
+     data-dashboard-url="@dashboardUrl"
+     data-request-token="@antiforgeryToken"
+     data-start-action="@startAction"
+     data-ready-action="@markReadyAction">
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="staff-toast-container"></div>
+
+    <div class="d-flex align-items-center mb-4">
+        <i class="bi bi-display me-2 fs-3 text-primary"></i>
+        <h1 class="h3 mb-0">Kitchen Display System</h1>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="h5 mb-0">Đơn mới</h2>
+                </div>
+                <div class="card-body" data-kitchen-section="pending">
+                    @if (!Model.PendingOrders.Any())
+                    {
+                        <p class="text-muted mb-0">Không có đơn mới.</p>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var order in Model.PendingOrders)
+                            {
+                                <div class="list-group-item border-0 px-0 pb-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="fw-semibold">@order.FoodName <span class="badge bg-secondary">x@order.Quantity</span></div>
+                                            <div class="text-muted small">Mã hóa đơn: @order.InvoiceCode</div>
+                                            <div class="text-muted small">Thời gian: @order.CreatedAt.ToLocalTime().ToString("HH:mm:ss")</div>
+                                            @if (order.Options.Any())
+                                            {
+                                                <div class="small text-muted">Tùy chọn: @string.Join(", ", order.Options)</div>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(order.Note))
+                                            {
+                                                <div class="small text-danger">Ghi chú: @order.Note</div>
+                                            }
+                                        </div>
+                                        <form asp-action="Start" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@order.OrderItemId" />
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">Nhận món</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <h2 class="h5 mb-0">Đang chế biến</h2>
+                </div>
+                <div class="card-body" data-kitchen-section="in-progress">
+                    @if (!Model.InProgressOrders.Any())
+                    {
+                        <p class="text-muted mb-0">Chưa có món nào đang chế biến.</p>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var order in Model.InProgressOrders)
+                            {
+                                <div class="list-group-item border-0 px-0 pb-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="fw-semibold">@order.FoodName <span class="badge bg-secondary">x@order.Quantity</span></div>
+                                            <div class="text-muted small">Mã hóa đơn: @order.InvoiceCode</div>
+                                            <div class="text-muted small">Bắt đầu lúc: @order.CreatedAt.ToLocalTime().ToString("HH:mm:ss")</div>
+                                            @if (order.Options.Any())
+                                            {
+                                                <div class="small text-muted">Tùy chọn: @string.Join(", ", order.Options)</div>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(order.Note))
+                                            {
+                                                <div class="small text-danger">Ghi chú: @order.Note</div>
+                                            }
+                                        </div>
+                                        <form asp-action="MarkReady" method="post" class="text-end">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@order.OrderItemId" />
+                                            <button type="submit" class="btn btn-success btn-sm">Hoàn thành</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h2 class="h5 mb-0">Chờ giao</h2>
+                </div>
+                <div class="card-body" data-kitchen-section="ready">
+                    @if (!Model.ReadyOrders.Any())
+                    {
+                        <p class="text-muted mb-0">Chưa có món nào sẵn sàng.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var order in Model.ReadyOrders)
+                            {
+                                <li class="list-group-item border-0 px-0 pb-3">
+                                    <div class="fw-semibold">@order.FoodName <span class="badge bg-secondary">x@order.Quantity</span></div>
+                                    <div class="text-muted small">Mã hóa đơn: @order.InvoiceCode</div>
+                                    @if (order.Options.Any())
+                                    {
+                                        <div class="small text-muted">Tùy chọn: @string.Join(", ", order.Options)</div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(order.Note))
+                                    {
+                                        <div class="small text-danger">Ghi chú: @order.Note</div>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script>
+        (() => {
+            const root = document.querySelector('[data-dashboard-url][data-start-action][data-ready-action]');
+            if (!root) return;
+
+            const dashboardUrl = root.getAttribute('data-dashboard-url');
+            const tokenValue = root.getAttribute('data-request-token') || '';
+            const startAction = root.getAttribute('data-start-action') || '';
+            const readyAction = root.getAttribute('data-ready-action') || '';
+            const toastContainer = document.getElementById('staff-toast-container');
+
+            const sectionEmptyTexts = {
+                pending: 'Không có đơn mới.',
+                'in-progress': 'Chưa có món nào đang chế biến.',
+                ready: 'Chưa có món nào sẵn sàng.'
+            };
+
+            function showToast(title, message, variant = 'primary') {
+                if (!toastContainer || typeof bootstrap === 'undefined') return;
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast align-items-center text-bg-${variant} border-0`;
+                toastEl.setAttribute('role', 'alert');
+                toastEl.setAttribute('aria-live', 'assertive');
+                toastEl.setAttribute('aria-atomic', 'true');
+
+                const body = document.createElement('div');
+                body.className = 'd-flex';
+
+                const content = document.createElement('div');
+                content.className = 'toast-body';
+                const titleEl = document.createElement('div');
+                titleEl.className = 'fw-semibold';
+                titleEl.textContent = title;
+                const messageEl = document.createElement('div');
+                messageEl.textContent = message;
+                content.appendChild(titleEl);
+                content.appendChild(messageEl);
+
+                const closeBtn = document.createElement('button');
+                closeBtn.type = 'button';
+                closeBtn.className = 'btn-close btn-close-white me-2 m-auto';
+                closeBtn.setAttribute('data-bs-dismiss', 'toast');
+                closeBtn.setAttribute('aria-label', 'Close');
+
+                body.appendChild(content);
+                body.appendChild(closeBtn);
+                toastEl.appendChild(body);
+
+                toastContainer.appendChild(toastEl);
+                const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+                toast.show();
+                toastEl.addEventListener('hidden.bs.toast', () => {
+                    toast.dispose();
+                    toastEl.remove();
+                });
+            }
+
+            function formatTime(value) {
+                if (!value) return '';
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) return '';
+                return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
+
+            function createTokenInput() {
+                if (!tokenValue) return null;
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = '__RequestVerificationToken';
+                input.value = tokenValue;
+                return input;
+            }
+
+            function renderKitchenSection(section, items) {
+                const container = document.querySelector(`[data-kitchen-section="${section}"]`);
+                if (!container) return;
+                container.innerHTML = '';
+
+                if (!Array.isArray(items) || items.length === 0) {
+                    const empty = document.createElement('p');
+                    empty.className = 'text-muted mb-0';
+                    empty.textContent = sectionEmptyTexts[section] || 'Không có dữ liệu.';
+                    container.appendChild(empty);
+                    return;
+                }
+
+                const isReadySection = section === 'ready';
+                const list = document.createElement(isReadySection ? 'ul' : 'div');
+                list.className = 'list-group list-group-flush';
+                container.appendChild(list);
+
+                items.forEach(item => {
+                    if (isReadySection) {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item border-0 px-0 pb-3';
+
+                        const name = document.createElement('div');
+                        name.className = 'fw-semibold';
+                        name.textContent = item.foodName || 'Món';
+                        const badge = document.createElement('span');
+                        badge.className = 'badge bg-secondary ms-2';
+                        badge.textContent = `x${item.quantity ?? 0}`;
+                        name.appendChild(badge);
+                        li.appendChild(name);
+
+                        const invoice = document.createElement('div');
+                        invoice.className = 'text-muted small';
+                        invoice.textContent = `Mã hóa đơn: ${item.invoiceCode || '#'}`;
+                        li.appendChild(invoice);
+
+                        if (Array.isArray(item.options) && item.options.length > 0) {
+                            const opts = document.createElement('div');
+                            opts.className = 'small text-muted';
+                            opts.textContent = `Tùy chọn: ${item.options.join(', ')}`;
+                            li.appendChild(opts);
+                        }
+
+                        if (item.note) {
+                            const note = document.createElement('div');
+                            note.className = 'small text-danger';
+                            note.textContent = `Ghi chú: ${item.note}`;
+                            li.appendChild(note);
+                        }
+
+                        list.appendChild(li);
+                        return;
+                    }
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'list-group-item border-0 px-0 pb-3';
+
+                    const content = document.createElement('div');
+                    content.className = 'd-flex justify-content-between align-items-start';
+                    wrapper.appendChild(content);
+
+                    const info = document.createElement('div');
+                    const name = document.createElement('div');
+                    name.className = 'fw-semibold';
+                    name.textContent = item.foodName || 'Món';
+                    const badge = document.createElement('span');
+                    badge.className = 'badge bg-secondary ms-2';
+                    badge.textContent = `x${item.quantity ?? 0}`;
+                    name.appendChild(badge);
+                    info.appendChild(name);
+
+                    const invoice = document.createElement('div');
+                    invoice.className = 'text-muted small';
+                    invoice.textContent = `Mã hóa đơn: ${item.invoiceCode || '#'}`;
+                    info.appendChild(invoice);
+
+                    const time = document.createElement('div');
+                    time.className = 'text-muted small';
+                    time.textContent = `${section === 'pending' ? 'Thời gian' : 'Bắt đầu lúc'}: ${formatTime(item.createdAt)}`;
+                    info.appendChild(time);
+
+                    if (Array.isArray(item.options) && item.options.length > 0) {
+                        const opts = document.createElement('div');
+                        opts.className = 'small text-muted';
+                        opts.textContent = `Tùy chọn: ${item.options.join(', ')}`;
+                        info.appendChild(opts);
+                    }
+
+                    if (item.note) {
+                        const note = document.createElement('div');
+                        note.className = 'small text-danger';
+                        note.textContent = `Ghi chú: ${item.note}`;
+                        info.appendChild(note);
+                    }
+
+                    content.appendChild(info);
+
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = section === 'pending' ? startAction : readyAction;
+                    if (section === 'in-progress') {
+                        form.className = 'text-end';
+                    }
+
+                    const tokenInput = createTokenInput();
+                    if (tokenInput) {
+                        form.appendChild(tokenInput);
+                    }
+
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.name = 'id';
+                    idInput.value = item.id;
+                    form.appendChild(idInput);
+
+                    const button = document.createElement('button');
+                    button.type = 'submit';
+                    button.className = section === 'pending'
+                        ? 'btn btn-outline-primary btn-sm'
+                        : 'btn btn-success btn-sm';
+                    button.textContent = section === 'pending' ? 'Nhận món' : 'Hoàn thành';
+                    form.appendChild(button);
+
+                    content.appendChild(form);
+
+                    list.appendChild(wrapper);
+                });
+            }
+
+            async function fetchDashboard() {
+                if (!dashboardUrl) return;
+                try {
+                    const response = await fetch(dashboardUrl, { cache: 'no-store' });
+                    if (!response.ok) throw new Error('Không thể tải dữ liệu bếp');
+                    const data = await response.json();
+                    renderKitchenSection('pending', data?.pending ?? []);
+                    renderKitchenSection('in-progress', data?.inProgress ?? []);
+                    renderKitchenSection('ready', data?.ready ?? []);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            let refreshTimer = null;
+            function requestRefresh(immediate = false) {
+                if (immediate) {
+                    fetchDashboard();
+                    return;
+                }
+
+                if (refreshTimer) return;
+                refreshTimer = window.setTimeout(() => {
+                    refreshTimer = null;
+                    fetchDashboard();
+                }, 600);
+            }
+
+            requestRefresh(true);
+            const periodic = window.setInterval(fetchDashboard, 60000);
+
+            if (typeof signalR !== 'undefined') {
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl('/hubs/order-status')
+                    .withAutomaticReconnect()
+                    .build();
+
+                connection.on('StaffOrderUpdated', payload => {
+                    if (!payload || !payload.summary) return;
+                    const summary = payload.summary;
+                    const orderCode = summary.code || summary.invoiceCode || '#';
+                    const tableName = summary.table || 'Bàn';
+                    const status = (summary.status || '').toString();
+                    const isServed = status.toLowerCase() === 'served';
+
+                    if (isServed) {
+                        requestRefresh();
+                        return;
+                    }
+
+                    if (payload.isNewOrder) {
+                        showToast('Đơn hàng mới', `${tableName} vừa gửi ${orderCode}`, 'warning');
+                    }
+                    else {
+                        showToast('Cập nhật đơn', `${orderCode} hiện trạng thái ${status}`, 'info');
+                    }
+
+                    requestRefresh();
+                });
+
+                connection.onreconnected(() => {
+                    connection.invoke('JoinKitchen').catch(() => { });
+                    requestRefresh(true);
+                });
+
+                connection.onclose(() => {
+                    setTimeout(() => {
+                        connection.start().then(() => connection.invoke('JoinKitchen').catch(() => { })).catch(() => { });
+                    }, 2000);
+                });
+
+                connection.start()
+                    .then(() => connection.invoke('JoinKitchen'))
+                    .catch(err => console.error('SignalR', err));
+            }
+
+            window.addEventListener('beforeunload', () => {
+                if (periodic) window.clearInterval(periodic);
+            });
+        })();
+    </script>
+}

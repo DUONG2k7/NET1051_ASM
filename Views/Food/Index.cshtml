@@ -28,6 +28,20 @@
             <p class="menu-subtitle">Khám phá những món ăn đặc sắc và hương vị tuyệt vời</p>
         </div>
 
+        @if (Model.DynamicPriceFactor.HasValue)
+        {
+            <div class="alert alert-info d-flex align-items-center gap-2">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span>
+                    Giá động x@Model.DynamicPriceFactor.Value.ToString("0.##")
+                    @if (!string.IsNullOrWhiteSpace(Model.DynamicPricingLabel))
+                    {
+                        @($"- {Model.DynamicPricingLabel}")
+                    }
+                </span>
+            </div>
+        }
+
         <!-- =================== CATEGORY BAR =================== -->
         <div class="menu-categories">
             <button class="active category-btn" data-category="0">
@@ -87,10 +101,12 @@
             <div id="combo-section" class="row g-4">
                 @foreach (var combo in Model.Combos)
                 {
+                    var comboOutOfStock = combo.ComboDetails == null || combo.ComboDetails.Any(cd =>
+                    cd.FoodItem == null || !cd.FoodItem.IsAvailable || cd.FoodItem.StockQuantity <= 0);
                     <div class="col-md-4 col-lg-3">
                         <a href="@Url.Action("Detail", "Food", new { tableCode = tableCode, slug = combo.Slug })"
                            style="text-decoration: none;"
-                           class="menu-item-card combo-card"
+                           class="menu-item-card combo-card@(comboOutOfStock ? " out-of-stock" : string.Empty)"
                            data-category="@string.Join(",", combo.ComboDetails!.Select(cd => cd.FoodItem!.CategoryId).Distinct())">
                             <!-- Ảnh combo -->
                             @* <img src="@Url.Content(!string.IsNullOrEmpty(combo.ImageUrl) ? combo.ImageUrl : "~/images/no-image.png")"
@@ -100,6 +116,10 @@
 
                             <div class="menu-item-image-wrapper">
                                 <div class="food-image">
+                                    @if (comboOutOfStock)
+                                    {
+                                        <span class="stock-badge">Hết hàng</span>
+                                    }
                                     <img src="@Url.Content(!string.IsNullOrEmpty(combo.ImageUrl) ? combo.ImageUrl : "~/images/no-image.png")"
                                          alt="@combo.ComboName"
                                          class="menu-item-image">
@@ -144,20 +164,28 @@
                                     <span class="rating-text">(4.8)</span>
                                 </div> *@
 
+                                @{
+                                    decimal comboDynamicPrice = 0;
+                                    var comboHasOverride = Model.ComboPriceOverrides != null && Model.ComboPriceOverrides.TryGetValue(combo.ComboId, out comboDynamicPrice);
+                                }
                                 <div class="price-section">
-                                    @* @if (combo.DiscountPrice > 0)
+                                    @if (comboHasOverride)
                                     {
-                                        <span class="old-price">@combo.BasePrice.ToString("N0") VNĐ</span>
-                                        <span class="price">
-                                            @((combo.BasePrice * (100 - combo.DiscountPercent) / 100).ToString("N0")) VNĐ
-                                        </span>
+                                        <span class="old-price">@combo.ComboPrice.ToString("N0") VNĐ</span>
+                                        <span class="price text-primary">@comboDynamicPrice.ToString("N0") VNĐ</span>
                                     }
                                     else
                                     {
-                                        <span class="price">@combo.BasePrice.ToString("N0") VNĐ</span>
-                                    } *@
-                                    <span class="price">@combo.ComboPrice.ToString("N0") VNĐ</span>
+                                        <span class="price">@combo.ComboPrice.ToString("N0") VNĐ</span>
+                                    }
                                 </div>
+                                @if (comboOutOfStock)
+                                {
+                                    <div class="stock-message">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        Combo tạm thời có món hết hàng
+                                    </div>
+                                }
                             </div>
                         </a>
                     </div>
@@ -180,6 +208,10 @@
                         <div class="food-card" data-category="@food.CategoryId">
                             <div class="food-image">
                                 <img src="@Url.Content(food.ImageUrl)" alt="@food.Name" class="menu-item-image">
+                                @if (!food.IsAvailable || food.StockQuantity <= 0)
+                                {
+                                    <span class="stock-badge">Hết hàng</span>
+                                }
                                 @if (food.DiscountPercent > 0)
                                 {
                                     <div class="discount-badge">-@food.DiscountPercent%</div>
@@ -192,13 +224,26 @@
                                     <span class="stars">★★★★★</span>
                                     <span class="rating-text">(4.8)</span>
                                 </div>
+                                @{
+                                    decimal foodDynamicPrice = 0;
+                                    var hasFoodOverride = Model.FoodPriceOverrides != null && Model.FoodPriceOverrides.TryGetValue(food.FoodItemId, out foodDynamicPrice);
+                                    var baseEffectivePrice = food.DiscountPrice > 0 ? food.DiscountPrice : (food.DiscountPercent > 0 ? food.BasePrice * (100 - food.DiscountPercent) / 100 : food.BasePrice);
+                                }
                                 <div class="price-section">
-                                    @if (food.DiscountPrice > 0)
+                                    @if (hasFoodOverride)
+                                    {
+                                        <span class="old-price">@baseEffectivePrice.ToString("N0") VNĐ</span>
+                                        <span class="price text-primary">@foodDynamicPrice.ToString("N0") VNĐ</span>
+                                    }
+                                    else if (food.DiscountPrice > 0)
                                     {
                                         <span class="old-price">@food.BasePrice.ToString("N0") VNĐ</span>
-                                        <span class="price">
-                                            @((food.BasePrice * (100 - food.DiscountPercent) / 100).ToString("N0")) VNĐ
-                                        </span>
+                                        <span class="price">@food.DiscountPrice.ToString("N0") VNĐ</span>
+                                    }
+                                    else if (food.DiscountPercent > 0)
+                                    {
+                                        <span class="old-price">@food.BasePrice.ToString("N0") VNĐ</span>
+                                        <span class="price">@((food.BasePrice * (100 - food.DiscountPercent) / 100).ToString("N0")) VNĐ</span>
                                     }
                                     else
                                     {
@@ -218,10 +263,15 @@
                 @* Kiểu 2 *@
                 @foreach (var food in Model.FoodItems)
                 {
+                    var foodOutOfStock = !food.IsAvailable || food.StockQuantity <= 0;
                     <div class="col-md-4 col-lg-3">
-                        <a href="@Url.Action("Detail", "Food", new { tableCode = tableCode, slug = food.Slug })" style="text-decoration: none;" class="menu-item-card" data-category="@food.CategoryId">
+                        <a href="@Url.Action("Detail", "Food", new { tableCode = tableCode, slug = food.Slug })" style="text-decoration: none;" class="menu-item-card@(foodOutOfStock ? " out-of-stock" : string.Empty)" data-category="@food.CategoryId">
                             <div class="menu-item-image-wrapper">
 
+                                @if (foodOutOfStock)
+                                {
+                                    <span class="stock-badge">Hết hàng</span>
+                                }
                                 <img src="@Url.Content(food.ImageUrl)" alt="@food.Name" class="menu-item-image">
                                 @if (food.DiscountPercent > 0)
                                 {
@@ -241,19 +291,39 @@
                                     <span class="stars">★★★★★</span>
                                     <span class="rating-text">(4.8)</span>
                                 </div> *@
+                                @{
+                                    decimal foodDynamicPrice2 = 0;
+                                    var hasFoodOverride2 = Model.FoodPriceOverrides != null && Model.FoodPriceOverrides.TryGetValue(food.FoodItemId, out foodDynamicPrice2);
+                                    var baseEffectivePrice2 = food.DiscountPrice > 0 ? food.DiscountPrice : (food.DiscountPercent > 0 ? food.BasePrice * (100 - food.DiscountPercent) / 100 : food.BasePrice);
+                                }
                                 <div class="price-section">
-                                    @if (food.DiscountPrice > 0)
+                                    @if (hasFoodOverride2)
+                                    {
+                                        <span class="old-price">@baseEffectivePrice2.ToString("N0") VNĐ</span>
+                                        <span class="price text-primary">@foodDynamicPrice2.ToString("N0") VNĐ</span>
+                                    }
+                                    else if (food.DiscountPrice > 0)
                                     {
                                         <span class="old-price">@food.BasePrice.ToString("N0") VNĐ</span>
-                                        <span class="price">
-                                            @((food.BasePrice * (100 - food.DiscountPercent) / 100).ToString("N0")) VNĐ
-                                        </span>
+                                        <span class="price">@food.DiscountPrice.ToString("N0") VNĐ</span>
+                                    }
+                                    else if (food.DiscountPercent > 0)
+                                    {
+                                        <span class="old-price">@food.BasePrice.ToString("N0") VNĐ</span>
+                                        <span class="price">@((food.BasePrice * (100 - food.DiscountPercent) / 100).ToString("N0")) VNĐ</span>
                                     }
                                     else
                                     {
                                         <span class="price">@food.BasePrice.ToString("N0") VNĐ</span>
                                     }
                                 </div>
+                                @if (foodOutOfStock)
+                                {
+                                    <div class="stock-message">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        Món ăn hiện đã hết hàng
+                                    </div>
+                                }
                             </div>
                         </a>
                     </div>

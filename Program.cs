@@ -1,4 +1,5 @@
 ﻿using ASM_1.Data;
+using ASM_1.Hubs;
 using ASM_1.Models.Account;
 using ASM_1.Services;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ASM_1.Services.ITableTrackerService, ASM_1.Services.TableTrackerService>();
 builder.Services.AddSingleton<ASM_1.Services.TableCodeService>();
 builder.Services.AddScoped<UserSessionService>();
+builder.Services.AddScoped<OrderNotificationService>();
 
 builder.Services.AddDistributedMemoryCache(); // dùng bộ nhớ trong server để lưu session
 builder.Services.AddSession(options =>
@@ -33,6 +35,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<SlugGenerator>();
 
@@ -74,6 +77,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action}/{id?}",
     defaults: new { area = "Admin", controller = "Admin", action = "Index" });
+
+app.MapHub<OrderStatusHub>("/hubs/order-status");
 
 
 app.Run();

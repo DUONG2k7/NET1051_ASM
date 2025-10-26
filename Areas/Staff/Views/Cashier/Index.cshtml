@@ -1,0 +1,429 @@
+@model CashierDashboardViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    ViewData["Title"] = "Quản lý đơn thu ngân";
+    var antiforgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+    var dashboardUrl = Url.Action("DashboardData", "Cashier", new { area = "Staff" });
+    var markServedAction = Url.Action("MarkServed", "Cashier", new { area = "Staff" });
+    var markPaidAction = Url.Action("MarkPaid", "Cashier", new { area = "Staff" });
+    var printUrlBase = Url.Action("Print", "Cashier", new { area = "Staff" });
+}
+
+<div class="container-fluid py-4"
+     data-dashboard-url="@dashboardUrl"
+     data-request-token="@antiforgeryToken"
+     data-served-action="@markServedAction"
+     data-paid-action="@markPaidAction"
+     data-print-url-base="@printUrlBase">
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="staff-toast-container"></div>
+
+    <div class="d-flex align-items-center mb-4">
+        <i class="bi bi-cash-coin me-2 fs-3 text-success"></i>
+        <h1 class="h3 mb-0">Quản lý đơn hàng &amp; thanh toán</h1>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h2 class="h5 mb-0">Đơn chờ bếp</h2>
+                </div>
+                <div class="card-body" data-cashier-section="waiting">
+                    @if (!Model.WaitingInvoices.Any())
+                    {
+                        <p class="text-muted mb-0">Không có đơn đang chờ.</p>
+                    }
+                    else
+                    {
+                        @foreach (var invoice in Model.WaitingInvoices)
+                        {
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">@invoice.InvoiceCode</div>
+                                        <div class="text-muted small">Tạo lúc: @invoice.CreatedDate.ToLocalTime().ToString("HH:mm dd/MM")</div>
+                                    </div>
+                                    <span class="badge bg-warning text-dark">@invoice.Status</span>
+                                </div>
+                                <ul class="list-unstyled small mt-2 mb-0">
+                                    @foreach (var item in invoice.Items)
+                                    {
+                                        <li>
+                                            <strong>@item.ItemName</strong> x@item.Quantity
+                                            <span class="text-muted">(@item.Status)</span>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Sẵn sàng phục vụ</h2>
+                </div>
+                <div class="card-body" data-cashier-section="ready">
+                    @if (!Model.ReadyInvoices.Any())
+                    {
+                        <p class="text-muted mb-0">Không có đơn nào đã hoàn tất.</p>
+                    }
+                    else
+                    {
+                        @foreach (var invoice in Model.ReadyInvoices)
+                        {
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                    <div class="fw-semibold">@invoice.InvoiceCode</div>
+                                    <div class="text-muted small">Tạo lúc: @invoice.CreatedDate.ToLocalTime().ToString("HH:mm dd/MM")</div>
+                                    @if (invoice.IsPrepaid)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success border-opacity-50">Đã trả trước</span>
+                                    }
+                                    </div>
+                                    <span class="badge bg-success">@invoice.Status</span>
+                                </div>
+                                <ul class="list-unstyled small mt-2">
+                                    @foreach (var item in invoice.Items)
+                                    {
+                                        <li>
+                                            <strong>@item.ItemName</strong> x@item.Quantity
+                                            @if (item.Options.Any())
+                                            {
+                                                <span class="text-muted">- @string.Join(", ", item.Options)</span>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                                <div class="d-flex gap-2">
+                                    <form asp-action="MarkServed" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="invoiceId" value="@invoice.InvoiceId" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">Đã phục vụ</button>
+                                    </form>
+                                    <form asp-action="MarkPaid" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="invoiceId" value="@invoice.InvoiceId" />
+                                        <button type="submit" class="btn btn-success btn-sm">Thanh toán &amp; in</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-dark text-white">
+                    <h2 class="h5 mb-0">Đã thanh toán</h2>
+                </div>
+                <div class="card-body" data-cashier-section="completed">
+                    @if (!Model.CompletedInvoices.Any())
+                    {
+                        <p class="text-muted mb-0">Chưa có hóa đơn đã thanh toán.</p>
+                    }
+                    else
+                    {
+                        @foreach (var invoice in Model.CompletedInvoices)
+                        {
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">@invoice.InvoiceCode</div>
+                                        <div class="text-muted small">Hoàn tất: @invoice.CreatedDate.ToLocalTime().ToString("HH:mm dd/MM")</div>
+                                    </div>
+                                    <span class="badge bg-success">Đã thanh toán</span>
+                                </div>
+                                <div class="mt-2 fw-semibold">Tổng: @invoice.FinalAmount.ToString("N0") đ</div>
+                                <a asp-action="Print" asp-route-invoiceId="@invoice.InvoiceId" class="btn btn-outline-secondary btn-sm mt-2">
+                                    <i class="bi bi-printer"></i> In lại hóa đơn
+                                </a>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script>
+        (() => {
+            const root = document.querySelector('[data-dashboard-url][data-served-action][data-paid-action]');
+            if (!root) return;
+
+            const dashboardUrl = root.getAttribute('data-dashboard-url');
+            const tokenValue = root.getAttribute('data-request-token') || '';
+            const servedAction = root.getAttribute('data-served-action') || '';
+            const paidAction = root.getAttribute('data-paid-action') || '';
+            const printUrlBase = root.getAttribute('data-print-url-base') || '';
+            const toastContainer = document.getElementById('staff-toast-container');
+
+            const sectionEmptyTexts = {
+                waiting: 'Không có đơn đang chờ.',
+                ready: 'Không có đơn nào đã hoàn tất.',
+                completed: 'Chưa có hóa đơn đã thanh toán.'
+            };
+
+            function showToast(title, message, variant = 'primary') {
+                if (!toastContainer || typeof bootstrap === 'undefined') return;
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast align-items-center text-bg-${variant} border-0`;
+                toastEl.setAttribute('role', 'alert');
+                toastEl.setAttribute('aria-live', 'assertive');
+                toastEl.setAttribute('aria-atomic', 'true');
+
+                const body = document.createElement('div');
+                body.className = 'd-flex';
+
+                const content = document.createElement('div');
+                content.className = 'toast-body';
+                const titleEl = document.createElement('div');
+                titleEl.className = 'fw-semibold';
+                titleEl.textContent = title;
+                const messageEl = document.createElement('div');
+                messageEl.textContent = message;
+                content.appendChild(titleEl);
+                content.appendChild(messageEl);
+
+                const closeBtn = document.createElement('button');
+                closeBtn.type = 'button';
+                closeBtn.className = 'btn-close btn-close-white me-2 m-auto';
+                closeBtn.setAttribute('data-bs-dismiss', 'toast');
+                closeBtn.setAttribute('aria-label', 'Close');
+
+                body.appendChild(content);
+                body.appendChild(closeBtn);
+                toastEl.appendChild(body);
+
+                toastContainer.appendChild(toastEl);
+                const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+                toast.show();
+                toastEl.addEventListener('hidden.bs.toast', () => {
+                    toast.dispose();
+                    toastEl.remove();
+                });
+            }
+
+            function formatTimeDay(value) {
+                if (!value) return '';
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) return '';
+                const hours = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                const day = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+                return `${hours} ${day}`;
+            }
+
+            function formatCurrency(value) {
+                const number = Number(value ?? 0);
+                return number.toLocaleString('vi-VN');
+            }
+
+            function createTokenInput() {
+                if (!tokenValue) return null;
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = '__RequestVerificationToken';
+                input.value = tokenValue;
+                return input;
+            }
+
+            function createElement(tag, className, textContent) {
+                const el = document.createElement(tag);
+                if (className) el.className = className;
+                if (typeof textContent === 'string') el.textContent = textContent;
+                return el;
+            }
+
+            function createActionForm(actionUrl, invoiceId, buttonClass, buttonText) {
+                const form = document.createElement('form');
+                form.method = 'post';
+                form.action = actionUrl;
+                form.className = 'd-inline';
+
+                const tokenInput = createTokenInput();
+                if (tokenInput) form.appendChild(tokenInput);
+
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'invoiceId';
+                idInput.value = invoiceId;
+                form.appendChild(idInput);
+
+                const button = createElement('button', buttonClass, buttonText);
+                button.type = 'submit';
+                form.appendChild(button);
+
+                return form;
+            }
+
+            function renderCashierSection(section, invoices) {
+                const container = document.querySelector(`[data-cashier-section="${section}"]`);
+                if (!container) return;
+                container.innerHTML = '';
+
+                if (!Array.isArray(invoices) || invoices.length === 0) {
+                    const empty = createElement('p', 'text-muted mb-0', sectionEmptyTexts[section] || 'Không có dữ liệu.');
+                    container.appendChild(empty);
+                    return;
+                }
+
+                invoices.forEach(invoice => {
+                    const wrapper = createElement('div', 'border-bottom pb-3 mb-3');
+
+                    const header = createElement('div', 'd-flex justify-content-between align-items-center');
+                    const info = document.createElement('div');
+                    info.appendChild(createElement('div', 'fw-semibold', invoice.code || '#'));
+
+                    const created = createElement('div', 'text-muted small', `${section === 'completed' ? 'Hoàn tất' : 'Tạo lúc'}: ${formatTimeDay(invoice.createdAt)}`);
+                    info.appendChild(created);
+
+                    if (section === 'ready' && invoice.isPrepaid) {
+                        const prepaid = createElement('span', 'badge bg-success-subtle text-success border border-success border-opacity-50', 'Đã trả trước');
+                        info.appendChild(prepaid);
+                    }
+
+                    header.appendChild(info);
+
+                    const statusBadgeClass = section === 'waiting'
+                        ? 'badge bg-warning text-dark'
+                        : section === 'ready'
+                            ? 'badge bg-success'
+                            : 'badge bg-success';
+                    const statusText = section === 'completed' ? 'Đã thanh toán' : (invoice.status || '');
+                    header.appendChild(createElement('span', statusBadgeClass, statusText));
+
+                    wrapper.appendChild(header);
+
+                    if (section === 'waiting' || section === 'ready') {
+                        const list = createElement('ul', `list-unstyled small mt-2${section === 'waiting' ? ' mb-0' : ''}`);
+                        (invoice.items || []).forEach(item => {
+                            const li = document.createElement('li');
+                            const name = createElement('strong', null, item.name || 'Món');
+                            li.appendChild(name);
+                            li.appendChild(document.createTextNode(` x${item.quantity ?? 0}`));
+
+                            if (section === 'waiting') {
+                                const status = createElement('span', 'text-muted', ` (${item.status || ''})`);
+                                li.appendChild(status);
+                            }
+                            else if (Array.isArray(item.options) && item.options.length > 0) {
+                                const opts = createElement('span', 'text-muted', ` - ${item.options.join(', ')}`);
+                                li.appendChild(opts);
+                            }
+
+                            list.appendChild(li);
+                        });
+                        wrapper.appendChild(list);
+                    }
+
+                    if (section === 'ready') {
+                        const actions = createElement('div', 'd-flex gap-2');
+                        actions.appendChild(createActionForm(servedAction, invoice.id, 'btn btn-outline-primary btn-sm', 'Đã phục vụ'));
+                        actions.appendChild(createActionForm(paidAction, invoice.id, 'btn btn-success btn-sm', 'Thanh toán & in'));
+                        wrapper.appendChild(actions);
+                    }
+
+                    if (section === 'completed') {
+                        const total = createElement('div', 'mt-2 fw-semibold', `Tổng: ${formatCurrency(invoice.finalAmount)} đ`);
+                        wrapper.appendChild(total);
+
+                        if (printUrlBase) {
+                            const link = document.createElement('a');
+                            link.className = 'btn btn-outline-secondary btn-sm mt-2';
+                            link.href = `${printUrlBase}?invoiceId=${invoice.id}`;
+                            const icon = createElement('i', 'bi bi-printer');
+                            link.appendChild(icon);
+                            link.appendChild(document.createTextNode(' In lại hóa đơn'));
+                            wrapper.appendChild(link);
+                        }
+                    }
+
+                    container.appendChild(wrapper);
+                });
+            }
+
+            async function fetchDashboard() {
+                if (!dashboardUrl) return;
+                try {
+                    const response = await fetch(dashboardUrl, { cache: 'no-store' });
+                    if (!response.ok) throw new Error('Không thể tải dữ liệu thu ngân');
+                    const data = await response.json();
+                    renderCashierSection('waiting', data?.waiting ?? []);
+                    renderCashierSection('ready', data?.ready ?? []);
+                    renderCashierSection('completed', data?.completed ?? []);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            let refreshTimer = null;
+            function requestRefresh(immediate = false) {
+                if (immediate) {
+                    fetchDashboard();
+                    return;
+                }
+
+                if (refreshTimer) return;
+                refreshTimer = window.setTimeout(() => {
+                    refreshTimer = null;
+                    fetchDashboard();
+                }, 600);
+            }
+
+            requestRefresh(true);
+            const periodic = window.setInterval(fetchDashboard, 60000);
+
+            if (typeof signalR !== 'undefined') {
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl('/hubs/order-status')
+                    .withAutomaticReconnect()
+                    .build();
+
+                connection.on('StaffOrderUpdated', payload => {
+                    if (!payload || !payload.summary) return;
+                    const summary = payload.summary;
+                    const invoiceCode = summary.invoiceCode || summary.code || '#';
+                    const tableName = summary.table || 'Bàn';
+                    const invoiceStatus = summary.invoiceStatus || summary.status || '';
+
+                    if (payload.isNewOrder) {
+                        showToast('Đơn hàng mới', `${tableName} vừa tạo hóa đơn ${invoiceCode}`, 'success');
+                    }
+                    else {
+                        showToast('Cập nhật hóa đơn', `${invoiceCode} hiện trạng thái ${invoiceStatus}`, 'info');
+                    }
+
+                    requestRefresh();
+                });
+
+                connection.onreconnected(() => {
+                    connection.invoke('JoinCashier').catch(() => { });
+                    requestRefresh(true);
+                });
+
+                connection.onclose(() => {
+                    setTimeout(() => {
+                        connection.start().then(() => connection.invoke('JoinCashier').catch(() => { })).catch(() => { });
+                    }, 2000);
+                });
+
+                connection.start()
+                    .then(() => connection.invoke('JoinCashier'))
+                    .catch(err => console.error('SignalR', err));
+            }
+
+            window.addEventListener('beforeunload', () => {
+                if (periodic) window.clearInterval(periodic);
+            });
+        })();
+    </script>
+}

@@ -5,6 +5,9 @@
         public FoodItem Item { get; set; } = default!;
         public decimal BasePriceEffective { get; set; }  // đã áp DiscountPrice/Percent
         public List<GroupVM> Groups { get; set; } = new(); // đã merge override & loại ẩn
+        public decimal FinalPrice { get; set; }
+        public decimal? DynamicPriceFactor { get; set; }
+        public string? DynamicPricingLabel { get; set; }
 
         public class GroupVM
         {
