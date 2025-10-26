@@ -5,10 +5,134 @@
     var subtotal = Model?.Sum(x => x.UnitPrice * x.Quantity) ?? 0m;
     var tableCode = Context.Session.GetString("CurrentTableCode");
     var hasItems = Model != null && Model.Any();
-    var activeOrderId = ViewBag.ActiveOrderId; // có thể null
 }
+
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/cart.css" asp-append-version="true" />
+    <style>
+        /* ===== Trạng thái đơn: List & Card ===== */
+        .order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .order-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            background: var(--white, #fff);
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            box-shadow: var(--shadow, 0 8px 24px rgba(17, 24, 39, .06));
+            text-decoration: none;
+            color: inherit;
+            transition: .18s ease;
+        }
+
+            .order-card:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 28px rgba(17,24,39,.08);
+            }
+
+        /* Left */
+        .oc-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .oc-code {
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: .2px;
+            color: #0b1320;
+        }
+
+        .oc-mini {
+            display: flex;
+            gap: 16px;
+            color: #6c757d;
+            font-size: .92rem;
+            align-items: center;
+        }
+
+            .oc-mini i {
+                width: 16px;
+                text-align: center;
+            }
+
+        /* Right */
+        .oc-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .oc-sum {
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: #111;
+        }
+
+        /* Badge (trạng thái) */
+        .badge-pill {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: .9rem;
+            white-space: nowrap;
+        }
+
+        .badge-PENDING {
+            background: #f1f3f5;
+            color: #333;
+        }
+
+        .badge-CONFIRMED {
+            background: #e6f4ea;
+            color: #155724;
+        }
+
+        .badge-IN_KITCHEN {
+            background: #fff3cd;
+            color: #856404;
+        }
+        /* Đang chế biến */
+        .badge-READY {
+            background: #e1ecff;
+            color: #004085;
+        }
+        /* Sẵn sàng */
+        .badge-SERVED {
+            background: #f1f3f5;
+            color: #383d41;
+        }
+
+        .badge-REQUESTED_BILL {
+            background: #ffeeba;
+            color: #856404;
+        }
+
+        .badge-PAID {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-CANCELLED {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Empty state (dùng style giống empty-cart) */
+        .order-empty .empty-cart-content i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 12px;
+        }
+    </style>
 }
 
 <div class="cart-page">
@@ -30,7 +154,7 @@
             </a>
         </div>
 
-        <!-- TAB 1: Giỏ hàng (bọc toàn bộ cart-content & empty state) -->
+        <!-- TAB 1: Giỏ hàng -->
         <div id="tab-items" class="tab-content active">
             @if (hasItems)
             {
@@ -58,7 +182,7 @@
                                     <div class="item-details">
                                         <h3 class="item-name">@item.ProductName</h3>
 
-                                        <!-- Hiển thị Option động -->
+                                        <!-- Tuỳ chọn động -->
                                         <div class="item-options">
                                             @if (item.Options != null && item.Options.Any())
                                             {
@@ -92,7 +216,7 @@
                                                 <button type="submit" class="qty-btn minus" aria-label="Giảm">-</button>
                                             </form>
 
-                                            <!-- Hiển thị số lượng -->
+                                            <!-- Số lượng -->
                                             <input type="number" class="quantity" value="@item.Quantity" min="1" max="10" readonly />
 
                                             <!-- Tăng 1 -->
@@ -151,9 +275,7 @@
 
                             <form id="checkoutForm" asp-controller="Cart" asp-action="PlaceOrder" asp-route-tableCode="@tableCode" method="post">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn-checkout">
-                                    Xác nhận
-                                </button>
+                                <button type="submit" class="btn-checkout">Xác nhận</button>
                             </form>
                         </div>
                     </div>
@@ -173,114 +295,45 @@
             }
         </div>
 
-        <!-- TAB 2: Trạng thái đơn -->
+        <!-- TAB 2: Trạng thái đơn (Nhiều đơn) -->
         <div id="tab-status" class="tab-content"
-             data-order-id="@(activeOrderId ?? "")"
              data-table-code="@Context.Session.GetString("CurrentTableCode")">
-            <div class="cart-content">
-                <div class="cart-items-section">
-                    <div class="order-status-header">
-                        <div class="os-left">
-                            <h2>Tiến trình đơn</h2>
-                            <div class="os-meta">
-                                <span>Mã đơn: <strong id="os-order-code">—</strong></span>
-                                <span>Bàn: <strong id="os-table">—</strong></span>
-                                <span>Đặt lúc: <strong id="os-placedAt">—</strong></span>
-                            </div>
-                        </div>
-                        <div class="os-right">
-                            <span class="badge os-badge" id="os-badge">—</span>
-                        </div>
+            <div class="cart-items-section">
+                <div class="order-status-header">
+                    <div class="os-left">
+                        <h2>Tiến trình đơn</h2>
                     </div>
-
-                    <div class="cart-items" id="cartItemsList">
-                        @foreach (var item in Model)
-                        {
-                            <div class="cart-item" data-id="@item.CartItemID">
-                                <div class="item-details">
-                                    <h3 class="item-name">@item.ProductName</h3>
-
-                                    <div class="item-price">
-                                        <span class="unit-price"></span>
-                                    </div>
-                                </div>
-
-                                <div class="item-controls">
-                                    <div class="quantity-controls">
-
-                                    </div>
-
-                                    <div class="item-total">
-                                        <span class="total-price">@item.TotalPrice.ToString("N0") VNĐ</span>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                    <div class="order-tracker" id="order-tracker">
-                        <div class="tracker-steps" id="tracker-steps"></div>
-                        <div class="tracker-legend">
-                            <span><i class="dot done"></i> Hoàn tất</span>
-                            <span><i class="dot current"></i> Đang xử lý</span>
-                            <span><i class="dot"></i> Chưa tới</span>
-                        </div>
-                    </div>
-
-
-                    <div class="order-events" id="order-events">
-                        <h4>Nhật ký sự kiện</h4>
-                        <ul class="event-list"></ul>
-                    </div>
-
-                    <div class="order-actions">
-                        <button class="btn-outline" id="btn-refresh-os" @(activeOrderId == null ? "disabled" : null)>
-                            <i class="fa-solid fa-rotate-right"></i> Làm mới
-                        </button>
-                        @if (activeOrderId != null)
-                        {
-                            <a asp-controller="Orders" asp-action="Details" asp-route-id="@activeOrderId" class="btn-link">
-                                <i class="fa-solid fa-up-right-from-square"></i> Xem chi tiết đơn
-                            </a>
-                        }
-                    </div>
-
-                    @if (activeOrderId == null)
-                    {
-                        <div class="small text-muted" style="margin-top:10px">
-                            Chưa có đơn nào để theo dõi. Hãy “Xác nhận” giỏ hàng trước.
-                        </div>
-                    }
                 </div>
 
-                <aside class="cart-summary-section">
-                    <!-- Có thể tái sử dụng tóm tắt (nếu muốn). Giữ trống cũng được. -->
-                    @if (hasItems)
-                    {
-                        <div class="cart-summary">
-                            <h3>Tóm tắt</h3>
-                            <div class="summary-details">
-                                <div class="summary-row">
-                                    <span>Tạm tính (@totalItems món):</span>
-                                    <span>@subtotal.ToString("N0") VNĐ</span>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </aside>
+                <!-- Danh sách đơn (render bằng JS) -->
+                <div class="order-list" id="order-list">
+                    <!-- các .order-card sẽ được nạp ở đây -->
+                </div>
+
+                <!-- Trạng thái rỗng -->
+                <div class="order-empty" id="order-empty" style="display:none">
+                    <div class="empty-cart-content">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h2>Chưa có đơn nào</h2>
+                        <p>Bạn có thể đặt món và theo dõi trạng thái tại đây.</p>
+                        <a asp-controller="Food" asp-action="Index"
+                           asp-route-tableCode="@Context.Session.GetString("CurrentTableCode")"
+                           class="btn-shop-now">
+                            <i class="fas fa-utensils"></i> Đặt món ngay
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 
 @section Scripts {
     <script>
         (() => {
-          // ========== Tabs ==========
+          // ===== Tabs =====
           const tabButtons = document.querySelectorAll('.cart-tabs .tab-btn');
-          const tabItems = document.getElementById('tab-items');
-          const tabStatus = document.getElementById('tab-status');
-
           tabButtons.forEach(btn => {
             btn.addEventListener('click', () => {
               tabButtons.forEach(b => b.classList.remove('active'));
@@ -289,110 +342,12 @@
               const pane = document.getElementById(btn.dataset.tab);
               if (pane) pane.classList.add('active');
 
-              // Bật/tắt polling theo tab
-              if (btn.dataset.tab === 'tab-status') { startStatusPolling(); }
-              else { stopStatusPolling(); }
+              if (btn.dataset.tab === 'tab-status') startOrdersPolling();
+              else stopOrdersPolling();
             });
           });
 
-          // ========== Order Status ==========
-
-          // 1) Map trạng thái → step
-          const stepsDef = [
-            { key:'PENDING',        label:'Đã gửi' },
-            { key:'CONFIRMED',      label:'Xác nhận' },
-            { key:'IN_KITCHEN',     label:'Đang chế biến' },
-            { key:'READY',          label:'Sẵn sàng' },
-            { key:'SERVED',         label:'Đã phục vụ' },
-            { key:'REQUESTED_BILL', label:'Yêu cầu tính tiền' },
-            { key:'PAID',           label:'Đã thanh toán' },
-          ];
-          const statusPriority = stepsDef.reduce((acc, s, i) => { acc[s.key]=i; return acc; }, { CANCELLED: 99 });
-
-          const tracker = document.getElementById('tracker-steps');
-          const badge = document.getElementById('os-badge');
-          const eventsUL = document.querySelector('#order-events .event-list');
-          const btnRefresh = document.getElementById('btn-refresh-os');
-
-          function renderSteps(container, currentKey, timestamps = {}) {
-            const curIndex = (currentKey in statusPriority) ? statusPriority[currentKey] : 0;
-            container.innerHTML = stepsDef.map((s, i) => {
-              const klass = i < curIndex ? 'step done' : (i === curIndex ? 'step current' : 'step');
-              const tm = timestamps[s.key] ? `<small>${new Date(timestamps[s.key]).toLocaleTimeString('vi-VN')}</small>` : '<small>&nbsp;</small>';
-              return `<div class="${klass}"><span class="dot"></span><span>${s.label}</span>${tm}</div>`;
-            }).join('');
-          }
-
-          function renderBadge(el, status) {
-            const map = {
-              PENDING:        { text:'Đang gửi', bg:'#f8f9fa', color:'#333' },
-              CONFIRMED:      { text:'Đã xác nhận', bg:'#d4edda', color:'#155724' },
-              IN_KITCHEN:     { text:'Đang chế biến', bg:'#fff3cd', color:'#856404' },
-              READY:          { text:'Sẵn sàng', bg:'#cce5ff', color:'#004085' },
-              SERVED:         { text:'Đã phục vụ', bg:'#e2e3e5', color:'#383d41' },
-              REQUESTED_BILL: { text:'Yêu cầu tính tiền', bg:'#ffeeba', color:'#856404' },
-              PAID:           { text:'Đã thanh toán', bg:'#d4edda', color:'#155724' },
-              CANCELLED:      { text:'Đã hủy', bg:'#f8d7da', color:'#721c24' },
-            };
-            const s = map[status] || map.PENDING;
-            el.style.background = s.bg; el.style.color = s.color; el.textContent = s.text;
-          }
-
-          function renderEvents(listEl, events = []) {
-            listEl.innerHTML = events.map(e => `
-              <li>
-                <div class="event-left">
-                  <span class="e-icon"><i class="fa-regular fa-clock"></i></span>
-                  <div>
-                    <div><strong>${e.title}</strong></div>
-                    <div>${e.message ?? ''}</div>
-                  </div>
-                </div>
-                <div class="event-right">${new Date(e.at).toLocaleString('vi-VN')}</div>
-              </li>`
-            ).join('');
-          }
-
-          async function fetchOrderStatus(orderId) {
-            const res = await fetch(`/cart/status/${orderId}`, { cache: 'no-store' });
-            if (!res.ok) throw new Error('Không lấy được trạng thái đơn');
-            return await res.json();
-          }
-
-          async function refreshStatus() {
-            const orderId = tabStatus?.dataset.orderId;
-            if (!orderId) return; // chưa có đơn
-            try {
-              const data = await fetchOrderStatus(orderId);
-              document.getElementById('os-order-code').textContent = data.orderCode ?? '—';
-              document.getElementById('os-table').textContent = data.table ?? (tabStatus.dataset.tableCode || '—');
-              document.getElementById('os-placedAt').textContent = data.placedAt ? new Date(data.placedAt).toLocaleString('vi-VN') : '—';
-              renderBadge(badge, data.status);
-              renderSteps(tracker, data.status, data.timestamps || {});
-              renderEvents(eventsUL, data.events || []);
-            } catch (err) {
-              console.warn(err);
-            }
-          }
-
-          // Làm mới thủ công
-          if (btnRefresh) {
-            btnRefresh.addEventListener('click', refreshStatus);
-          }
-
-          // Polling khi đang ở tab trạng thái
-          let osTimer = null;
-          function startStatusPolling() {
-            if (!tabStatus?.dataset.orderId) return;
-            refreshStatus();
-            stopStatusPolling();
-            osTimer = setInterval(refreshStatus, 8000);
-          }
-          function stopStatusPolling() {
-            if (osTimer) { clearInterval(osTimer); osTimer = null; }
-          }
-
-          // ========== Checkout UX ==========
+          // ===== Disable button khi submit checkout =====
           const checkoutForm = document.getElementById('checkoutForm');
           if (checkoutForm) {
             checkoutForm.addEventListener('submit', function () {
@@ -403,6 +358,80 @@
               }
             });
           }
+
+          // ===== Trạng thái đơn: list nhiều đơn =====
+          const tabStatus = document.getElementById('tab-status');
+          const listEl = document.getElementById('order-list');
+          const emptyEl = document.getElementById('order-empty');
+          const tableCode = tabStatus?.dataset.tableCode;
+
+          const money = v => (Number(v||0)).toLocaleString('vi-VN') + ' đ';
+          const tstr = iso => {
+            const d = new Date(iso);
+            const hh = d.toLocaleTimeString('vi-VN', { hour12:false });
+            const dd = d.toLocaleDateString('vi-VN');
+            return `${hh} ${dd}`;
+          };
+          const badgeClass = s => `badge-pill badge-${(s||'').toUpperCase()}`;
+          const badgeText = s => ({
+            PENDING:'Đang gửi', CONFIRMED:'Đã xác nhận', IN_KITCHEN:'Đang chế biến',
+            READY:'Sẵn sàng', SERVED:'Đã phục vụ', REQUESTED_BILL:'Yêu cầu tính tiền',
+            PAID:'Đã thanh toán', CANCELLED:'Đã huỷ'
+          }[(s||'').toUpperCase()] || '—');
+
+          function renderList(items){
+            if (!Array.isArray(items) || !items.length){
+              listEl.innerHTML = '';
+              emptyEl.style.display = 'block';
+              return;
+            }
+            emptyEl.style.display = 'none';
+            listEl.innerHTML = items.map(o => `
+              <a class="order-card" href="/orders/details/${o.id}" aria-label="Xem chi tiết ${o.code}">
+                <div class="oc-left">
+                  <div class="oc-code">${o.code}</div>
+                  <div class="oc-mini">
+                    <span><i class="fa-regular fa-clock"></i> ${tstr(o.placedAt)}</span>
+                    <span><i class="fa-solid fa-chair"></i> ${o.table}</span>
+                  </div>
+                </div>
+                <div class="oc-right">
+                  <div class="oc-sum">${money(o.sum)}</div>
+                  <span class="${badgeClass(o.status)}">${badgeText(o.status)}</span>
+                </div>
+              </a>
+            `).join('');
+          }
+
+          async function fetchOrders(){
+            if (!tableCode){ renderList([]); return; }
+            // Ưu tiên endpoint /cart/status/list?tableCode=...
+            try{
+              const res = await fetch(`/cart/status/list?tableCode=${encodeURIComponent(tableCode)}`, { cache:'no-store' });
+              if (!res.ok) throw 0;
+              const data = await res.json();
+              renderList(Array.isArray(data) ? data : []);
+            }catch{
+              // Fallback: /cart/my-orders?tableCode=...
+              try{
+                const r2 = await fetch(`/cart/my-orders?tableCode=${encodeURIComponent(tableCode)}`, { cache:'no-store' });
+                if (!r2.ok) throw 0;
+                const data2 = await r2.json();
+                renderList(Array.isArray(data2) ? data2 : []);
+              }catch{
+                renderList([]);
+              }
+            }
+          }
+
+          // Poll khi ở tab “Trạng thái đơn”
+          let timer = null;
+          function startOrdersPolling(){ stopOrdersPolling(); fetchOrders(); timer = setInterval(fetchOrders, 8000); }
+          function stopOrdersPolling(){ if (timer) { clearInterval(timer); timer = null; } }
+
+          // Nếu tab-status đang active ngay khi vào trang
+          const activeTab = document.querySelector('.cart-tabs .tab-btn.active')?.dataset.tab;
+          if (activeTab === 'tab-status') startOrdersPolling();
         })();
     </script>
 }

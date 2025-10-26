@@ -39,18 +39,16 @@ namespace ASM_1.Controllers
 
         [HttpGet("{tableCode}/cart/count")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> CartCountValue()
+        public async Task<IActionResult> CartCountValue(string tableCode)
         {
-            if (!(User?.Identity?.IsAuthenticated ?? false))
-                return Content("0", "text/plain");
+            //if (!(User?.Identity?.IsAuthenticated ?? false))
+            //    return Content("0", "text/plain");
 
-            var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if (claim == null)
+            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
+            if (userId == null)
             {
                 return Content("0", "text/plain"); // hoặc xử lý khác tùy bạn
             }
-            string userId = claim.Value;
-
 
             var count = await _context.CartItems
                 .Where(ci => ci.Cart != null && ci.Cart.UserID == userId)
@@ -72,7 +70,7 @@ namespace ASM_1.Controllers
             var tableId = _tableCodeService.DecryptTableCode(tableCode);
             if (tableId == null) return RedirectToAction("InvalidTable");
 
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
             var cart = await GetCartAsync(userId);
 
             if (!cart.CartItems.Any())
@@ -156,7 +154,7 @@ namespace ASM_1.Controllers
             string note = null;
 
             // 1) Lấy user & giỏ hàng
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? tableCode;
+            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                     .ThenInclude(i => i.Options)
@@ -301,11 +299,13 @@ namespace ASM_1.Controllers
             string? note = null)
         {
             // 1️⃣ Kiểm tra đăng nhập
-            if (!User.Identity?.IsAuthenticated ?? true)
-            {
-                TempData["ErrorMessage"] = "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
-                return RedirectToAction("Login", "Account");
-            }
+            //if (!User.Identity?.IsAuthenticated ?? true)
+            //{
+            //    TempData["ErrorMessage"] = "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
+            //    return RedirectToAction("Login", "Account");
+            //}
+
+
 
             quantity = Math.Clamp(quantity, 1, 10);
 
@@ -332,7 +332,7 @@ namespace ASM_1.Controllers
             decimal unitPrice = basePrice + extraPrice;
 
             // 5️⃣ Lấy user ID
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
 
             // 6️⃣ Lấy hoặc tạo giỏ hàng
             var cart = await GetCartAsync(userId);
@@ -384,7 +384,7 @@ namespace ASM_1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromCart(int cartItemId, string tableCode)
         {
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
             var cart = await GetCartAsync(userId);
             var item = cart.CartItems.FirstOrDefault(i => i.CartItemID == cartItemId);
             if (item != null)
@@ -399,7 +399,7 @@ namespace ASM_1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearCart(string tableCode)
         {
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
             var cart = await GetCartAsync(userId);
 
             if (cart.CartItems.Any())
@@ -416,7 +416,7 @@ namespace ASM_1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeQuantity(string tableCode, int cartItemId, int delta)
         {
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
             var cart = await GetCartAsync(userId);
             var item = cart.CartItems.FirstOrDefault(i => i.CartItemID == cartItemId);
             if (item == null) return NotFound();

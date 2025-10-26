@@ -2,7 +2,7 @@
 
 namespace ASM_1.Models.Food
 {
-    public enum OrderStatus { Pending, Preparing, Ready, Served, Paid, Canceled }
+    public enum OrderStatus { Pending, Confirmed, In_Kitchen, Ready, Served, Requested_Bill, Paid, Canceled }
     public class Order
     {
         [Key] public int OrderId { get; set; }
