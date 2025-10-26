@@ -6,8 +6,8 @@ namespace ASM_1.Models.Food
     public class OrderItem
     {
         [Key] public int OrderItemId { get; set; }
-        public int? InvoiceId { get; set; }               // null khi chưa xuất hóa đơn
-        public Invoice? Invoice { get; set; }
+        [Required] public int OrderId { get; set; }
+        public Order Order { get; set; } = default!;
         [Required] public int FoodItemId { get; set; }
         public FoodItem FoodItem { get; set; } = default!;    // món gì
         public int Quantity { get; set; } = 1;

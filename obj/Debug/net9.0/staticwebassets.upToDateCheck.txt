@@ -5,7 +5,6 @@ wwwroot\css\pages\admin-orders.css
 wwwroot\css\pages\admin-reports.css
 wwwroot\css\pages\admin-reviews.css
 wwwroot\css\pages\bs5grid.css
-wwwroot\css\pages\cart.css
 wwwroot\css\pages\checkout.css
 wwwroot\css\pages\contact.css
 wwwroot\css\pages\create-order.css
@@ -151,6 +150,7 @@ wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
 wwwroot\uploads\combos\1fd3f8ef-123a-46cd-b899-bcbf349492c6.jpg
+wwwroot\uploads\combos\4ce33526-2214-4816-8cb2-f3bc723309ec.png
 wwwroot\uploads\combos\72ae77b7-a0bd-4d0c-a2df-e3bcd94091e3.png
 wwwroot\uploads\combos\739643d9-bb64-4c21-8cbf-f6c812e1bed5.jpg
 wwwroot\uploads\combos\82fb838b-25ab-4b4a-a855-a01f90f49c1d.jpg
@@ -166,103 +166,106 @@ wwwroot\uploads\foods\1d62a793-5974-44c8-87e6-29339696831e.jpg
 wwwroot\uploads\foods\317d2c6b-4d6b-44f5-8eb9-01fbda6b4d3b.jpg
 wwwroot\uploads\foods\63aa896f-c50a-432e-9f61-57757cdd3789.png
 wwwroot\uploads\foods\648ee8de-f26a-42f7-868d-4d7f86cddcc4.jpg
+wwwroot\uploads\foods\be813517-0644-4dc0-bce1-336ba1d469d5.png
 wwwroot\uploads\foods\ea89d1a3-309d-4d84-83d5-d4a86da09b21.jpg
 wwwroot\uploads\qr\table_1.png
 wwwroot\uploads\qr\table_2.png
 wwwroot\uploads\qr\table_3.png
 wwwroot\uploads\qr\table_4.png
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\LICENSE.txt
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.slim.min.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.slim.min.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.slim.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.min.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.min.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\LICENSE.md
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\dist\jquery.validate.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\dist\additional-methods.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\updateCartCount.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\site.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\sales-dashboard.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\mobile-menu.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\menu-page.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\menu-management.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\food-dashboard.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\create-order.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\admin.js
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\favicon.ico
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\site.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\user-profile.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\user-management.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\sales-dashboard.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\Register.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\news.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\menu-page.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\login.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\home.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-report.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-promotion-management.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-menu-management.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-detail.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-dashboard.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-Category-Management.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\create-order.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\contact.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\checkout.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\cart.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\bs5grid.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-reviews.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-reports.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-orders.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-dashboard.css
-C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\about.css
+wwwroot\uploads\qr\table_5.png
+wwwroot\css\pages\cart.css
 C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\admin-layout.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\about.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-dashboard.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-orders.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-reports.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\admin-reviews.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\bs5grid.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\checkout.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\contact.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\create-order.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-Category-Management.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-dashboard.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-detail.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-menu-management.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-promotion-management.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\food-report.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\home.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\login.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\menu-page.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\news.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\Register.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\sales-dashboard.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\user-management.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\user-profile.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\site.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\favicon.ico
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\admin.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\create-order.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\food-dashboard.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\menu-management.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\menu-page.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\mobile-menu.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\sales-dashboard.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\site.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\js\updateCartCount.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\dist\additional-methods.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\dist\jquery.validate.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery-validation\LICENSE.md
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.min.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.min.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.slim.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.slim.min.js
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\dist\jquery.slim.min.map
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\lib\jquery\LICENSE.txt
+C:\Users\PC\Documents\Tin Học\NET1051\Bailam\ASM_1\ASM_1\wwwroot\css\pages\cart.css

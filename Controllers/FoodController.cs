@@ -35,7 +35,7 @@ namespace ASM_1.Controllers
                 return RedirectToAction("InvalidTable");
             }
 
-            _userSessionService.GetOrCreateUserSessionId(tableCode);
+            var id = _userSessionService.GetOrCreateUserSessionId(tableCode);
 
             var model = new MenuOverviewViewModel
             {
