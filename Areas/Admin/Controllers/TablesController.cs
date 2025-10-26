@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace ASM_1.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class TablesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -31,7 +32,6 @@ namespace ASM_1.Areas.Admin.Controllers
         }
 
         // GET: Admin/Tables
-        //[Authorize]
         public async Task<IActionResult> Index()
         {
             var tables = await _context.Tables.ToListAsync();

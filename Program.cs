@@ -28,7 +28,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Admin/Account/Login";
+    options.LoginPath = "/admin/account/login";
 });
 
 // Add services to the container.

@@ -44,9 +44,9 @@
             <div class="top-bar-right">
                 <span><i class="fas fa-clock"></i> Mở cửa: 6:00 - 22:00</span>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#" style="text-decoration:none"><i class="fab fa-facebook"></i></a>
+                    <a href="#" style="text-decoration:none"><i class="fab fa-instagram"></i></a>
+                    <a href="#" style="text-decoration:none"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
@@ -80,19 +80,19 @@
                             <i class="fas fa-chevron-down"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a asp-area="Admin" asp-controller="About" asp-action="Story">Câu chuyện thương hiệu</a></li>
-                            <li><a asp-area="Admin" asp-controller="About" asp-action="Team">Đội ngũ</a></li>
-                            <li><a asp-area="Admin" asp-controller="About" asp-action="Values">Giá trị cốt lõi</a></li>
+                            <li><a asp-controller="About" asp-action="Story" asp-route-tableCode="@tableCode">Câu chuyện thương hiệu</a></li>
+                            <li><a asp-controller="About" asp-action="Team" asp-route-tableCode="@tableCode">Đội ngũ</a></li>
+                            <li><a asp-controller="About" asp-action="Values" asp-route-tableCode="@tableCode">Giá trị cốt lõi</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a asp-area="Admin" asp-controller="News" asp-action="Index" class="nav-link">
+                        <a asp-controller="News" asp-action="Index" asp-route-tableCode="@tableCode" class="nav-link">
                             <i class="fas fa-newspaper"></i>
                             <span>Tin tức</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a asp-area="Admin" asp-controller="Contact" asp-action="Index" class="nav-link">
+                        <a asp-controller="Contact" asp-action="Index" asp-route-tableCode="@tableCode" class="nav-link">
                             <i class="fas fa-phone-alt"></i>
                             <span>Liên hệ</span>
                         </a>
@@ -139,7 +139,7 @@
                     }
 
                     <!-- Desktop Auth Section -->
-                    <div class="desktop-auth">
+                    @* <div class="desktop-auth">
                         @if (isLoggedIn)
                         {
                             <!-- User Dropdown khi đã đăng nhập -->
@@ -154,7 +154,7 @@
                                 </button>
 
                                 <div class="user-dropdown-menu">
-                                    <div class="dropdown-header">
+                                    <div class="user-dropdown-header">
                                         <img src="@userAvatar" alt="Avatar">
                                         <div>
                                             <strong>@username</strong>
@@ -162,31 +162,31 @@
                                         </div>
                                     </div>
 
-                                    <div class="dropdown-divider"></div>
+                                    <div class="user-dropdown-divider"></div>
 
-                                    <a asp-area="Admin" asp-controller="Account" asp-action="Profile" class="dropdown-item">
+                                    <a asp-area="Admin" asp-controller="Account" asp-action="Profile" class="user-dropdown-item">
                                         <i class="fas fa-user"></i>
                                         <span>Hồ sơ cá nhân</span>
                                     </a>
 
-                                    <a asp-area="Admin" asp-controller="Account" asp-action="Orders" class="dropdown-item">
+                                    <a asp-area="Admin" asp-controller="Account" asp-action="Orders" class="user-dropdown-item">
                                         <i class="fas fa-shopping-bag"></i>
                                         <span>Đơn hàng của tôi</span>
                                     </a>
 
-                                    <a href="#" class="dropdown-item">
+                                    <a href="#" class="user-dropdown-item">
                                         <i class="fas fa-heart"></i>
                                         <span>Món yêu thích</span>
                                     </a>
 
-                                    <a href="#" class="dropdown-item">
+                                    <a href="#" class="user-dropdown-item">
                                         <i class="fas fa-cog"></i>
                                         <span>Cài đặt</span>
                                     </a>
 
-                                    <div class="dropdown-divider"></div>
+                                    <div class="user-dropdown-divider"></div>
 
-                                    <a asp-area="Admin" asp-controller="Account" asp-action="Logout" class="dropdown-item logout-item">
+                                    <a asp-area="Admin" asp-controller="Account" asp-action="Logout" class="user-dropdown-item logout-item">
                                         <i class="fas fa-sign-out-alt"></i>
                                         <span>Đăng xuất</span>
                                     </a>
@@ -207,7 +207,7 @@
                                 </a>
                             </div>
                         }
-                    </div>
+                    </div> *@
 
                     <!-- Mobile Menu Toggle -->
                     <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -338,12 +338,12 @@
                     <a asp-controller="Cart" asp-action="Index" class="mobile-nav-link mobile-cart-link">
                         <i class="fas fa-shopping-cart"></i>
                         <span>Đơn hàng</span>
-                        <span class="mobile-cart-count">6</span>
+                        <span class="mobile-cart-count">0</span>
                     </a>
                 </li>
 
                 <!-- Hiển thị thêm menu khi đã đăng nhập -->
-                @if (isLoggedIn)
+                @* @if (isLoggedIn)
                 {
                     <li class="mobile-nav-item">
                         <a asp-controller="Account" asp-action="Orders" class="mobile-nav-link">
@@ -363,7 +363,7 @@
                             <span>Cài đặt</span>
                         </a>
                     </li>
-                }
+                } *@
             </ul>
 
             <!-- Mobile Contact Info -->
@@ -404,22 +404,26 @@
                         <div class="footer-social">
                             <a href="https://www.facebook.com/CTSVPTCDDONGNAI"
                                target="_blank"
-                               rel="noopener noreferrer">
+                               rel="noopener noreferrer"
+                               style="text-decoration:none">
                                 <i class="fab fa-facebook"></i>
                             </a>
                             <a href="https://www.instagram.com/fptpolyschool/?hl=en"
                                target="_blank"
-                               rel="noopener noreferrer">
+                               rel="noopener noreferrer"
+                               style="text-decoration:none">
                                 <i class="fab fa-instagram"></i>
                             </a>
                             <a href="#"
                                target="_blank"
-                               rel="noopener noreferrer">
+                               rel="noopener noreferrer"
+                               style="text-decoration:none">
                                 <i class="fab fa-youtube"></i>
                             </a>
                             <a href="#"
                                target="_blank"
-                               rel="noopener noreferrer">
+                               rel="noopener noreferrer"
+                               style="text-decoration:none">
                                 <i class="fab fa-tiktok"></i>
                             </a>
                         </div>
@@ -500,7 +504,7 @@
       const el = document.querySelector(".cart-count");
       if (!el) return;
 
-      fetch('@Url.Action("CartCountValue", "Cart")', { cache: "no-store" })
+      fetch('@Url.Action("CartCountValue", "Cart", new { tableCode })', { cache: "no-store" })
         .then(r => r.text())
         .then(txt => el.textContent = txt)
         .catch(console.error);

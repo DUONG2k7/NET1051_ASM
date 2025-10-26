@@ -6,9 +6,9 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/home.css" />
-    <link rel="stylesheet" href="~/css/pages/menu-page.css" />
-    <link rel="stylesheet" href="~/css/pages/bs5grid.css" />
+    <link rel="stylesheet" href="~/css/pages/home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/menu-page.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/bs5grid.css" asp-append-version="true" />
 }
 
 <section class="hero">
@@ -116,7 +116,7 @@
                                 </div>
                             </div>
 
-                            <div class="card-body d-flex flex-column">
+                            @* <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">@combo.ComboName</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">@combo.ComboPrice.ToString("C")</h6>
 
@@ -126,18 +126,18 @@
                                         <li>@name</li>
                                     }
                                 </ul>
-                            </div>
+                            </div> *@
 
                             <div class="menu-item-content">
                                 <h3 class="menu-item-name">@combo.ComboName</h3>
-                                <p class="menu-item-description">@combo.Description</p>
+                                <p class="menu-item-description">
+                                    @combo.Description
+                                </p>
 
-                                <ul class="small text-muted mb-3">
-                                    @foreach (var name in combo.ComboDetails!.Select(cd => cd.FoodItem!.Name))
-                                    {
-                                        <li>@name</li>
-                                    }
-                                </ul>
+                                @foreach (var name in combo.ComboDetails!.Select(cd => cd.FoodItem!.Name))
+                                {
+                                    <div class="menu-item-description">@("- " + @name)</div>
+                                }
 
                                 @* <div class="rating">
                                     <span class="stars">★★★★★</span>
@@ -171,7 +171,7 @@
                 <i class="bi bi-egg-fried me-2 text-warning"></i> Món ăn đơn
             </h3>
 
-            <div id="food-section" class="row g-4">
+            <div id="menu" class="row g-4">
 
                 @* Kiểu 1 onerror="this.src='/images/placeholder.jpg'"*@
                 @* @foreach (var food in Model.FoodItems)
@@ -219,15 +219,14 @@
                 @foreach (var food in Model.FoodItems)
                 {
                     <div class="col-md-4 col-lg-3">
-                        <a href="@Url.Action("Detail", "Food", new { tableCode = tableCode, slug = food.Slug })" style="text-decoration: none;" class="menu-item-card food-card" data-category="@food.CategoryId">
+                        <a href="@Url.Action("Detail", "Food", new { tableCode = tableCode, slug = food.Slug })" style="text-decoration: none;" class="menu-item-card" data-category="@food.CategoryId">
                             <div class="menu-item-image-wrapper">
-                                <div class="food-image">
-                                    <img src="@Url.Content(food.ImageUrl)" alt="@food.Name" class="menu-item-image">
-                                    @if (food.DiscountPercent > 0)
-                                    {
-                                        <div class="discount-badge">-@food.DiscountPercent%</div>
-                                    }
-                                </div>
+
+                                <img src="@Url.Content(food.ImageUrl)" alt="@food.Name" class="menu-item-image">
+                                @if (food.DiscountPercent > 0)
+                                {
+                                    <div class="discount-badge">-@food.DiscountPercent%</div>
+                                }
                                 <div class="menu-item-overlay">
                                     <div class="btn-view-detail">
                                         <i class="fas fa-eye"></i>
@@ -269,8 +268,87 @@
         document.addEventListener('DOMContentLoaded', () => {
             const buttons = document.querySelectorAll('.category-btn');
             const comboCards = document.querySelectorAll('.combo-card');
-            const foodCards = document.querySelectorAll('.food-card');
+            const foodCards = document.querySelectorAll('.menu-item-card');
+            const allCards = [...comboCards, ...foodCards];
+            const grid = document.querySelector('#menuGrid');
 
+            // === CSS animation style ===
+            const style = document.createElement('style');
+            style.textContent = `
+                .menu-item-card, .combo-card {
+                    opacity: 1;
+                    transform: translateY(0);
+                    transition: opacity 0.4s ease, transform 0.4s ease;
+                }
+
+                .fade-out {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                .fade-in {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                .fade-in.show {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+
+                .filtering {
+                    opacity: 0.9;
+                    pointer-events: none;
+                }
+            `;
+            document.head.appendChild(style);
+
+            // === Hàm lọc với animation mượt ===
+            function filterMenuItemsSmooth(selectedCat) {
+                if (grid) grid.classList.add('filtering');
+
+                const showAfter = []; // lưu item cần hiện sau khi ẩn xong
+
+                allCards.forEach((card) => {
+                    const categories = card.dataset.category.split(',');
+                    const isVisible = (selectedCat === "0" || categories.includes(selectedCat));
+
+                    // Nếu không khớp danh mục -> ẩn
+                    if (!isVisible && card.parentElement.style.display !== 'none') {
+                        card.classList.remove('fade-in', 'show');
+                        card.classList.add('fade-out');
+
+                        // sau khi animation ẩn xong mới ẩn thật sự
+                        setTimeout(() => {
+                            card.parentElement.style.display = 'none';
+                            card.classList.remove('fade-out');
+                        }, 400);
+                    }
+                    // Nếu khớp danh mục -> thêm vào danh sách cần hiển thị sau
+                    else if (isVisible) {
+                        showAfter.push(card);
+                    }
+                });
+
+                // Sau 400ms (ẩn xong) mới bắt đầu hiện món mới
+                setTimeout(() => {
+                    let delay = 0;
+                    showAfter.forEach(card => {
+                        card.parentElement.style.display = 'block';
+                        card.classList.remove('fade-out');
+                        card.classList.add('fade-in');
+                        setTimeout(() => card.classList.add('show'), delay);
+                        delay += 50; // xuất hiện dần
+                    });
+
+                    // Gỡ trạng thái filtering sau khi hoàn tất
+                    setTimeout(() => {
+                        if (grid) grid.classList.remove('filtering');
+                    }, 500);
+                }, 400);
+            }
+
+            // === Nút danh mục ===
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const selectedCat = btn.dataset.category;
@@ -281,21 +359,12 @@
                     btn.classList.remove('btn-outline-secondary');
                     btn.classList.add('btn-primary', 'active');
 
-                    // Ẩn / hiện combo
-                    comboCards.forEach(card => {
-                        const categories = card.dataset.category.split(',');
-                        card.parentElement.style.display =
-                            (selectedCat === "0" || categories.includes(selectedCat)) ? "block" : "none";
-                    });
-
-                    // Ẩn / hiện món ăn
-                    foodCards.forEach(card => {
-                        card.parentElement.style.display =
-                            (selectedCat === "0" || card.dataset.category === selectedCat) ? "block" : "none";
-                    });
+                    // Gọi hàm lọc
+                    filterMenuItemsSmooth(selectedCat);
                 });
             });
         });
     </script>
-    <script src="~/js/menu-page.js"></script>
+
+    <script src="~/js/menu-page.js" asp-append-version="true"></script>
 }

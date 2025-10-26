@@ -174,34 +174,40 @@
 
 @section Scripts {
     <script>
-        // CHỈ XỬ LÝ PHÍ GIAO HÀNG - KHÔNG CÓ VALIDATION PHỨC TẠP
-        document.addEventListener('DOMContentLoaded', function() {
-            var radios = document.getElementsByName('deliveryTime');
-            var schedule = document.getElementById('scheduleOptions');
-            var fee = document.getElementById('shippingFee');
-            var total = document.getElementById('totalAmount');
-            var base = @subtotal;
+                // CHỈ XỬ LÝ PHÍ GIAO HÀNG - KHÔNG CÓ VALIDATION PHỨC TẠP
+                // document.addEventListener('DOMContentLoaded', function() {
+                //     var radios = document.getElementsByName('deliveryTime');
+                //     var schedule = document.getElementById('scheduleOptions');
+                //     var fee = document.getElementById('shippingFee');
+                //     var total = document.getElementById('totalAmount');
+                //     var base = @subtotal;
 
-            function update() {
-                var shipping = 0;
-                for (var i = 0; i < radios.length; i++) {
-                    if (radios[i].checked && radios[i].value === 'delivery') {
-                        shipping = 30000;
-                        if (schedule) schedule.style.display = 'block';
-                        break;
-                    }
-                }
-                if (shipping === 0 && schedule) {
-                    schedule.style.display = 'none';
-                }
-                if (fee) fee.textContent = shipping.toLocaleString('vi-VN') + '₫';
-                if (total) total.textContent = (base + shipping).toLocaleString('vi-VN') + '₫';
-            }
+                //     function update() {
+                //         var shipping = 0;
+                //         for (var i = 0; i < radios.length; i++) {
+                //             if (radios[i].checked && radios[i].value === 'delivery') {
+                //                 shipping = 30000;
+                //                 if (schedule) schedule.style.display = 'block';
+                //                 break;
+                //             }
+                //         }
+                //         if (shipping === 0 && schedule) {
+                //             schedule.style.display = 'none';
+                //         }
+                //         if (fee) fee.textContent = shipping.toLocaleString('vi-VN') + '₫';
+                //         if (total) total.textContent = (base + shipping).toLocaleString('vi-VN') + '₫';
+                //     }
 
-            for (var i = 0; i < radios.length; i++) {
-                radios[i].addEventListener('change', update);
-            }
-            update();
+                //     for (var i = 0; i < radios.length; i++) {
+                //         radios[i].addEventListener('change', update);
+                //     }
+                //     update();
+                // });
+
+                document.getElementById('checkoutForm').addEventListener('submit', function() {
+            const btn = document.querySelector('.btn-place-order');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
         });
     </script>
 }
