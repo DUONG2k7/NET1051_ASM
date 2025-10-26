@@ -116,7 +116,7 @@
                                 </div>
                             </div>
 
-                            <div class="card-body d-flex flex-column">
+                            @* <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">@combo.ComboName</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">@combo.ComboPrice.ToString("C")</h6>
 
@@ -126,18 +126,18 @@
                                         <li>@name</li>
                                     }
                                 </ul>
-                            </div>
+                            </div> *@
 
                             <div class="menu-item-content">
                                 <h3 class="menu-item-name">@combo.ComboName</h3>
-                                <p class="menu-item-description">@combo.Description</p>
+                                <p class="menu-item-description">
+                                    @combo.Description
+                                </p>
 
-                                <ul class="small text-muted mb-3">
-                                    @foreach (var name in combo.ComboDetails!.Select(cd => cd.FoodItem!.Name))
-                                    {
-                                        <li>@name</li>
-                                    }
-                                </ul>
+                                @foreach (var name in combo.ComboDetails!.Select(cd => cd.FoodItem!.Name))
+                                {
+                                    <div class="menu-item-description">@("- " + @name)</div>
+                                }
 
                                 @* <div class="rating">
                                     <span class="stars">★★★★★</span>

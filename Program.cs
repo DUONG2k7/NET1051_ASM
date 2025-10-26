@@ -26,7 +26,7 @@ builder.Services.AddSingleton<ASM_1.Services.TableCodeService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Admin/Account/Login";
+    options.LoginPath = "/admin/account/login";
 });
 
 // Add services to the container.
