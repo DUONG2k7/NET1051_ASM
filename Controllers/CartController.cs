@@ -34,6 +34,7 @@ namespace ASM_1.Controllers
             string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
 
             var cart = await GetCartAsync(userId);
+
             var activeInvoice = await _context.TableInvoices
                 .Include(ti => ti.Invoice)
                     .ThenInclude(inv => inv.Orders)
@@ -47,20 +48,32 @@ namespace ASM_1.Controllers
                 .Select(ti => ti.Invoice)
                 .FirstOrDefaultAsync();
 
-            if (activeInvoice != null)
-            {
-                ViewBag.ActiveInvoice = activeInvoice;
-                var allItems = activeInvoice.Orders
-                    .SelectMany(o => o.Items)
-                    .ToList();
-
-                ViewBag.ActiveOrderItems = allItems;
-                ViewBag.ActiveOrderId = activeInvoice.Orders
-                    .OrderByDescending(o => o.CreatedAt)
-                    .FirstOrDefault()?.OrderId;
-            }
+            ViewBag.ActiveInvoice = activeInvoice;
+            ViewBag.AllOrders = activeInvoice?.Orders
+                .OrderByDescending(o => o.CreatedAt)
+                .ToList() ?? new List<Order>();
 
             return View(cart.CartItems);
+        }
+
+        [HttpGet("/Cart/Details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.FoodItem)
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Options)
+                .FirstOrDefaultAsync(o => o.OrderId == id);
+
+            if (order == null) return NotFound();
+
+            return PartialView("_OrderDetailPartial", order);
+        }
+        [HttpGet]
+        public IActionResult Checkout(int id)
+        {
+            return View();
         }
 
         [HttpGet("{tableCode}/cart/count")]
@@ -77,28 +90,81 @@ namespace ASM_1.Controllers
         }
 
         // THÊM MỚI: Action Checkout
-        [HttpGet("{tableCode}/cart/check")]
+        [HttpPost("{tableCode}/cart/checkout")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Checkout(string tableCode)
         {
-            //if (!User.Identity?.IsAuthenticated ?? true)
-            //{
-            //    TempData["ErrorMessage"] = "Bạn cần đăng nhập để thanh toán.";
-            //    return RedirectToAction("Login", "Account");
-            //}
-
             var tableId = _tableCodeService.DecryptTableCode(tableCode);
-            if (tableId == null) return RedirectToAction("InvalidTable");
+            if (tableId == null)
+                return RedirectToAction("InvalidTable");
 
-            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
-            var cart = await GetCartAsync(userId);
+            // 🧾 Lấy hóa đơn mở (chưa thanh toán)
+            var invoice = await _context.TableInvoices
+                .Include(ti => ti.Invoice)
+                .Where(ti => ti.TableId == tableId && ti.Invoice.Status == "Open")
+                .Select(ti => ti.Invoice)
+                .FirstOrDefaultAsync();
 
-            if (!cart.CartItems.Any())
+            if (invoice == null)
             {
-                TempData["ErrorMessage"] = "Giỏ hàng của bạn đang trống.";
-                return RedirectToAction("Index", new { tableCode });
+                TempData["ErrorMessage"] = "Không tìm thấy hóa đơn cần thanh toán.";
+                return RedirectToAction(nameof(Index), new { tableCode });
             }
 
-            return View(cart.CartItems);
+            // 🍽️ Lấy tất cả OrderItem thuộc hóa đơn này
+            var orderItems = await _context.OrderItems
+                .Include(oi => oi.Order)
+                .Where(oi => oi.Order.InvoiceId == invoice.InvoiceId)
+                .ToListAsync();
+
+            if (!orderItems.Any())
+            {
+                TempData["ErrorMessage"] = "Không có món nào trong hóa đơn.";
+                return RedirectToAction(nameof(Index), new { tableCode });
+            }
+
+            using var tx = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                decimal totalAmount = 0m;
+
+                foreach (var oi in orderItems)
+                {
+                    var detail = new InvoiceDetail
+                    {
+                        InvoiceId = invoice.InvoiceId,
+                        FoodItemId = oi.FoodItemId,
+                        Quantity = oi.Quantity,
+                        UnitPrice = oi.UnitBasePrice,
+                        SubTotal = oi.LineTotal
+                    };
+                    totalAmount += oi.LineTotal;
+                    _context.InvoiceDetails.Add(detail);
+                }
+
+                // Cập nhật tổng tiền hóa đơn
+                invoice.TotalAmount = totalAmount;
+                invoice.FinalAmount = totalAmount;
+                invoice.Status = "Paying";
+
+                // Cập nhật trạng thái bàn
+                var table = await _context.Tables.FindAsync(tableId);
+                if (table != null)
+                    table.Status = "Available";
+
+                await _context.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                TempData["SuccessMessage"] = "Thanh toán thành công!";
+                return RedirectToAction(nameof(Success), new { tableCode });
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                Console.WriteLine("Checkout error: " + ex.Message);
+                TempData["ErrorMessage"] = "Có lỗi khi thanh toán. Vui lòng thử lại.";
+                return RedirectToAction(nameof(Index), new { tableCode });
+            }
         }
 
         //THÊM MỚI: Thanh toán thành công
@@ -211,8 +277,6 @@ namespace ASM_1.Controllers
                     {
                         InvoiceCode = NewInvoiceCode(),
                         CreatedDate = now,
-                        TotalAmount = finalAmount,
-                        FinalAmount = finalAmount,
                         Status = "Open", // ✅ hóa đơn đang mở
                         Notes = $"Bàn {tableId} mở bill lúc {now:HH:mm dd/MM}"
                     };

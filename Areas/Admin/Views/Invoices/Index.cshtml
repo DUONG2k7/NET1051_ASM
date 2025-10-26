@@ -4,46 +4,55 @@
     ViewData["Title"] = "Danh sách hóa đơn";
 }
 
-<h2 class="mb-3">Danh sách hóa đơn</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold text-primary">📄 Danh sách hóa đơn</h2>
 
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Mã hóa đơn</th>
-            <th>Bàn</th>
-            <th>Ngày tạo</th>
-            <th>Trạng thái</th>
-            <th>Tổng tiền</th>
-            <th>Giảm giá</th>
-            <th>Thành tiền</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+        <div>
+            <!-- ✅ Nút Thống kê -->
+            <a asp-action="Statistics" class="btn btn-info me-2">
+                <i class="bi bi-bar-chart-line"></i> Thống kê hóa đơn
+            </a>
+            <!-- (Nếu bạn muốn thêm nút tạo mới hoặc xuất excel, có thể thêm tại đây) -->
+            @* <a asp-action="Create" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Tạo hóa đơn mới
+            </a> *@
+        </div>
+    </div>
+
+    <table class="table table-striped table-bordered align-middle">
+        <thead class="table-dark">
             <tr>
-                <td>@item.InvoiceCode</td>
-                <td>
-                    @string.Join(", ", item.TableInvoices.Select(ti => ti.Table!.TableName))
-                </td>
-                <td>@item.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>
-                    <span class="badge bg-@(item.Status == "Paid" ? "success" : "warning")">
-                        @item.Status
-                    </span>
-                </td>
-                <td>@item.TotalAmount.ToString("N0") ₫</td>
-                <td>
-                    @(item.Discount != null ? item.Discount.DiscountId : "-")
-                </td>
-                <td>@item.FinalAmount.ToString("N0") ₫</td>
-                <td>
-                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.InvoiceId">
-                        <i class="bi bi-eye"></i> Xem
-                    </a>
-                </td>
+                <th>Mã hóa đơn</th>
+                <th>Ngày tạo</th>
+                <th>Tổng tiền</th>
+                <th>Thành tiền</th>
+                <th>Giảm giá</th>
+                <th>Trạng thái</th>
+                <th class="text-center">Thao tác</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.InvoiceCode</td>
+                    <td>@item.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.TotalAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                    <td>@item.FinalAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                    <td>@(item.Discount?.Code ?? "-")</td>
+                    <td>
+                        <span class="badge bg-@(item.Status == "Open" ? "warning" : item.Status == "Paid" ? "success" : "secondary")">
+                            @item.Status
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <a asp-action="Details" asp-route-id="@item.InvoiceId" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> Chi tiết
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

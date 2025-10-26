@@ -196,6 +196,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcSW52b2ljZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/FALL2025/NET1051 - Lập trình C\#5/Assignment/Source/Repos/NET1051_ASM/Areas/Admin/Views/Invoices/Statistics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcSW52b2ljZXNcU3RhdGlzdGljcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/FALL2025/NET1051 - Lập trình C\#5/Assignment/Source/Repos/NET1051_ASM/Areas/Admin/Views/Shared/_AdminLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -236,12 +240,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxDaGVja291dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/FALL2025/NET1051 - Lập trình C\#5/Assignment/Source/Repos/NET1051_ASM/Views/Cart/Confirm.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxDb25maXJtLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
 [D:/FALL2025/NET1051 - Lập trình C\#5/Assignment/Source/Repos/NET1051_ASM/Views/Cart/Success.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxTdWNjZXNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/FALL2025/NET1051 - Lập trình C\#5/Assignment/Source/Repos/NET1051_ASM/Views/Cart/_OrderDetailPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxfT3JkZXJEZXRhaWxQYXJ0aWFsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/FALL2025/NET1051 - Lập trình C\#5/Assignment/Source/Repos/NET1051_ASM/Views/Food/Detail.cshtml]

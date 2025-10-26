@@ -34,10 +34,16 @@ namespace ASM_1.Areas.Admin.Controllers
         // GET: Admin/Tables
         public async Task<IActionResult> Index()
         {
-            var tables = await _context.Tables.ToListAsync();
+            var tables = await _context.Tables
+                .Include(t => t.TableInvoices)
+                .ThenInclude(ti => ti.Invoice)
+                .ToListAsync();
 
             foreach (var t in tables)
             {
+                if (t.Status == "Merged")
+                    continue;
+
                 int guestCount = _tableTracker.GetGuestCount(t.TableId);
                 t.Status = guestCount < t.SeatCount ? "Available" : "Full";
             }
@@ -148,6 +154,185 @@ namespace ASM_1.Areas.Admin.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> MergeTables(int[] tableIds)
+        {
+            using var tx = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Lấy hóa đơn đang mở của từng bàn
+                var activeInvoices = await _context.TableInvoices
+                    .Include(ti => ti.Invoice)
+                    .Where(ti => tableIds.Contains(ti.TableId) && ti.Invoice.Status == "Open")
+                    .ToListAsync();
+
+                if (activeInvoices.Count < 2)
+                {
+                    TempData["ErrorMessage"] = "Cần ít nhất 2 bàn có hóa đơn mở để gộp.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // ✅ Tạo hóa đơn gộp
+                var mergedInvoice = new Invoice
+                {
+                    InvoiceCode = "MERGE-" + DateTime.Now.Ticks,
+                    CreatedDate = DateTime.Now,
+                    Status = "Open",
+                    Notes = "Hóa đơn gộp",
+                    IsMerged = true
+                };
+                _context.Invoices.Add(mergedInvoice);
+                await _context.SaveChangesAsync();
+
+                // Gắn các bàn vào hóa đơn gộp
+                foreach (var ti in activeInvoices)
+                {
+                    var oldInvoice = ti.Invoice;
+
+                    oldInvoice.Status = "Merged";
+                    oldInvoice.MergeGroupId = mergedInvoice.InvoiceId;
+
+                    var oldDetails = await _context.InvoiceDetails
+                        .Where(d => d.InvoiceId == oldInvoice.InvoiceId)
+                        .ToListAsync();
+
+                    foreach (var detail in oldDetails)
+                    {
+                        var existingDetail = await _context.InvoiceDetails
+                            .FirstOrDefaultAsync(d =>
+                                d.InvoiceId == mergedInvoice.InvoiceId &&
+                                d.FoodItemId == detail.FoodItemId);
+
+                        if (existingDetail != null)
+                        {
+                            // Nếu món này đã có trong hóa đơn gộp → cộng dồn số lượng
+                            existingDetail.Quantity += detail.Quantity;
+                        }
+                        else
+                        {
+                            // Nếu chưa có → thêm mới
+                            var newDetail = new InvoiceDetail
+                            {
+                                InvoiceId = mergedInvoice.InvoiceId,
+                                FoodItemId = detail.FoodItemId,
+                                Quantity = detail.Quantity,
+                                UnitPrice = detail.UnitPrice
+                            };
+                            _context.InvoiceDetails.Add(newDetail);
+                        }
+                    }
+
+                    _context.TableInvoices.Add(new TableInvoice
+                    {
+                        TableId = ti.TableId,
+                        InvoiceId = mergedInvoice.InvoiceId,
+                        MergeGroupId = mergedInvoice.InvoiceId,
+                        OldInvoiceId = oldInvoice.InvoiceId
+                    });
+
+                    var table = await _context.Tables.FindAsync(ti.TableId);
+                    if (table != null)
+                    {
+                        table.Status = "Merged";
+                        _context.Tables.Update(table);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                TempData["SuccessMessage"] = "Đã gộp bàn thành công.";
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                TempData["ErrorMessage"] = "Lỗi khi gộp bàn: " + ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SplitTables(int mergedInvoiceId)
+        {
+            using var tx = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var mergedInvoice = await _context.Invoices
+                    .Include(i => i.TableInvoices)
+                    .Include(i => i.InvoiceDetails)
+                    .FirstOrDefaultAsync(i => i.InvoiceId == mergedInvoiceId && i.IsMerged);
+
+                if (mergedInvoice == null)
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy hóa đơn gộp.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Duyệt qua từng bàn trong hóa đơn gộp
+                foreach (var tableInvoice in mergedInvoice.TableInvoices)
+                {
+                    if (tableInvoice.OldInvoiceId != null)
+                    {
+                        // 🔙 Khôi phục hóa đơn cũ
+                        var oldInvoice = await _context.Invoices.FindAsync(tableInvoice.OldInvoiceId);
+                        if (oldInvoice != null)
+                        {
+                            oldInvoice.Status = "Open";
+                            oldInvoice.MergeGroupId = null;
+                            tableInvoice.InvoiceId = oldInvoice.InvoiceId;
+                            tableInvoice.MergeGroupId = null;
+                            tableInvoice.OldInvoiceId = null;
+
+                            _context.Update(oldInvoice);
+                        }
+                    }
+                    else
+                    {
+                        // Nếu bàn này không có hóa đơn cũ, tạo hóa đơn mới
+                        var newInvoice = new Invoice
+                        {
+                            InvoiceCode = "SPLIT-" + tableInvoice.TableId + "-" + DateTime.Now.Ticks,
+                            CreatedDate = DateTime.Now,
+                            Status = "Open",
+                            Notes = $"Tách từ hóa đơn gộp {mergedInvoice.InvoiceCode}"
+                        };
+                        _context.Invoices.Add(newInvoice);
+                        await _context.SaveChangesAsync();
+
+                        tableInvoice.InvoiceId = newInvoice.InvoiceId;
+                        tableInvoice.MergeGroupId = null;
+                        tableInvoice.OldInvoiceId = null;
+                    }
+
+                    var table = await _context.Tables.FindAsync(tableInvoice.TableId);
+                    if (table != null)
+                    {
+                        table.Status = "Available";
+                        _context.Tables.Update(table);
+                    }
+                }
+
+                mergedInvoice.Status = "Split";
+                mergedInvoice.IsMerged = false;
+                _context.Update(mergedInvoice);
+
+                await _context.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                TempData["SuccessMessage"] = "Đã tách bàn thành công.";
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                TempData["ErrorMessage"] = "Lỗi khi tách bàn: " + ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: Admin/Tables/Create
         public IActionResult Create()
         {
@@ -192,37 +377,43 @@ namespace ASM_1.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TableId,TableName,SeatCount")] Table table)
+        public async Task<IActionResult> Edit(int id, [Bind("TableId,TableName,SeatCount")] Table updatedTable)
         {
-            if (id != table.TableId)
-            {
+            if (id != updatedTable.TableId)
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    int guestCount = _tableTracker.GetGuestCount(table.TableId);
-                    table.Status = guestCount < table.SeatCount ? "Available" : "Full";
-
-                    _context.Update(table);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TableExists(table.TableId))
-                    {
+                    // 🔹 Load entity gốc từ DB
+                    var table = await _context.Tables.FindAsync(id);
+                    if (table == null)
                         return NotFound();
-                    }
-                    else
+
+                    // 🔹 Cập nhật các trường được phép
+                    table.TableName = updatedTable.TableName;
+                    table.SeatCount = updatedTable.SeatCount;
+
+                    // 🔹 Giữ nguyên trạng thái "Merged", chỉ cập nhật nếu chưa gộp
+                    if (table.Status != "Merged")
                     {
-                        throw;
+                        int guestCount = _tableTracker.GetGuestCount(table.TableId);
+                        table.Status = guestCount < table.SeatCount ? "Available" : "Full";
                     }
+
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Cập nhật bàn thành công.";
                 }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Lỗi khi cập nhật: " + ex.Message;
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(table);
+
+            return View(updatedTable);
         }
 
         // GET: Admin/Tables/Delete/5

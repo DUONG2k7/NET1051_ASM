@@ -20,5 +20,6 @@ namespace ASM_1.Models.Food
         public decimal? SplitRatio { get; set; } // 0.33 if split among 3
 
         public int? MergeGroupId { get; set; } // For merged tables
+        public int? OldInvoiceId { get; set; }
     }
 }
