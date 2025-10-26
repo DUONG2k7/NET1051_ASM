@@ -9,7 +9,7 @@ namespace ASM_1.Models.Food
         public int InvoiceId { get; set; }
 
         [Required, StringLength(50)]
-        public string InvoiceCode { get; set; }
+        public string InvoiceCode { get; set; } = default!;
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
@@ -29,6 +29,7 @@ namespace ASM_1.Models.Food
         public string? Notes { get; set; }
 
         // Navigation
+        public ICollection<Order> Orders { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetails { get; set; }
         public ICollection<TableInvoice> TableInvoices { get; set; }
     }

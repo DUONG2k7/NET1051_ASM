@@ -3,8 +3,6 @@
     public class UserSessionService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private const string SessionKey = "UserSessionId";
-        private const string CookieKey = "UserSessionId";
 
         public UserSessionService(IHttpContextAccessor httpContextAccessor)
         {
@@ -15,22 +13,14 @@
             var context = _httpContextAccessor.HttpContext;
             if (context == null) return tableCode;
 
-            var sessionId = context.Session.GetString(SessionKey);
+            string sessionKey = $"UserSessionId_{tableCode}";
+            var sessionId = context.Session.GetString(sessionKey);
 
-            // 🔹 Nếu chưa có session hoặc session khác bàn hiện tại → tạo mới
-            if (string.IsNullOrEmpty(sessionId) || !sessionId.StartsWith($"{tableCode}_"))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 sessionId = $"{tableCode}_{Guid.NewGuid():N}";
-
-                context.Session.SetString(SessionKey, sessionId);
-                context.Response.Cookies.Append(CookieKey, sessionId, new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddHours(2),
-                    HttpOnly = true,
-                    IsEssential = true
-                });
+                context.Session.SetString(sessionKey, sessionId);
             }
-
             return sessionId;
         }
     }

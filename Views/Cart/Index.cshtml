@@ -1,7 +1,7 @@
 ﻿@model List<ASM_1.Models.Food.CartItem>
 @{
     ViewData["Title"] = "Giỏ hàng";
-    var totalItems = Model?.Sum(x => x.Quantity) ?? 0;
+    var totalItems = Model?.Select(x => x.ProductID).Distinct().Count() ?? 0;
     var subtotal = Model?.Sum(x => x.UnitPrice * x.Quantity) ?? 0m;
     var tableCode = Context.Session.GetString("CurrentTableCode");
     var hasItems = Model != null && Model.Any();
@@ -298,34 +298,242 @@
         <!-- TAB 2: Trạng thái đơn (Nhiều đơn) -->
         <div id="tab-status" class="tab-content"
              data-table-code="@Context.Session.GetString("CurrentTableCode")">
-            <div class="cart-items-section">
-                <div class="order-status-header">
-                    <div class="os-left">
-                        <h2>Tiến trình đơn</h2>
-                    </div>
-                </div>
 
-                <!-- Danh sách đơn (render bằng JS) -->
-                <div class="order-list" id="order-list">
-                    <!-- các .order-card sẽ được nạp ở đây -->
-                </div>
-
-                <!-- Trạng thái rỗng -->
-                <div class="order-empty" id="order-empty" style="display:none">
-                    <div class="empty-cart-content">
-                        <i class="fas fa-clipboard-list"></i>
-                        <h2>Chưa có đơn nào</h2>
-                        <p>Bạn có thể đặt món và theo dõi trạng thái tại đây.</p>
-                        <a asp-controller="Food" asp-action="Index"
-                           asp-route-tableCode="@Context.Session.GetString("CurrentTableCode")"
-                           class="btn-shop-now">
-                            <i class="fas fa-utensils"></i> Đặt món ngay
-                        </a>
+            <div class="cart-content">
+                <div class="cart-items-section">
+                    <div class="order-status-header">
+                        <div class="os-left">
+                            <h2>Trạng thái đơn hàng</h2>
+                            @if (ViewBag.ActiveInvoice != null)
+                            {
+                                var invoice = ViewBag.ActiveInvoice as ASM_1.Models.Food.Invoice;
+                                <div class="os-meta">
+                                    <span>Mã hóa đơn: <strong>@invoice.InvoiceCode</strong></span>
+                                    <span>Trạng thái: <strong>@invoice.Status</strong></span>
+                                    <span>Ngày tạo: <strong>@invoice.CreatedDate.ToString("HH:mm dd/MM/yyyy")</strong></span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="os-meta text-muted">Chưa có đơn hàng nào được đặt.</div>
+                            }
+                        </div>
                     </div>
+
+                    @if (ViewBag.ActiveOrderItems != null && ((List<ASM_1.Models.Food.OrderItem>)ViewBag.ActiveOrderItems).Any())
+                    {
+                        var items = (List<ASM_1.Models.Food.OrderItem>)ViewBag.ActiveOrderItems;
+                        <div class="cart-items" id="orderItemsList">
+                            @foreach (var item in items)
+                            {
+                                var order = item.Order;
+                                string statusClass = order.Status.ToString().ToLower();
+                                string statusText = order.Status switch
+                                {
+                                    ASM_1.Models.Food.OrderStatus.Pending => "Chờ xác nhận",
+                                    ASM_1.Models.Food.OrderStatus.Preparing => "Đang chế biến",
+                                    ASM_1.Models.Food.OrderStatus.Ready => "Sẵn sàng phục vụ",
+                                    ASM_1.Models.Food.OrderStatus.Served => "Đã phục vụ",
+                                    ASM_1.Models.Food.OrderStatus.Paid => "Đã thanh toán",
+                                    ASM_1.Models.Food.OrderStatus.Canceled => "Đã hủy",
+                                    _ => "Không xác định"
+                                };
+
+                                <div class="cart-item" data-id="@item.OrderItemId">
+                                    <div class="item-image">
+                                        <img src="@Url.Content(item.FoodItem?.ImageUrl ?? "/images/default-food.png")" alt="@item.FoodItem?.Name" />
+                                    </div>
+
+                                    <div class="item-details">
+                                        <h3 class="item-name">@item.FoodItem?.Name</h3>
+
+                                        <div class="item-options">
+                                            @if (item.Options != null && item.Options.Any())
+                                            {
+                                                foreach (var opt in item.Options)
+                                                {
+                                                    <span class="option">@opt.OptionGroupNameSnap: @opt.OptionValueNameSnap</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="option text-muted">Không có tùy chọn</span>
+                                            }
+                                            <span class="note">Ghi chú: @(string.IsNullOrWhiteSpace(item.Note) ? "Không có" : item.Note)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="item-controls">
+                                        <div class="item-status">
+                                            <span class="badge order-status-badge status-@statusClass">@statusText</span>
+                                        </div>
+
+                                        <div class="item-price">
+                                            <span class="unit-price">@item.UnitBasePrice.ToString("N0") VNĐ/món</span>
+                                        </div>
+
+                                        <div class="item-total">
+                                            <strong>@item.LineTotal.ToString("N0") VNĐ</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="order-summary">
+                            <div class="summary-row">
+                                <span>Tổng cộng:</span>
+                                <strong>@items.Sum(x => x.LineTotal).ToString("N0") VNĐ</strong>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-cart">
+                            <div class="empty-cart-content">
+                                <i class="fas fa-clipboard-list"></i>
+                                <h3>Chưa có đơn hàng nào được đặt</h3>
+                                <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@Context.Session.GetString("CurrentTableCode")" class="btn-shop-now">
+                                    <i class="fas fa-utensils"></i> Đặt món ngay
+                                </a>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
+                                          method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-remove" title="Xóa món">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="order-tracker" id="order-tracker">
+                        <div class="tracker-steps" id="tracker-steps"></div>
+                        <div class="tracker-legend">
+                            <span><i class="dot done"></i> Hoàn tất</span>
+                            <span><i class="dot current"></i> Đang xử lý</span>
+                            <span><i class="dot"></i> Chưa tới</span>
+                        </div>
+                    </div>
+
+
+                    <div class="order-events" id="order-events">
+                        <h4>Nhật ký sự kiện</h4>
+                        <ul class="event-list"></ul>
+                    </div>
+
+                    <div class="order-actions">
+                        <button class="btn-outline" id="btn-refresh-os" @(activeOrderId == null ? "disabled" : null)>
+                            <i class="fa-solid fa-rotate-right"></i> Làm mới
+                        </button>
+                        @if (activeOrderId != null)
+                        {
+                            <a asp-controller="Orders" asp-action="Details" asp-route-id="@activeOrderId" class="btn-link">
+                                <i class="fa-solid fa-up-right-from-square"></i> Xem chi tiết đơn
+                            </a>
+                        }
+                    </div>
+
+                    @if (activeOrderId == null)
+                    {
+                        <div class="small text-muted" style="margin-top:10px">
+                            Chưa có đơn nào để theo dõi. Hãy “Xác nhận” giỏ hàng trước.
+                        </div>
+                    }
+                </div>
+
+                <aside class="cart-summary-section">
+                    <!-- Có thể tái sử dụng tóm tắt (nếu muốn). Giữ trống cũng được. -->
+                    @if (hasItems)
+                    {
+                        <div class="cart-summary">
+                            <h3>Tóm tắt</h3>
+                            <div class="summary-details">
+                                <div class="summary-row">
+                                    <span>Tạm tính (@totalItems món):</span>
+                                    <span>@subtotal.ToString("N0") VNĐ</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </aside>
+            </div>
+        </div>
+    </div>
+</div>
+
+                                          method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-remove" title="Xóa món">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="order-tracker" id="order-tracker">
+                        <div class="tracker-steps" id="tracker-steps"></div>
+                        <div class="tracker-legend">
+                            <span><i class="dot done"></i> Hoàn tất</span>
+                            <span><i class="dot current"></i> Đang xử lý</span>
+                            <span><i class="dot"></i> Chưa tới</span>
+                        </div>
+                    </div>
+
+
+                    <div class="order-events" id="order-events">
+                        <h4>Nhật ký sự kiện</h4>
+                        <ul class="event-list"></ul>
+                    </div>
+
+                    <div class="order-actions">
+                        <button class="btn-outline" id="btn-refresh-os" @(activeOrderId == null ? "disabled" : null)>
+                            <i class="fa-solid fa-rotate-right"></i> Làm mới
+                        </button>
+                        @if (activeOrderId != null)
+                        {
+                            <a asp-controller="Orders" asp-action="Details" asp-route-id="@activeOrderId" class="btn-link">
+                                <i class="fa-solid fa-up-right-from-square"></i> Xem chi tiết đơn
+                            </a>
+                        }
+                    </div>
+
+                    @if (activeOrderId == null)
+                    {
+                        <div class="small text-muted" style="margin-top:10px">
+                            Chưa có đơn nào để theo dõi. Hãy “Xác nhận” giỏ hàng trước.
+                        </div>
+                    }
+                </div>
+
+                <aside class="cart-summary-section">
+                    <!-- Có thể tái sử dụng tóm tắt (nếu muốn). Giữ trống cũng được. -->
+                    @if (hasItems)
+                    {
+                        <div class="cart-summary">
+                            <h3>Tóm tắt</h3>
+                            <div class="summary-details">
+                                <div class="summary-row">
+                                    <span>Tạm tính (@totalItems món):</span>
+                                    <span>@subtotal.ToString("N0") VNĐ</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </aside>
+            </div>
+        </div>
     </div>
 </div>
 

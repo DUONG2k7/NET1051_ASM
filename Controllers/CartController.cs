@@ -34,6 +34,32 @@ namespace ASM_1.Controllers
             string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
 
             var cart = await GetCartAsync(userId);
+            var activeInvoice = await _context.TableInvoices
+                .Include(ti => ti.Invoice)
+                    .ThenInclude(inv => inv.Orders)
+                        .ThenInclude(o => o.Items)
+                            .ThenInclude(i => i.FoodItem)
+                .Include(ti => ti.Invoice)
+                    .ThenInclude(inv => inv.Orders)
+                        .ThenInclude(o => o.Items)
+                            .ThenInclude(i => i.Options)
+                .Where(ti => ti.TableId == tableId && ti.Invoice.Status == "Open")
+                .Select(ti => ti.Invoice)
+                .FirstOrDefaultAsync();
+
+            if (activeInvoice != null)
+            {
+                ViewBag.ActiveInvoice = activeInvoice;
+                var allItems = activeInvoice.Orders
+                    .SelectMany(o => o.Items)
+                    .ToList();
+
+                ViewBag.ActiveOrderItems = allItems;
+                ViewBag.ActiveOrderId = activeInvoice.Orders
+                    .OrderByDescending(o => o.CreatedAt)
+                    .FirstOrDefault()?.OrderId;
+            }
+
             return View(cart.CartItems);
         }
 
@@ -41,14 +67,7 @@ namespace ASM_1.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> CartCountValue(string tableCode)
         {
-            //if (!(User?.Identity?.IsAuthenticated ?? false))
-            //    return Content("0", "text/plain");
-
             string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
-            if (userId == null)
-            {
-                return Content("0", "text/plain"); // hoặc xử lý khác tùy bạn
-            }
 
             var count = await _context.CartItems
                 .Where(ci => ci.Cart != null && ci.Cart.UserID == userId)
@@ -150,11 +169,12 @@ namespace ASM_1.Controllers
         public async Task<IActionResult> PlaceOrder(string tableCode, string paymentMethod)
         {
             var tableId = _tableCodeService.DecryptTableCode(tableCode);
-            if (tableId == null) return RedirectToAction("InvalidTable");
-            string note = null;
+            if (tableId == null)
+                return RedirectToAction("InvalidTable");
 
-            // 1) Lấy user & giỏ hàng
             string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
+
+            // 1️⃣ Lấy giỏ hàng của user
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                     .ThenInclude(i => i.Options)
@@ -166,106 +186,123 @@ namespace ASM_1.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // 2) Tính tiền
+            // 2️⃣ Tính tổng tiền
             var subtotal = cart.CartItems.Sum(x => x.UnitPrice * x.Quantity);
-            decimal shipping = 0m; // tuỳ mô hình giao/nhận
-            var finalAmount = subtotal + shipping;
+            var finalAmount = subtotal; // có thể cộng thêm phí giao, VAT nếu cần
 
-            // 3) Xác định mô hình thanh toán
-            bool isPrepaid = paymentMethod is "momo" or "zalopay" or "vnpay"; // trả trước
-            var nowLocal = DateTime.Now;
+            var now = DateTime.Now;
 
-            // 4) Lưu dữ liệu: Invoice + OrderItem (+ InvoiceDetail nếu prepaid)
             using var tx = await _context.Database.BeginTransactionAsync();
             try
             {
-                // 4.1 Tạo hóa đơn "khung" (pre-bill); với trả sau thì đây chỉ là bill mở, chưa xuất chi tiết
-                var invoice = new Invoice
-                {
-                    InvoiceCode = NewInvoiceCode(),                // mã hóa đơn
-                    CreatedDate = nowLocal,
-                    TotalAmount = finalAmount,                    // tổng theo thời điểm đặt
-                    FinalAmount = finalAmount,                    // có thể áp mã giảm/fees sau
-                    Status = isPrepaid ? "Paid" : "Pending", // trả trước = Paid, trả sau = Pending
-                    Notes = note
-                };
-                _context.Invoices.Add(invoice);
-                await _context.SaveChangesAsync(); // cần Id cho FK OrderItem
+                // 3️⃣ Kiểm tra hóa đơn hiện có cho bàn
+                var existingInvoice = await _context.TableInvoices
+                    .Include(ti => ti.Invoice)
+                    .Where(ti => ti.TableId == tableId)
+                    .OrderByDescending(ti => ti.Invoice.CreatedDate)
+                    .Select(ti => ti.Invoice)
+                    .FirstOrDefaultAsync(i => i.Status == "Open" || i.Status == "Pending");
 
-                // 4.2 Chuyển từng CartItem -> OrderItem (+ OrderItemOption snapshot)
+                Invoice invoice;
+                if (existingInvoice == null)
+                {
+                    // ❌ Chưa có hóa đơn mở → tạo mới
+                    invoice = new Invoice
+                    {
+                        InvoiceCode = NewInvoiceCode(),
+                        CreatedDate = now,
+                        TotalAmount = finalAmount,
+                        FinalAmount = finalAmount,
+                        Status = "Open", // ✅ hóa đơn đang mở
+                        Notes = $"Bàn {tableId} mở bill lúc {now:HH:mm dd/MM}"
+                    };
+
+                    _context.Invoices.Add(invoice);
+                    await _context.SaveChangesAsync();
+
+                    // Tạo liên kết Table ↔ Invoice
+                    _context.TableInvoices.Add(new TableInvoice
+                    {
+                        TableId = tableId.Value,
+                        InvoiceId = invoice.InvoiceId,
+                        SplitRatio = null,
+                        MergeGroupId = null
+                    });
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    // ✅ Đã có hóa đơn mở → dùng lại
+                    invoice = existingInvoice;
+                }
+
+                // 4️⃣ Tạo Order (phiếu gọi món) thuộc về Invoice
+                var order = new Order
+                {
+                    InvoiceId = invoice.InvoiceId,
+                    Status = OrderStatus.Pending, // hoặc "New" nếu bạn thích
+                    CreatedByUserId = userId,
+                    Note = string.Empty,
+                    CreatedAt = now
+                };
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                // 5️⃣ Chuyển từng CartItem → OrderItem
                 foreach (var ci in cart.CartItems)
                 {
-                    var oi = new OrderItem
+                    var orderItem = new OrderItem
                     {
-                        InvoiceId = invoice.InvoiceId,
+                        OrderId = order.OrderId,
                         FoodItemId = ci.ProductID,
                         Quantity = ci.Quantity,
-                        UnitBasePrice = ci.UnitPrice,                  // giả định UnitPrice đã gồm chênh option
-                        //OptionsDeltaTotal = 0m,                             // nếu bạn tách delta option, set đúng tại đây
-                        //UnitFinalPrice = ci.UnitPrice,
+                        UnitBasePrice = ci.UnitPrice,
                         LineTotal = ci.UnitPrice * ci.Quantity,
                         Note = ci.Note,
-                        CreatedAt = DateTime.UtcNow
+                        CreatedAt = now
                     };
-                    _context.OrderItems.Add(oi);
-                    await _context.SaveChangesAsync(); // cần OrderItemId cho options
+                    _context.OrderItems.Add(orderItem);
+                    await _context.SaveChangesAsync();
 
+                    // Thêm các tùy chọn (CartItemOption → OrderItemOption)
                     if (ci.Options != null && ci.Options.Count > 0)
                     {
                         foreach (var opt in ci.Options)
                         {
-                            // Không có Id nhóm/giá trị từ CartItemOption => lưu snapshot tên (anti-drift)
-                            var oio = new OrderItemOption
+                            var optEntity = new OrderItemOption
                             {
-                                OrderItemId = oi.OrderItemId,
-                                PriceDelta = 0m, // nếu bạn tách delta option, set chính xác tại đây
+                                OrderItemId = orderItem.OrderItemId,
+                                PriceDelta = 0m,
                                 OptionGroupNameSnap = opt.OptionTypeName,
                                 OptionValueNameSnap = opt.OptionName,
                                 OptionValueCodeSnap = null,
-                                OptionGroupId = null, // nếu có thể map, gán Id thật để in KDS
+                                OptionGroupId = null,
                                 OptionValueId = null
                             };
-                            _context.OrderItemOptions.Add(oio);
+                            _context.OrderItemOptions.Add(optEntity);
                         }
-                    }
-
-                    // 4.3 Nếu trả trước: sinh chi tiết hóa đơn để in/xuất ngay
-                    if (isPrepaid)
-                    {
-                        var id = new InvoiceDetail
-                        {
-                            InvoiceId = invoice.InvoiceId,
-                            FoodItemId = ci.ProductID,
-                            Quantity = ci.Quantity,
-                            UnitPrice = ci.UnitPrice,
-                            SubTotal = ci.UnitPrice * ci.Quantity
-                        };
-                        _context.InvoiceDetails.Add(id);
-
-                        // Nếu muốn gắn option vào InvoiceDetail:
-                        // cần tra OptionValue/FoodOptionId thật; hiện CartItemOption chỉ có tên,
-                        // nên có thể bỏ qua hoặc cài map riêng trước khi thêm InvoiceDetailFoodOption.
                     }
                 }
 
-                await _context.SaveChangesAsync();
+                // 6️⃣ Cập nhật trạng thái bàn + hóa đơn
+                var table = await _context.Tables.FindAsync(tableId);
+                if (table != null)
+                {
+                    table.Status = "Occupied";
+                    _context.Tables.Update(table);
+                }
 
-                // 4.4 (TÙY CHỌN) Liên kết bàn để hỗ trợ chia/gộp bill sau này
-                // Nếu bạn có tableId từ QR/Session: tạo record TableInvoice
-                // _context.TableInvoices.Add(new TableInvoice {
-                //     TableId = tableId, InvoiceId = invoice.InvoiceId, SplitRatio = null, MergeGroupId = null
-                // });
-                // await _context.SaveChangesAsync();
+                invoice.Status = "Open";
+                _context.Invoices.Update(invoice);
 
-                // 4.5 Xóa giỏ
+                // 7️⃣ Xóa giỏ hàng sau khi tạo Order
                 _context.CartItems.RemoveRange(cart.CartItems);
+                _context.Carts.Remove(cart);
+
                 await _context.SaveChangesAsync();
                 await tx.CommitAsync();
 
-                // 5) TempData cho trang Success
                 TempData["OrderSuccess"] = true;
-                //TempData["CustomerName"] = fullName;
-                //TempData["CustomerPhone"] = phone;
                 TempData["PaymentMethod"] = paymentMethod;
 
                 return RedirectToAction(nameof(Success), new { tableCode });
@@ -273,8 +310,8 @@ namespace ASM_1.Controllers
             catch (Exception ex)
             {
                 await tx.RollbackAsync();
-                // log ex...
-                TempData["ErrorMessage"] = "Có lỗi khi đặt hàng. Vui lòng thử lại.";
+                Console.WriteLine("Error placing order: " + ex.Message);
+                TempData["ErrorMessage"] = "Có lỗi khi đặt món. Vui lòng thử lại.";
                 return RedirectToAction(nameof(Index), new { tableCode });
             }
         }
@@ -298,15 +335,6 @@ namespace ASM_1.Controllers
             int quantity,
             string? note = null)
         {
-            // 1️⃣ Kiểm tra đăng nhập
-            //if (!User.Identity?.IsAuthenticated ?? true)
-            //{
-            //    TempData["ErrorMessage"] = "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
-            //    return RedirectToAction("Login", "Account");
-            //}
-
-
-
             quantity = Math.Clamp(quantity, 1, 10);
 
             // 2️⃣ Lấy món ăn
@@ -343,7 +371,7 @@ namespace ASM_1.Controllers
                 i.Options.Select(o => o.OptionTypeName + ":" + o.OptionName)
                     .OrderBy(x => x)
                     .SequenceEqual(selectedOptions
-                        .Select(o => o.OptionType.TypeName + ":" + o.OptionName)
+                        .Select(o => o.OptionType?.TypeName + ":" + o.OptionName)
                         .OrderBy(x => x)) &&
                 string.Equals((i.Note ?? "").Trim(), (note ?? "").Trim(), StringComparison.OrdinalIgnoreCase)
             );
@@ -362,7 +390,7 @@ namespace ASM_1.Controllers
                     TotalPrice = unitPrice * quantity,
                     Options = selectedOptions.Select(opt => new CartItemOption
                     {
-                        OptionTypeName = opt.OptionType.TypeName,
+                        OptionTypeName = opt.OptionType!.TypeName,
                         OptionName = opt.OptionName
                     }).ToList()
                 };

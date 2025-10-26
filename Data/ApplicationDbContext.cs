@@ -13,6 +13,9 @@ namespace ASM_1.Data
         {
         }
 
+        // ==============================
+        // DbSet khai báo bảng
+        // ==============================
         public DbSet<Category> Categories { get; set; }
         public DbSet<FoodItem> FoodItems { get; set; }
         public DbSet<FoodOption> FoodOptions { get; set; }
@@ -20,13 +23,18 @@ namespace ASM_1.Data
         public DbSet<Combo> Combos { get; set; }
         public DbSet<ComboDetail> ComboDetails { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+
         public DbSet<Table> Tables { get; set; }
+        public DbSet<TableInvoice> TableInvoices { get; set; }
+
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
         public DbSet<InvoiceDetailFoodOption> InvoiceDetailFoodOptions { get; set; }
-        public DbSet<TableInvoice> TableInvoices { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderItemOption> OrderItemOptions { get; set; }
+
         public DbSet<OptionGroup> OptionGroups { get; set; }
         public DbSet<OptionValue> OptionValues { get; set; }
         public DbSet<MenuItemOptionGroup> MenuItemOptionGroups { get; set; }
@@ -34,6 +42,7 @@ namespace ASM_1.Data
 
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<CartItemOption> CartItemOptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -64,7 +73,7 @@ namespace ASM_1.Data
                 .HasOne(cd => cd.FoodItem)
                 .WithMany(f => f.ComboDetails)
                 .HasForeignKey(cd => cd.FoodItemId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // ===============================
             // 4️⃣ Table ↔ TableInvoice ↔ Invoice (n-n)
@@ -82,7 +91,7 @@ namespace ASM_1.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // ===============================
-            // 5️⃣ (Optional) Default values / constraints
+            // 5️⃣ Default values
             // ===============================
             builder.Entity<FoodItem>()
                 .Property(f => f.IsAvailable)
@@ -93,9 +102,56 @@ namespace ASM_1.Data
                 .HasDefaultValue(true);
 
             // ===============================
-            // 6️⃣ InvoiceDetail ↔ InvoiceDetailFoodOption ↔ FoodOption (n-n)
+            // 6️⃣ Invoice ↔ Order (1-n)
             // ===============================
+            builder.Entity<Order>()
+                .HasOne(o => o.Invoice)
+                .WithMany(i => i.Orders)
+                .HasForeignKey(o => o.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // ===============================
+            // 7️⃣ Order ↔ OrderItem (1-n)
+            // ===============================
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ===============================
+            // 8️⃣ OrderItem ↔ FoodItem (1-n)
+            // ===============================
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.FoodItem)
+                .WithMany()
+                .HasForeignKey(oi => oi.FoodItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ===============================
+            // 9️⃣ OrderItem ↔ OrderItemOption (1-n)
+            // ===============================
+            builder.Entity<OrderItemOption>()
+                .HasOne(oio => oio.OrderItem)
+                .WithMany(oi => oi.Options)
+                .HasForeignKey(oio => oio.OrderItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<OrderItemOption>()
+                .HasOne(oio => oio.OptionGroup)
+                .WithMany()
+                .HasForeignKey(oio => oio.OptionGroupId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<OrderItemOption>()
+                .HasOne(oio => oio.OptionValue)
+                .WithMany()
+                .HasForeignKey(oio => oio.OptionValueId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // ===============================
+            // 🔟 InvoiceDetail ↔ FoodOption (n-n)
+            // ===============================
             builder.Entity<InvoiceDetailFoodOption>()
                 .HasOne(idfo => idfo.InvoiceDetail)
                 .WithMany(id => id.InvoiceDetailFoodOptions)
@@ -109,20 +165,11 @@ namespace ASM_1.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // ===============================
-            // 7️⃣ FoodOption ↔ OptionType (1-n)
+            // 11️⃣ OptionGroup ↔ OptionValue (1-n)
             // ===============================
-            builder.Entity<FoodOption>()
-                .HasOne(o => o.OptionType)
-                .WithMany(ot => ot.FoodOptions)
-                .HasForeignKey(o => o.OptionTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // ======================================================================
-            // 8) OptionGroup ↔ OptionValue (1-n) + enum to string + defaults
-            // ======================================================================
             builder.Entity<OptionGroup>()
                 .Property(g => g.GroupType)
-                .HasConversion<string>()        // lưu enum thành string
+                .HasConversion<string>()
                 .HasMaxLength(20);
 
             builder.Entity<OptionGroup>()
@@ -136,23 +183,23 @@ namespace ASM_1.Data
                 .HasMany(g => g.Values)
                 .WithOne(v => v.OptionGroup)
                 .HasForeignKey(v => v.OptionGroupId)
-                .OnDelete(DeleteBehavior.Restrict); // tránh xóa dây chuyền gây mất dữ liệu
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<OptionValue>()
-                .HasIndex(v => new { v.OptionGroupId, v.Name }).IsUnique(); // tên không trùng trong nhóm
+                .HasIndex(v => new { v.OptionGroupId, v.Name }).IsUnique();
             builder.Entity<OptionValue>()
                 .HasIndex(v => new { v.OptionGroupId, v.SortOrder });
 
-            // ======================================================================
-            // 9) MenuItemOptionGroup (item ↔ group) + unique
-            // ======================================================================
+            // ===============================
+            // 12️⃣ MenuItemOptionGroup / Value
+            // ===============================
             builder.Entity<MenuItemOptionGroup>()
                 .HasIndex(x => new { x.FoodItemId, x.OptionGroupId })
                 .IsUnique();
 
             builder.Entity<MenuItemOptionGroup>()
                 .HasOne(x => x.FoodItem)
-                .WithMany() // không bắt buộc nav ngược trong FoodItem
+                .WithMany()
                 .HasForeignKey(x => x.FoodItemId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -162,9 +209,6 @@ namespace ASM_1.Data
                 .HasForeignKey(x => x.OptionGroupId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ======================================================================
-            // 10) MenuItemOptionValue (override value theo món) + unique
-            // ======================================================================
             builder.Entity<MenuItemOptionValue>()
                 .HasIndex(x => new { x.FoodItemId, x.OptionValueId })
                 .IsUnique();
@@ -181,45 +225,26 @@ namespace ASM_1.Data
                 .HasForeignKey(x => x.OptionValueId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ======================================================================
-            // 11) OrderItem
-            // ======================================================================
-            builder.Entity<OrderItem>()
-                .HasOne(x => x.Invoice)
-                .WithMany()                                // không cần nav ngược trên Invoice
-                .HasForeignKey(x => x.InvoiceId)
+            // ===============================
+            // 13️⃣ Cart ↔ CartItem (1-n)
+            // ===============================
+            builder.Entity<CartItem>()
+                .HasOne(ci => ci.Cart)
+                .WithMany(c => c.CartItems)
+                .HasForeignKey(ci => ci.CartID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<OrderItem>()
-                .HasOne(x => x.FoodItem)
-                .WithMany()
-                .HasForeignKey(x => x.FoodItemId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // ===============================
+            // 14️⃣ CartItem ↔ CartItemOption (1-n)
+            // ===============================
+            builder.Entity<CartItemOption>()
+                .HasKey(cio => cio.CartItemOptionID);
 
-            // ======================================================================
-            // 12) OrderItemOption
-            // ======================================================================
-            builder.Entity<OrderItemOption>()
-                .HasIndex(x => x.OrderItemId);
-
-            builder.Entity<OrderItemOption>()
-                .HasOne(x => x.OrderItem)
-                .WithMany(i => i.Options)
-                .HasForeignKey(x => x.OrderItemId)
+            builder.Entity<CartItemOption>()
+                .HasOne<CartItem>()
+                .WithMany(ci => ci.Options)
+                .HasForeignKey(cio => cio.CartItemID)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // == Nếu bạn chọn phương án A (có navigation) ==
-            builder.Entity<OrderItemOption>()
-                .HasOne(x => x.OptionValue)
-                .WithMany()
-                .HasForeignKey(x => x.OptionValueId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            builder.Entity<OrderItemOption>()
-                .HasOne(x => x.OptionGroup)
-                .WithMany()
-                .HasForeignKey(x => x.OptionGroupId)
-                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
