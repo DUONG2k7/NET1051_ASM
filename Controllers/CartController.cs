@@ -11,10 +11,12 @@ namespace ASM_1.Controllers
     public class CartController : BaseController
     {
         private readonly TableCodeService _tableCodeService;
+        private readonly UserSessionService _userSessionService;
 
-        public CartController(ApplicationDbContext context, TableCodeService tableCodeService) : base(context)
+        public CartController(ApplicationDbContext context, TableCodeService tableCodeService, UserSessionService userSessionService) : base(context)
         {
             _tableCodeService = tableCodeService;
+            _userSessionService = userSessionService;
         }
 
         [HttpGet("{tableCode}/cart")]
@@ -29,32 +31,10 @@ namespace ASM_1.Controllers
             var tableId = _tableCodeService.DecryptTableCode(tableCode);
             if (tableId == null) return RedirectToAction("InvalidTable");
 
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? tableCode; // ✅ an toàn
+            string userId = _userSessionService.GetOrCreateUserSessionId(tableCode);
 
             var cart = await GetCartAsync(userId);
             return View(cart.CartItems);
-        }
-
-        //THÊM MỚI: Method GetCartAsync
-        private new async Task<Cart> GetCartAsync(string userId)
-        {
-            var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.UserID == userId);
-
-            if (cart == null)
-            {
-                cart = new Cart
-                {
-                    UserID = userId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                _context.Carts.Add(cart);
-                await _context.SaveChangesAsync();
-            }
-
-            return cart;
         }
 
         [HttpGet("{tableCode}/cart/count")]
@@ -223,8 +203,8 @@ namespace ASM_1.Controllers
                         FoodItemId = ci.ProductID,
                         Quantity = ci.Quantity,
                         UnitBasePrice = ci.UnitPrice,                  // giả định UnitPrice đã gồm chênh option
-                        OptionsDeltaTotal = 0m,                             // nếu bạn tách delta option, set đúng tại đây
-                        UnitFinalPrice = ci.UnitPrice,
+                        //OptionsDeltaTotal = 0m,                             // nếu bạn tách delta option, set đúng tại đây
+                        //UnitFinalPrice = ci.UnitPrice,
                         LineTotal = ci.UnitPrice * ci.Quantity,
                         Note = ci.Note,
                         CreatedAt = DateTime.UtcNow

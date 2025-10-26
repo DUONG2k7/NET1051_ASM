@@ -13,16 +13,18 @@ builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<ASM_1.Services.ITableTrackerService, ASM_1.Services.TableTrackerService>();
+builder.Services.AddSingleton<ASM_1.Services.TableCodeService>();
+builder.Services.AddScoped<UserSessionService>();
+
 builder.Services.AddDistributedMemoryCache(); // dùng bộ nhớ trong server để lưu session
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(10); // thời gian hết hạn session
+    options.IdleTimeout = TimeSpan.FromMinutes(45); // thời gian hết hạn session
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
-builder.Services.AddSingleton<ASM_1.Services.ITableTrackerService, ASM_1.Services.TableTrackerService>();
-builder.Services.AddSingleton<ASM_1.Services.TableCodeService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
