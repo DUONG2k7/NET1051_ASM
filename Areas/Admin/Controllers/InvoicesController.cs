@@ -27,6 +27,8 @@ namespace ASM_1.Areas.Admin.Controllers
                 .Include(i => i.Discount)
                 .Include(i => i.TableInvoices)
                     .ThenInclude(ti => ti.Table)
+                .Include(i => i.InvoiceDetails)
+                    .ThenInclude(d => d.FoodItem)
                 .OrderByDescending(i => i.CreatedDate)
                 .ToListAsync();
 
@@ -36,10 +38,7 @@ namespace ASM_1.Areas.Admin.Controllers
         // GET: Admin/Invoices/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var invoice = await _context.Invoices
                 .Include(i => i.Discount)

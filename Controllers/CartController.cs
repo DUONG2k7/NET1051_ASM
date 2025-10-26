@@ -188,7 +188,8 @@ namespace ASM_1.Controllers
 
             // 2️⃣ Tính tổng tiền
             var subtotal = cart.CartItems.Sum(x => x.UnitPrice * x.Quantity);
-            var finalAmount = subtotal; // có thể cộng thêm phí giao, VAT nếu cần
+            decimal shipping = 0m; // tuỳ mô hình giao/nhận
+            var finalAmount = subtotal + shipping;
 
             var now = DateTime.Now;
 
