@@ -1,0 +1,149 @@
+﻿@{
+    ViewData["Title"] = "Thống kê hóa đơn";
+    var revenueByDay = ViewBag.RevenueByDay as IEnumerable<dynamic>;
+    var statusCounts = ViewBag.StatusCounts as IEnumerable<dynamic>;
+}
+
+<div class="container mt-4">
+    <h2 class="fw-bold text-primary mb-3">📊 Thống kê hóa đơn</h2>
+
+    <!-- ==== THÔNG TIN TỔNG QUAN ==== -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-bg-primary shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Tổng hóa đơn</h6>
+                    <h3>@ViewBag.TotalInvoices</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-success shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Tổng doanh thu (VNĐ)</h6>
+                    <h4>@String.Format("{0:N0}", ViewBag.TotalRevenue)</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-bg-warning shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Đang mở</h6>
+                    <h5>@String.Format("{0:N0}", ViewBag.TotalOpen)</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-bg-info shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Đã thanh toán</h6>
+                    <h5>@String.Format("{0:N0}", ViewBag.TotalPaid)</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-bg-danger shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Đã hủy</h6>
+                    <h5>@String.Format("{0:N0}", ViewBag.TotalCanceled)</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==== BIỂU ĐỒ ==== -->
+    <div class="row mt-4">
+        <div class="col-md-7">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-bold mb-3 text-center">📈 Doanh thu 7 ngày gần nhất</h5>
+                <canvas id="revenueChart" height="180"></canvas>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-bold mb-3 text-center">🥧 Tỷ lệ trạng thái hóa đơn</h5>
+                <canvas id="statusChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách hóa đơn
+        </a>
+    </div>
+</div>
+
+<!-- ==== CHART.JS CDN ==== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // === DỮ LIỆU CHO BIỂU ĐỒ DOANH THU ===
+    const labels = [
+        @foreach (var item in revenueByDay)
+        {
+                @: '@item.Date.ToString("dd/MM")',
+                @:
+        }
+    ];
+
+    const revenues = [
+        @foreach (var item in revenueByDay)
+        {
+                @: @item.Revenue,
+                @:
+        }
+    ];
+
+    new Chart(document.getElementById("revenueChart"), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: revenues,
+                borderWidth: 1,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)'
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // === DỮ LIỆU CHO BIỂU ĐỒ TRẠNG THÁI ===
+    const statusLabels = [
+        @foreach (var s in statusCounts)
+        {
+                @: '@s.Status',
+                @:
+        }
+    ];
+    const statusData = [
+        @foreach (var s in statusCounts)
+        {
+                @: @s.Count,
+                @:
+        }
+    ];
+
+    new Chart(document.getElementById("statusChart"), {
+        type: 'pie',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                label: 'Số lượng',
+                data: statusData,
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(75, 192, 192, 0.7)'
+                ]
+            }]
+        }
+    });
+</script>

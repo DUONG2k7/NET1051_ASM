@@ -5,414 +5,291 @@
     var subtotal = Model?.Sum(x => x.UnitPrice * x.Quantity) ?? 0m;
     var tableCode = Context.Session.GetString("CurrentTableCode");
     var hasItems = Model != null && Model.Any();
-    var activeOrderId = ViewBag.ActiveOrderId; // có thể null
+    var orders = ViewBag.Orders as List<ASM_1.Models.Food.Order>;
+    var tableName = ViewBag.TableName as string;
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/cart.css" asp-append-version="true" />
 }
+<header>
+    <style>
+        .tab-content {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+.tab-content.active {
+    display: block;
+    opacity: 1;
+}
+.cart-tabs .tab-btn.active {
+    background-color: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+}
 
-<div class="cart-page">
+    </style>
+</header>
+<div class="cart-page py-4">
     <div class="container">
-        <!-- Breadcrumb -->
-        <nav class="breadcrumb">
+        <!-- 🧭 Breadcrumb -->
+        <nav class="breadcrumb mb-4">
             <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode">Trang chủ</a>
-            <span class="separator">></span>
-            <span class="current">Giỏ hàng</span>
+            <span class="mx-2">›</span>
+            <span class="text-muted">Giỏ hàng</span>
         </nav>
 
-        <!-- Tabs -->
-        <div class="cart-tabs">
-            <button class="tab-btn active" data-tab="tab-items">
+        <!-- 🔖 Tabs -->
+        <div class="cart-tabs mb-4 text-center">
+            <button class="btn btn-outline-primary me-2 tab-btn active" data-tab="tab-items">
                 <i class="fa-solid fa-bag-shopping"></i> Giỏ hàng
             </button>
-            <button class="tab-btn" data-tab="tab-status">
+            <button class="btn btn-outline-secondary tab-btn" data-tab="tab-status">
                 <i class="fa-solid fa-clipboard-list"></i> Trạng thái đơn
             </button>
         </div>
 
-        <!-- TAB 1: Giỏ hàng (bọc toàn bộ cart-content & empty state) -->
+        <!-- 🧩 TAB 1: Giỏ hàng -->
         <div id="tab-items" class="tab-content active">
             @if (hasItems)
             {
-                <div class="cart-content">
-                    <!-- Cart Items -->
-                    <div class="cart-items-section">
-                        <div class="cart-header">
-                            <h2>Danh sách món ăn (@totalItems món)</h2>
-                            <form asp-controller="Cart" asp-action="ClearCart" asp-route-tableCode="@tableCode" method="post">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn-clear-cart">
-                                    <i class="fas fa-trash"></i> Xóa tất cả
-                                </button>
-                            </form>
-                        </div>
+                <div class="row">
+                    <!-- LEFT: danh sách món -->
+                    <div class="col-lg-8 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Danh sách món ăn (@totalItems món)</h5>
+                                <form asp-controller="Cart" asp-action="ClearCart" asp-route-tableCode="@tableCode" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i> Xóa tất cả
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var item in Model)
+                                {
+                                    <div class="d-flex align-items-start border-bottom py-3">
+                                        <img src="@Url.Content(item.ProductImage)" alt="@item.ProductName"
+                                             class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" />
 
-                        <div class="cart-items" id="cartItemsList">
-                            @foreach (var item in Model)
-                            {
-                                <div class="cart-item" data-id="@item.CartItemID">
-                                    <div class="item-image">
-                                        <img src="@Url.Content(item.ProductImage)" alt="@item.ProductName" />
-                                    </div>
-
-                                    <div class="item-details">
-                                        <h3 class="item-name">@item.ProductName</h3>
-
-                                        <!-- Hiển thị Option động -->
-                                        <div class="item-options">
-                                            @if (item.Options != null && item.Options.Any())
-                                            {
-                                                foreach (var opt in item.Options)
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-1">@item.ProductName</h6>
+                                            <div class="text-muted small mb-1">
+                                                @if (item.Options != null && item.Options.Any())
                                                 {
-                                                    <span class="option">@opt.OptionTypeName: @opt.OptionName</span>
+                                                    foreach (var opt in item.Options)
+                                                    {
+                                                        <span>@opt.OptionTypeName: @opt.OptionName &nbsp;</span>
+                                                    }
                                                 }
-                                            }
-                                            else
-                                            {
-                                                <span class="option">Không có tùy chọn</span>
-                                            }
-                                            <span class="note">Ghi chú: @(string.IsNullOrWhiteSpace(item.Note) ? "Không có ghi chú" : item.Note)</span>
-                                        </div>
+                                                else
+                                                {
+                                                    <span>Không có tùy chọn</span>
+                                                }
+                                            </div>
+                                            <div class="text-muted small mb-2">
+                                                Ghi chú: @(string.IsNullOrWhiteSpace(item.Note) ? "Không có" : item.Note)
+                                            </div>
 
-                                        <div class="item-price">
-                                            <span class="unit-price">@item.UnitPrice.ToString("N0") VNĐ/món</span>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <div class="input-group input-group-sm" style="width: 120px;">
+                                                    <form asp-controller="Cart" asp-action="ChangeQuantity"
+                                                          asp-route-cartItemId="@item.CartItemID" asp-route-delta="-1"
+                                                          asp-route-tableCode="@tableCode" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-outline-secondary">-</button>
+                                                    </form>
+
+                                                    <input type="number" class="form-control text-center" value="@item.Quantity" readonly />
+
+                                                    <form asp-controller="Cart" asp-action="ChangeQuantity"
+                                                          asp-route-cartItemId="@item.CartItemID" asp-route-delta="1"
+                                                          asp-route-tableCode="@tableCode" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-outline-secondary">+</button>
+                                                    </form>
+                                                </div>
+
+                                                <span class="fw-semibold text-primary">@item.TotalPrice.ToString("N0") VNĐ</span>
+
+                                                <form asp-controller="Cart" asp-action="RemoveFromCart"
+                                                      asp-route-cartItemId="@item.CartItemID"
+                                                      asp-route-tableCode="@tableCode" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="item-controls">
-                                        <div class="quantity-controls">
-                                            <!-- Giảm 1 -->
-                                            <form asp-controller="Cart"
-                                                  asp-action="ChangeQuantity"
-                                                  asp-route-cartItemId="@item.CartItemID"
-                                                  asp-route-delta="-1"
-                                                  asp-route-tableCode="@tableCode"
-                                                  method="post">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="qty-btn minus" aria-label="Giảm">-</button>
-                                            </form>
-
-                                            <!-- Hiển thị số lượng -->
-                                            <input type="number" class="quantity" value="@item.Quantity" min="1" max="10" readonly />
-
-                                            <!-- Tăng 1 -->
-                                            <form asp-controller="Cart"
-                                                  asp-action="ChangeQuantity"
-                                                  asp-route-cartItemId="@item.CartItemID"
-                                                  asp-route-delta="1"
-                                                  asp-route-tableCode="@tableCode"
-                                                  method="post">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="qty-btn plus" aria-label="Tăng">+</button>
-                                            </form>
-                                        </div>
-
-                                        <div class="item-total">
-                                            <span class="total-price">@item.TotalPrice.ToString("N0") VNĐ</span>
-                                        </div>
-
-                                        <!-- Xóa món -->
-                                        <form asp-controller="Cart"
-                                              asp-action="RemoveFromCart"
-                                              asp-route-cartItemId="@item.CartItemID"
-                                              asp-route-tableCode="@tableCode"
-                                              method="post">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn-remove" title="Xóa món">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-
-                        <div class="continue-shopping">
-                            <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode" class="btn-continue">
-                                <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
-                            </a>
+                                }
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Cart Summary & Checkout -->
-                    <div class="cart-summary-section">
-                        <div class="cart-summary">
-                            <h3>Tóm tắt đơn hàng</h3>
-                            <div class="summary-details">
-                                <div class="summary-row">
+                    <!-- RIGHT: tổng tiền + xác nhận -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-3">Tóm tắt đơn hàng</h5>
+                                <div class="d-flex justify-content-between mb-2">
                                     <span>Tạm tính (@totalItems món):</span>
                                     <span>@subtotal.ToString("N0") VNĐ</span>
                                 </div>
-                                <div class="summary-row total">
+                                <hr />
+                                <div class="d-flex justify-content-between fw-bold mb-3">
                                     <span>Tổng cộng:</span>
-                                    <span class="total-amount">@(subtotal.ToString("N0")) VNĐ</span>
+                                    <span class="text-primary">@subtotal.ToString("N0") VNĐ</span>
                                 </div>
-                            </div>
 
-                            <form id="checkoutForm" asp-controller="Cart" asp-action="PlaceOrder" asp-route-tableCode="@tableCode" method="post">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn-checkout">
-                                    Xác nhận
-                                </button>
-                            </form>
+                                <form id="checkoutForm" asp-controller="Cart" asp-action="PlaceOrder"
+                                      asp-route-tableCode="@tableCode" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-primary w-100 py-2">
+                                        <i class="fas fa-check"></i> Xác nhận
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             }
             else
             {
-                <div class="empty-cart">
-                    <div class="empty-cart-content">
-                        <i class="fas fa-shopping-cart"></i>
-                        <h2>Giỏ hàng của bạn đang trống</h2>
-                        <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode" class="btn-shop-now">
-                            <i class="fas fa-utensils"></i> Đặt món ngay
-                        </a>
-                    </div>
+                <div class="alert alert-secondary text-center py-5">
+                    <i class="fas fa-shopping-cart fa-2x mb-3"></i>
+                    <h5>Giỏ hàng của bạn đang trống</h5>
+                    <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@tableCode"
+                       class="btn btn-primary mt-3"><i class="fas fa-utensils"></i> Đặt món ngay</a>
                 </div>
             }
         </div>
 
-        <!-- TAB 2: Trạng thái đơn -->
-        <div id="tab-status" class="tab-content"
-             data-table-code="@Context.Session.GetString("CurrentTableCode")">
-
-            <div class="cart-content">
-                <div class="cart-items-section">
-                    <div class="order-status-header">
-                        <div class="os-left">
-                            <h2>Trạng thái đơn hàng</h2>
-                            @if (ViewBag.ActiveInvoice != null)
-                            {
-                                var invoice = ViewBag.ActiveInvoice as ASM_1.Models.Food.Invoice;
-                                <div class="os-meta">
-                                    <span>Mã hóa đơn: <strong>@invoice.InvoiceCode</strong></span>
-                                    <span>Trạng thái: <strong>@invoice.Status</strong></span>
-                                    <span>Ngày tạo: <strong>@invoice.CreatedDate.ToString("HH:mm dd/MM/yyyy")</strong></span>
+        <!-- 🧾 TAB 2: Trạng thái đơn -->
+        <div id="tab-status" class="tab-content">
+            @if (ViewBag.AllOrders != null && ((List<ASM_1.Models.Food.Order>)ViewBag.AllOrders).Any())
+            {
+                <div class="row">
+                    <!-- LEFT: danh sách phiếu order -->
+                    <div class="col-lg-8 mb-4">
+                        @foreach (var order in (List<ASM_1.Models.Food.Order>)ViewBag.AllOrders)
+                        {
+                            var totalAmount = order.Items?.Sum(x => x.LineTotal) ?? 0m;
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-header d-flex justify-content-between">
+                                    <div>
+                                        <strong>Phiếu Order #@order.OrderId</strong>
+                                        <div class="small text-muted">
+                                            @order.CreatedAt.ToString("HH:mm dd/MM/yyyy") |
+                                            Trạng thái: <b>@order.Status</b>
+                                        </div>
+                                    </div>
+                                    <span class="fw-bold text-primary">@totalAmount.ToString("N0") VNĐ</span>
                                 </div>
-                            }
-                            else
-                            {
-                                <div class="os-meta text-muted">Chưa có đơn hàng nào được đặt.</div>
-                            }
-                        </div>
+                                <div class="card-body">
+                                    @foreach (var item in order.Items.Take(3))
+                                    {
+                                        <div class="d-flex justify-content-between small mb-1">
+                                            <span>@item.FoodItem?.Name</span>
+                                            <span>x @item.Quantity</span>
+                                            <span>@item.LineTotal.ToString("N0")đ</span>
+                                        </div>
+                                    }
+                                    @if (order.Items.Count > 3)
+                                    {
+                                        <div class="text-muted small">...và @(order.Items.Count - 3) món khác</div>
+                                    }
+                                </div>
+                            </div>
+                        }
                     </div>
 
-                    @if (ViewBag.ActiveOrderItems != null && ((List<ASM_1.Models.Food.OrderItem>)ViewBag.ActiveOrderItems).Any())
-                    {
-                        var items = (List<ASM_1.Models.Food.OrderItem>)ViewBag.ActiveOrderItems;
-                        <div class="cart-items" id="orderItemsList">
-                            @foreach (var item in items)
-                            {
-                                var order = item.Order;
-                                string statusClass = order.Status.ToString().ToLower();
-                                string statusText = order.Status switch
-                                {
-                                    ASM_1.Models.Food.OrderStatus.Pending => "Chờ xác nhận",
-                                    ASM_1.Models.Food.OrderStatus.Preparing => "Đang chế biến",
-                                    ASM_1.Models.Food.OrderStatus.Ready => "Sẵn sàng phục vụ",
-                                    ASM_1.Models.Food.OrderStatus.Served => "Đã phục vụ",
-                                    ASM_1.Models.Food.OrderStatus.Paid => "Đã thanh toán",
-                                    ASM_1.Models.Food.OrderStatus.Canceled => "Đã hủy",
-                                    _ => "Không xác định"
-                                };
-
-                                <div class="cart-item" data-id="@item.OrderItemId">
-                                    <div class="item-image">
-                                        <img src="@Url.Content(item.FoodItem?.ImageUrl ?? "/images/default-food.png")" alt="@item.FoodItem?.Name" />
-                                    </div>
-
-                                    <div class="item-details">
-                                        <h3 class="item-name">@item.FoodItem?.Name</h3>
-
-                                        <div class="item-options">
-                                            @if (item.Options != null && item.Options.Any())
-                                            {
-                                                foreach (var opt in item.Options)
-                                                {
-                                                    <span class="option">@opt.OptionGroupNameSnap: @opt.OptionValueNameSnap</span>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <span class="option text-muted">Không có tùy chọn</span>
-                                            }
-                                            <span class="note">Ghi chú: @(string.IsNullOrWhiteSpace(item.Note) ? "Không có" : item.Note)</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="item-controls">
-                                        <div class="item-status">
-                                            <span class="badge order-status-badge status-@statusClass">@statusText</span>
-                                        </div>
-
-                                        <div class="item-price">
-                                            <span class="unit-price">@item.UnitBasePrice.ToString("N0") VNĐ/món</span>
-                                        </div>
-
-                                        <div class="item-total">
-                                            <strong>@item.LineTotal.ToString("N0") VNĐ</strong>
-                                        </div>
-                                    </div>
+                    <!-- RIGHT: tổng tiền + thanh toán -->
+                    <div class="col-lg-4">
+                        @{
+                            var totalAllOrders = ((List<ASM_1.Models.Food.Order>)ViewBag.AllOrders)?
+                            .Sum(o => o.Items?.Sum(i => i.LineTotal) ?? 0m) ?? 0m;
+                        }
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-3">Tóm tắt thanh toán</h5>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tổng tiền các phiếu gọi món:</span>
+                                    <span>@totalAllOrders.ToString("N0") VNĐ</span>
                                 </div>
-                            }
-                        </div>
-
-                        <div class="order-summary">
-                            <div class="summary-row">
-                                <span>Tổng cộng:</span>
-                                <strong>@items.Sum(x => x.LineTotal).ToString("N0") VNĐ</strong>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="empty-cart">
-                            <div class="empty-cart-content">
-                                <i class="fas fa-clipboard-list"></i>
-                                <h3>Chưa có đơn hàng nào được đặt</h3>
-                                <a asp-controller="Food" asp-action="Index" asp-route-tableCode="@Context.Session.GetString("CurrentTableCode")" class="btn-shop-now">
-                                    <i class="fas fa-utensils"></i> Đặt món ngay
+                                <hr />
+                                <div class="d-flex justify-content-between fw-bold mb-3">
+                                    <span>Tổng cộng:</span>
+                                    <span class="text-success">@totalAllOrders.ToString("N0") VNĐ</span>
+                                </div>
+                                <a asp-controller="Cart" asp-action="Checkout">
+                                    <i class="fas fa-money-bill-wave"></i> Lựa chọn thanh toán
                                 </a>
+                                <form id="checkoutInvoiceForm"
+                                      asp-controller="Cart" asp-action="Checkout"
+                                      asp-route-tableCode="@tableCode" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-success w-100 py-2">
+                                        <i class="fas fa-money-bill-wave"></i> Thanh toán
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                    }
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary text-center py-5">
+                    <i class="fas fa-clipboard-list fa-2x mb-3"></i>
+                    <h5>Chưa có phiếu gọi món nào</h5>
+                    <a asp-controller="Food" asp-action="Index" class="btn btn-primary mt-3">
+                        <i class="fas fa-utensils"></i> Đặt món ngay
+                    </a>
+                </div>
+            }
         </div>
     </div>
 </div>
 
+
 @section Scripts {
     <script>
-        (() => {
-          // ========== Tabs ==========
-          const tabButtons = document.querySelectorAll('.cart-tabs .tab-btn');
-          const tabItems = document.getElementById('tab-items');
-          const tabStatus = document.getElementById('tab-status');
+        document.addEventListener("DOMContentLoaded", function () {
+            const tabButtons = document.querySelectorAll(".tab-btn");
+            const tabContents = document.querySelectorAll(".tab-content");
 
-          tabButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-              tabButtons.forEach(b => b.classList.remove('active'));
-              document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-              btn.classList.add('active');
-              const pane = document.getElementById(btn.dataset.tab);
-              if (pane) pane.classList.add('active');
+            tabButtons.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    // Loại bỏ active ở tất cả tab & nội dung
+                    tabButtons.forEach(b => b.classList.remove("active"));
+                    tabContents.forEach(c => c.classList.remove("active"));
 
-              // Bật/tắt polling theo tab
-              if (btn.dataset.tab === 'tab-status') { startStatusPolling(); }
-              else { stopStatusPolling(); }
+                    // Kích hoạt tab được click
+                    btn.classList.add("active");
+                    const targetId = btn.getAttribute("data-tab");
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) {
+                        targetContent.classList.add("active");
+                    } else {
+                        console.warn("Không tìm thấy tab có ID:", targetId);
+                    }
+
+                    // Cuộn nhẹ lên đầu (tùy chọn, UX tốt hơn)
+                    window.scrollTo({ top: 150, behavior: "smooth" });
+                });
             });
-          });
+        });
+        // Lưu tab hiện tại vào localStorage
+        localStorage.setItem("activeTab", targetId);
 
-          // ========== Order Status ==========
+        // Khi tải lại trang, mở lại tab cũ
+        const savedTab = localStorage.getItem("activeTab");
+        if (savedTab) {
+            document.querySelector(`[data-tab="${savedTab}"]`)?.click();
+        }
 
-          // 1) Map trạng thái → step
-          const stepsDef = [
-            { key:'PENDING',        label:'Đã gửi' },
-            { key:'CONFIRMED',      label:'Xác nhận' },
-            { key:'IN_KITCHEN',     label:'Đang chế biến' },
-            { key:'READY',          label:'Sẵn sàng' },
-            { key:'SERVED',         label:'Đã phục vụ' },
-            { key:'REQUESTED_BILL', label:'Yêu cầu tính tiền' },
-            { key:'PAID',           label:'Đã thanh toán' },
-          ];
-          const statusPriority = stepsDef.reduce((acc, s, i) => { acc[s.key]=i; return acc; }, { CANCELLED: 99 });
-
-          const tracker = document.getElementById('tracker-steps');
-          const badge = document.getElementById('os-badge');
-          const eventsUL = document.querySelector('#order-events .event-list');
-          const btnRefresh = document.getElementById('btn-refresh-os');
-
-          function renderSteps(container, currentKey, timestamps = {}) {
-            const curIndex = (currentKey in statusPriority) ? statusPriority[currentKey] : 0;
-            container.innerHTML = stepsDef.map((s, i) => {
-              const klass = i < curIndex ? 'step done' : (i === curIndex ? 'step current' : 'step');
-              const tm = timestamps[s.key] ? `<small>${new Date(timestamps[s.key]).toLocaleTimeString('vi-VN')}</small>` : '<small>&nbsp;</small>';
-              return `<div class="${klass}"><span class="dot"></span><span>${s.label}</span>${tm}</div>`;
-            }).join('');
-          }
-
-          function renderBadge(el, status) {
-            const map = {
-              PENDING:        { text:'Đang gửi', bg:'#f8f9fa', color:'#333' },
-              CONFIRMED:      { text:'Đã xác nhận', bg:'#d4edda', color:'#155724' },
-              IN_KITCHEN:     { text:'Đang chế biến', bg:'#fff3cd', color:'#856404' },
-              READY:          { text:'Sẵn sàng', bg:'#cce5ff', color:'#004085' },
-              SERVED:         { text:'Đã phục vụ', bg:'#e2e3e5', color:'#383d41' },
-              REQUESTED_BILL: { text:'Yêu cầu tính tiền', bg:'#ffeeba', color:'#856404' },
-              PAID:           { text:'Đã thanh toán', bg:'#d4edda', color:'#155724' },
-              CANCELLED:      { text:'Đã hủy', bg:'#f8d7da', color:'#721c24' },
-            };
-            const s = map[status] || map.PENDING;
-            el.style.background = s.bg; el.style.color = s.color; el.textContent = s.text;
-          }
-
-          function renderEvents(listEl, events = []) {
-            listEl.innerHTML = events.map(e => `
-              <li>
-                <div class="event-left">
-                  <span class="e-icon"><i class="fa-regular fa-clock"></i></span>
-                  <div>
-                    <div><strong>${e.title}</strong></div>
-                    <div>${e.message ?? ''}</div>
-                  </div>
-                </div>
-                <div class="event-right">${new Date(e.at).toLocaleString('vi-VN')}</div>
-              </li>`
-            ).join('');
-          }
-
-          async function fetchOrderStatus(orderId) {
-            const res = await fetch(`/cart/status/${orderId}`, { cache: 'no-store' });
-            if (!res.ok) throw new Error('Không lấy được trạng thái đơn');
-            return await res.json();
-          }
-
-          async function refreshStatus() {
-            const orderId = tabStatus?.dataset.orderId;
-            if (!orderId) return; // chưa có đơn
-            try {
-              const data = await fetchOrderStatus(orderId);
-              document.getElementById('os-order-code').textContent = data.orderCode ?? '—';
-              document.getElementById('os-table').textContent = data.table ?? (tabStatus.dataset.tableCode || '—');
-              document.getElementById('os-placedAt').textContent = data.placedAt ? new Date(data.placedAt).toLocaleString('vi-VN') : '—';
-              renderBadge(badge, data.status);
-              renderSteps(tracker, data.status, data.timestamps || {});
-              renderEvents(eventsUL, data.events || []);
-            } catch (err) {
-              console.warn(err);
-            }
-          }
-
-          // Làm mới thủ công
-          if (btnRefresh) {
-            btnRefresh.addEventListener('click', refreshStatus);
-          }
-
-          // Polling khi đang ở tab trạng thái
-          let osTimer = null;
-          function startStatusPolling() {
-            if (!tabStatus?.dataset.orderId) return;
-            refreshStatus();
-            stopStatusPolling();
-            osTimer = setInterval(refreshStatus, 8000);
-          }
-          function stopStatusPolling() {
-            if (osTimer) { clearInterval(osTimer); osTimer = null; }
-          }
-
-          // ========== Checkout UX ==========
-          const checkoutForm = document.getElementById('checkoutForm');
-          if (checkoutForm) {
-            checkoutForm.addEventListener('submit', function () {
-              const btn = checkoutForm.querySelector('.btn-checkout');
-              if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-              }
-            });
-          }
-        })();
     </script>
 }

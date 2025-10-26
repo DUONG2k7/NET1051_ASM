@@ -28,6 +28,9 @@ namespace ASM_1.Models.Food
         [StringLength(200)]
         public string? Notes { get; set; }
 
+        public bool IsMerged { get; set; } = false;
+        public int? MergeGroupId { get; set; } = null;
+
         // Navigation
         public ICollection<Order> Orders { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetails { get; set; }

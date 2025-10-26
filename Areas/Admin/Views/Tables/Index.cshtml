@@ -1,82 +1,164 @@
 ﻿@model IEnumerable<ASM_1.Models.Food.Table>
 
 @{
-    ViewData["Title"] = "Danh sách bàn";
+    ViewData["Title"] = "Quản lý bàn ăn";
+    var normalTables = Model.Where(t => t.Status != "Merged").ToList();
+    var mergedTables = Model.Where(t => t.Status == "Merged").ToList();
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold text-primary">🍽️ Danh sách bàn</h2>
+        <h2 class="fw-bold text-primary">
+            🍽️ Quản lý bàn ăn
+        </h2>
         <a asp-action="Create" class="btn btn-success">
             <i class="bi bi-plus-circle"></i> Thêm bàn mới
         </a>
     </div>
 
-    <form asp-action="GenerateAll" method="post" class="mb-3">
-        <button class="btn btn-outline-primary">
-            <i class="bi bi-qr-code"></i> Tạo QR cho tất cả bàn
-        </button>
-    </form>
+    <!-- ======================== BÀN CHƯA GỘP ======================== -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-table"></i> Bàn chưa gộp</h5>
+            <form asp-action="MergeTables" method="post" id="mergeForm">
+                <button type="submit" class="btn btn-light btn-sm fw-bold text-primary">
+                    <i class="bi bi-link-45deg"></i> Gộp bàn
+                </button>
+            </form>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle text-center mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:50px;">Chọn</th>
+                        <th>Tên bàn</th>
+                        <th>Số ghế</th>
+                        <th>Trạng thái</th>
+                        <th>QR</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!normalTables.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">
+                                <i class="bi bi-info-circle"></i> Không có bàn nào chưa gộp.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var table in normalTables)
+                        {
+                            var statusClass = table.Status == "Available" ? "text-success fw-bold" : "text-warning fw-bold";
+                            <tr>
+                                <td>
+                                    <input type="checkbox" form="mergeForm" name="tableIds" value="@table.TableId" />
+                                </td>
+                                <td class="fw-semibold">@table.TableName</td>
+                                <td>@table.SeatCount</td>
+                                <td class="@statusClass">@table.Status</td>
+                                <td>
+                                    <img src="@Url.Content($"~/uploads/qr/Table_{table.TableId}.png")"
+                                         width="70" height="70"
+                                         class="rounded border border-2 shadow-sm" />
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Details" asp-route-id="@table.TableId" class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@table.TableId" class="btn btn-sm btn-outline-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@table.TableId" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <table class="table table-hover align-middle shadow-sm rounded">
-        <thead class="table-primary">
-            <tr class="text-center">
-                <th>Tên bàn</th>
-                <th>Số ghế</th>
-                <th>Trạng thái</th>
-                <th>QR</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var table in Model)
+    <!-- ======================== BÀN ĐÃ GỘP ======================== -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-diagram-3"></i> Nhóm bàn đã gộp</h5>
+        </div>
+        <div class="card-body">
+            @if (!mergedTables.Any())
             {
-                var statusClass = table.Status == "Available" ? "text-success fw-bold" : "text-danger fw-bold";
-                <tr class="text-center">
-                    <td class="fw-semibold">@table.TableName</td>
-                    <td>@table.SeatCount</td>
-                    <td class="@statusClass">
-                        @if (table.Status == "Available")
-                        {
-                            <i class="bi bi-check-circle-fill">Còn trống</i>
-                        }
-                        else
-                        {
-                            <i class="bi bi-x-circle-fill">Đầy</i>
-                        }
-                    </td>
-                    <td>
-                        <img src="@Url.Content($"~/uploads/qr/Table_{table.TableId}.png")"
-                             alt="QR"
-                             width="90"
-                             height="90"
-                             class="rounded border border-2 shadow-sm" />
-                    </td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <a asp-action="Details" asp-route-id="@table.TableId"
-                               class="btn btn-sm btn-outline-info">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a asp-action="Edit" asp-route-id="@table.TableId"
-                               class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@table.TableId"
-                               class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
+                <div class="alert alert-light text-center">
+                    <i class="bi bi-info-circle"></i> Không có nhóm bàn nào đang gộp.
+                </div>
             }
-        </tbody>
-    </table>
+            else
+            {
+                <!-- Nhóm bàn theo MergeGroupId -->
+                @foreach (var group in mergedTables.GroupBy(t => t.TableInvoices?.Where(ti => ti.MergeGroupId != null).Select(ti => ti.MergeGroupId).FirstOrDefault()))
+                {
+                    var groupId = group.Key ?? 0;
+                    <div class="card border-dark mb-3">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-collection"></i> Nhóm gộp #@groupId
+                            </div>
+                            <form asp-action="SplitTables" method="post" class="m-0">
+                                <input type="hidden" name="mergedInvoiceId" value="@groupId" />
+                                <button type="submit" class="btn btn-sm btn-outline-light">
+                                    <i class="bi bi-scissors"></i> Tách nhóm
+                                </button>
+                            </form>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm table-bordered mb-0 text-center align-middle">
+                                <thead class="table-secondary">
+                                    <tr>
+                                        <th>Tên bàn</th>
+                                        <th>Số ghế</th>
+                                        <th>Trạng thái</th>
+                                        <th>QR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var table in group)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold">@table.TableName</td>
+                                            <td>@table.SeatCount</td>
+                                            <td class="text-danger fw-bold">@table.Status</td>
+                                            <td>
+                                                <img src="@Url.Content($"~/uploads/qr/Table_{table.TableId}.png")"
+                                                     width="60" height="60"
+                                                     class="rounded border border-2 shadow-sm" />
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
 
-    @if (TempData["Success"] != null)
+    <!-- ======================== THÔNG BÁO ======================== -->
+    @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success mt-3">
-            <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+            <i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3">
+            <i class="bi bi-x-circle-fill"></i> @TempData["ErrorMessage"]
         </div>
     }
 </div>

@@ -9,7 +9,7 @@ namespace ASM_1.Models.Food
 
         [Required, StringLength(50)]
         public string TableName { get; set; }
-
+        [Range(1, 100)]
         public int SeatCount { get; set; }
 
         [StringLength(20)]

@@ -1,64 +1,123 @@
 ﻿@model ASM_1.Models.Food.Invoice
-
 @{
     ViewData["Title"] = "Chi tiết hóa đơn";
 }
 
-<h2>Chi tiết hóa đơn @Model.InvoiceCode</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold text-primary mb-0">
+            📑 Chi tiết hóa đơn
+        </h2>
+    </div>
 
-<hr />
+    <!-- Thông tin chung -->
+    <div class="card shadow-sm p-3 mb-4">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Mã hóa đơn</dt>
+            <dd class="col-sm-9 fw-semibold">@Model.InvoiceCode</dd>
 
-<div class="mb-3">
-    <strong>Bàn:</strong> @string.Join(", ", Model.TableInvoices.Select(ti => ti.Table!.TableName))<br />
-    <strong>Ngày tạo:</strong> @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")<br />
-    <strong>Trạng thái:</strong>
-    <span class="badge bg-@(Model.Status == "Paid" ? "success" : "warning")">
-        @Model.Status
-    </span><br />
-    <strong>Ghi chú:</strong> @Model.Notes
-</div>
+            <dt class="col-sm-3">Ngày tạo</dt>
+            <dd class="col-sm-9">@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</dd>
 
-<table class="table table-hover table-bordered">
-    <thead class="table-light">
-        <tr>
-            <th>Tên món</th>
-            <th>Tùy chọn</th>
-            <th>Phụ chọn (Topping)</th>
-            <th>Số lượng</th>
-            <th>Đơn giá</th>
-            <th>Thành tiền</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var detail in Model.InvoiceDetails)
-        {
-            <tr>
-                <td>@detail.FoodItem?.Name</td>
-                <td>
-                    @if (detail.InvoiceDetailFoodOptions != null && detail.InvoiceDetailFoodOptions.Any())
+            <dt class="col-sm-3">Bàn</dt>
+            <dd class="col-sm-9">
+                @string.Join(", ", Model.TableInvoices.Select(ti => ti.Table?.TableName ?? ""))
+            </dd>
+
+            <dt class="col-sm-3">Giảm giá</dt>
+            <dd class="col-sm-9">@Model.Discount?.Code ?? "Không có"</dd>
+
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9">
+                <span class="badge bg-@(Model.Status == "Paid" ? "success" : Model.Status == "Open" ? "warning" : "secondary")">
+                    @Model.Status
+                </span>
+            </dd>
+
+            <dt class="col-sm-3">Ghi chú</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.Notes) ? Model.Notes : "Không có")</dd>
+        </dl>
+    </div>
+
+    <!-- Danh sách món ăn -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light fw-bold">
+            Danh sách món ăn
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0 align-middle">
+                <thead class="table-secondary">
+                    <tr class="text-center">
+                        <th style="width: 40%;">Tên món</th>
+                        <th>Tùy chọn</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.InvoiceDetails)
                     {
-                        @string.Join(", ", detail.InvoiceDetailFoodOptions.Select(o => o.FoodOption.OptionName))
+                        <tr>
+                            <td>
+                                <strong>@item.FoodItem?.Name</strong>
+                                @if (item.InvoiceDetailFoodOptions != null && item.InvoiceDetailFoodOptions.Any())
+                                {
+                                    <ul class="small text-muted mb-0">
+                                        @foreach (var opt in item.InvoiceDetailFoodOptions)
+                                        {
+                                            <li>@opt.FoodOption?.OptionName</li>
+                                        }
+                                    </ul>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @(item.InvoiceDetailFoodOptions?.Count() ?? 0)
+                            </td>
+                            <td class="text-center">@item.Quantity</td>
+                            <td class="text-end">
+                                @item.UnitPrice.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                            </td>
+                            <td class="text-end fw-semibold">
+                                @item.SubTotal.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                            </td>
+                        </tr>
                     }
-                    else
-                    {
-                        <span>-</span>
-                    }
-                </td>
-                <td>@detail.Quantity</td>
-                <td>@detail.UnitPrice.ToString("N0") ₫</td>
-                <td>@detail.SubTotal.ToString("N0") ₫</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<div class="mt-4 text-end">
-    <p><strong>Tổng cộng:</strong> @Model.TotalAmount.ToString("N0") ₫</p>
-    <p>
-        <strong>Giảm giá:</strong>
-        @(Model.Discount != null ? Model.Discount.Code + " (" + Model.Discount.Percent + "%)" : "-")
-    </p>
-    <h4><strong>Thành tiền:</strong> @Model.FinalAmount.ToString("N0") ₫</h4>
+    <!-- Tổng kết -->
+    <div class="card shadow-sm p-3">
+        <div class="d-flex justify-content-end">
+            <table class="table w-auto mb-0">
+                <tr>
+                    <th class="text-end pe-3">Tổng tiền:</th>
+                    <td class="text-end">@Model.TotalAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                </tr>
+                <tr>
+                    <th class="text-end pe-3">Giảm giá:</th>
+                    <td class="text-end">
+                        @(Model.Discount?.MaxAmount?.ToString("C0", new System.Globalization.CultureInfo("vi-VN")) ?? "0 ₫")
+                    </td>
+                </tr>
+                <tr class="fw-bold border-top">
+                    <th class="text-end pe-3 text-primary">Thành tiền:</th>
+                    <td class="text-end text-primary">
+                        @Model.FinalAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+        </a>
+        <a asp-action="Print" asp-route-id="@Model.InvoiceId" class="btn btn-success">
+            <i class="bi bi-printer"></i> In hóa đơn
+        </a>
+    </div>
 </div>
-
-<a asp-action="Index" class="btn btn-secondary mt-3">← Quay lại danh sách</a>
